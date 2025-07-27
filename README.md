@@ -922,38 +922,6 @@ def extract_representative_ops(
     # Configuration-driven parameters
 ```
 
-### Key Architectural Benefits
-
-#### **1. Maintainability** 
-- ✅ **Single Point of Change**: Modify parameters in one location
-- ✅ **Consistent Values**: No risk of parameter drift across modules  
-- ✅ **Clear Dependencies**: Easy to understand what each module configures
-- ✅ **Reduced Code Duplication**: Shared utilities prevent inconsistencies
-
-#### **2. Extensibility**
-- ✅ **Easy Parameter Addition**: Add new config without touching multiple files
-- ✅ **Module Independence**: Modules depend on config, not each other
-- ✅ **Testing Flexibility**: Easy to test with different parameter sets
-- ✅ **Documentation Co-location**: Parameters documented where defined
-
-#### **3. User Experience**
-- ✅ **Discoverable Options**: All customizable parameters in one place
-- ✅ **Consistent Behavior**: Same parameter values across all analysis workflows
-- ✅ **Easy Customization**: Modify behavior without code changes
-- ✅ **Reproducible Research**: Configuration snapshots enable reproducibility
-
-### Development Features
-- **Month-based filtering** for efficient data processing
-- **Complex Excel structure handling** with proper column and row mapping
-- **Comprehensive data validation** with type checking, limit validation, and gap filling
-- **Representative operating point extraction** using advanced clustering algorithms
-- **Reactive power analysis** with proper sign conventions
-- **Wind power integration** with load calculations
-- **Centralized configuration management** for easy maintenance and customization
-- **Comprehensive logging** with detailed progress tracking
-- **Error handling** with graceful failure and recovery
-- **Clean column naming** for improved output readability
-
 ### Requirements
 - Python 3.7+
 - pandas
@@ -974,7 +942,3 @@ Or install from requirements.txt:
 ```bash
 pip install -r requirements.txt
 ```
-
-## License
-
-This tool is developed for power system analysis and research purposes by the Sustainable Power Systems Lab (SPSL).
