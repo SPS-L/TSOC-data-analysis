@@ -35,10 +35,10 @@ Traditional power system analysis tools often suffer from:
 - Code duplication for common utilities
 
 #### **Solution: Centralized Configuration**
-This tool centralizes all configuration in `config.py`, providing:
+This tool centralizes all configuration in `system_configuration.py`, providing:
 
 **🎯 Single Source of Truth**
-- All parameters defined in one location (`config.py`)
+- All parameters defined in one location (`system_configuration.py`)
 - Consistent values across all modules
 - Easy discovery of configurable options
 - Comprehensive documentation for each parameter
@@ -138,7 +138,7 @@ COLUMN_PREFIXES = {
 ### Utility Functions
 
 #### **Clean Column Naming**
-The `clean_column_name()` function in `config.py` provides consistent column name cleaning:
+The `clean_column_name()` function in `system_configuration.py` provides consistent column name cleaning:
 
 ```python
 def clean_column_name(col_name):
@@ -157,7 +157,7 @@ def clean_column_name(col_name):
 
 #### **Customizing Representative Operations**
 ```python
-# In config.py, modify REPRESENTATIVE_OPS for your system:
+# In system_configuration.py, modify REPRESENTATIVE_OPS for your system:
 
 # For larger power systems (more clusters needed)
 REPRESENTATIVE_OPS['defaults']['k_max'] = 20
@@ -178,7 +178,7 @@ REPRESENTATIVE_OPS['ranking_weights'] = {
 
 #### **Customizing Data Validation**
 ```python
-# In config.py, modify DATA_VALIDATION for your data:
+# In system_configuration.py, modify DATA_VALIDATION for your data:
 
 # For different power system limits
 DATA_VALIDATION['limit_checks']['power_limits']['wind']['max_mw'] = 200
@@ -194,7 +194,7 @@ DATA_VALIDATION['quality_thresholds']['max_missing_percentage'] = 5.0
 
 #### **Customizing Output Files**
 ```python
-# In config.py, modify file naming:
+# In system_configuration.py, modify file naming:
 
 # Custom suffixes to remove
 def clean_column_name(col_name):
@@ -229,7 +229,7 @@ python power_analysis_cli.py --save-csv --save-plots --verbose
 # Extract representative points with default parameters
 python -c "
 from power_analysis_cli import execute
-from representative_ops import extract_representative_ops
+from operating_point_extractor import extract_representative_ops
 
 # Load and analyze data
 success, df = execute(month='2024-01', save_csv=True)
@@ -392,7 +392,7 @@ The enhanced data validation system provides a comprehensive three-step validati
 
 ### ⚙️ **Configuration Architecture**
 
-All validation parameters are centrally managed in `config.py` with separate sections for different validation aspects and automatic adaptation to actual data structure.
+All validation parameters are centrally managed in `system_configuration.py` with separate sections for different validation aspects and automatic adaptation to actual data structure.
 
 ### Enhanced Validation Features
 
@@ -419,7 +419,7 @@ All validation parameters are centrally managed in `config.py` with separate sec
 
 ### Configuration Management
 
-**Enhanced Gap Filling Settings (`config.py`):**
+**Enhanced Gap Filling Settings (`system_configuration.py`):**
 ```python
 ENHANCED_DATA_VALIDATION = {
     'advanced_gap_filling': {
@@ -477,7 +477,7 @@ ENHANCED_DATA_VALIDATION = {
 
 **Complete Enhanced Validation (Recommended):**
 ```python
-from data_validation import EnhancedDataValidator
+from power_data_validator import EnhancedDataValidator
 
 # Create enhanced validator with all features
 validator = EnhancedDataValidator()
@@ -571,7 +571,7 @@ The enhanced validation seamlessly integrates with the existing analysis workflo
 
 ### Configuration Customization
 
-Users can easily customize validation behavior by modifying `config.py`:
+Users can easily customize validation behavior by modifying `system_configuration.py`:
 
 ```python
 # Example: More aggressive outlier detection
@@ -820,7 +820,7 @@ The tool follows a **modular, configuration-driven architecture** designed for m
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   User Layer    │    │  Configuration  │    │    Utilities   │
 │                 │    │     Layer       │    │                │
-│ CLI Interface   │◄──►│   config.py     │◄──►│ clean_column_   │
+│ CLI Interface   │◄──►│system_configuration│◄──►│ clean_column_   │
 │ Python Scripts  │    │                 │    │ name()          │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
@@ -828,16 +828,19 @@ The tool follows a **modular, configuration-driven architecture** designed for m
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │  Analysis Core  │    │  Validation     │    │ Representative  │
 │                 │    │     Layer       │    │   Operations    │
-│ analysis.py     │    │ data_validation │    │                │
-│ plotting.py     │    │      .py        │    │representative_  │
-│ data_loader.py  │    │                 │    │   ops.py        │
+│power_system_    │    │power_data_      │    │                │
+│analytics.py     │    │validator.py     │    │operating_point_ │
+│power_system_    │    │                 │    │extractor.py     │
+│visualizer.py    │    │                 │    │                │
+│excel_data_      │    │                 │    │                │
+│processor.py     │    │                 │    │                │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
 ### Core Modules
 
 #### **Configuration Layer**
-- **`config.py`** - **Centralized configuration hub** containing:
+- **`system_configuration.py`** - **Centralized configuration hub** containing:
   - File mappings and column prefixes
   - Data validation parameters and limits
   - Representative operations clustering parameters
@@ -850,35 +853,35 @@ The tool follows a **modular, configuration-driven architecture** designed for m
   - Month filtering and optimized data loading
   - Comprehensive analysis pipeline orchestration
   - Configuration-driven parameter usage
-  - **Enhanced**: Now imports `clean_column_name` from config for consistency
+  - **Enhanced**: Now imports `clean_column_name` from system_configuration for consistency
 
 #### **Analysis Core**
-- **`analysis.py`** - Core analysis functions:
+- **`power_system_analytics.py`** - Core analysis functions:
   - Load calculations (total, net load)
   - Generator categorization (voltage control vs PQ control)
   - Reactive power calculations with proper sign conventions
   - Wind power integration and statistics
 
-- **`plotting.py`** - Visualization functions:
+- **`power_system_visualizer.py`** - Visualization functions:
   - Time series plots (load, wind, reactive power)
   - Daily and monthly profiles
   - Comprehensive analysis dashboards
 
-- **`data_loader.py`** - Data loading and preprocessing:
+- **`excel_data_processor.py`** - Data loading and preprocessing:
   - Excel file structure handling
   - Modular data loading functions for reusable analysis workflows
 
 #### **Validation Layer**
-- **`data_validation.py`** - Comprehensive data quality assurance:
+- **`power_data_validator.py`** - Comprehensive data quality assurance:
   - Type checking and limit validation
   - Advanced gap filling with multiple interpolation methods
   - Enhanced anomaly detection (statistical, ML-based)
   - Power system specific validation rules
 
 #### **Representative Operations**
-- **`representative_ops.py`** - Advanced clustering analysis:
+- **`operating_point_extractor.py`** - Advanced clustering analysis:
   - K-means clustering for operating point extraction
-  - **Configuration-driven**: All parameters imported from `config.py`
+  - **Configuration-driven**: All parameters imported from `system_configuration.py`
   - Automatic cluster quality assessment
   - MAPGL belt analysis for critical low-load conditions
   - **Enhanced**: Uses centralized configuration for all parameters
@@ -887,7 +890,7 @@ The tool follows a **modular, configuration-driven architecture** designed for m
 
 #### **Before: Scattered Configuration**
 ```python
-# representative_ops.py (old approach)
+# operating_point_extractor.py (old approach)
 def extract_representative_ops(k_max=10, random_state=42):
     # Hardcoded parameters scattered in functions
     if sil > 0.25:  # Quality threshold hardcoded
@@ -901,7 +904,7 @@ def clean_column_name(col_name):
 
 #### **After: Centralized Configuration**
 ```python
-# config.py (new approach)
+# system_configuration.py (new approach)
 REPRESENTATIVE_OPS = {
     'defaults': {'k_max': 10, 'random_state': 42},
     'quality_thresholds': {'min_silhouette': 0.25},
@@ -911,8 +914,8 @@ REPRESENTATIVE_OPS = {
 def clean_column_name(col_name):
     # Single, reusable utility function
     
-# representative_ops.py (new approach)
-from config import REPRESENTATIVE_OPS
+# operating_point_extractor.py (new approach)
+from system_configuration import REPRESENTATIVE_OPS
 def extract_representative_ops(
     k_max=REPRESENTATIVE_OPS['defaults']['k_max']
 ):
