@@ -91,7 +91,7 @@ Python Script Examples:
     )
     if success:
         # Use the dataframe for further analysis
-        from representative_ops import extract_representative_ops
+        from operating_point_extractor import extract_representative_ops
         rep_df, diag = extract_representative_ops(df, max_power=850, MAPGL=200)
     
     # Summary only analysis
@@ -122,10 +122,10 @@ from pathlib import Path
 
 # Import our custom modules
 
-from analysis import calculate_total_load, calculate_net_load, get_load_statistics, categorize_generators, calculate_total_wind, calculate_total_reactive_power
-from plotting import plot_load_timeseries, plot_monthly_profile, plot_total_load_daily_profile, plot_net_load_daily_profile, create_comprehensive_plots
-from data_validation import DataValidator
-from config import (
+from power_system_analytics import calculate_total_load, calculate_net_load, get_load_statistics, categorize_generators, calculate_total_wind, calculate_total_reactive_power
+from power_system_visualizer import plot_load_timeseries, plot_monthly_profile, plot_total_load_daily_profile, plot_net_load_daily_profile, create_comprehensive_plots
+from power_data_validator import DataValidator
+from system_configuration import (
     FILES, COLUMN_PREFIXES, DEFAULT_OUTPUT_DIR, DEFAULT_VERBOSE,
     DATA_DIR, PLOT_STYLE, PLOT_PALETTE,
     FIGURE_SIZES, FONT_SIZES, MIN_YEAR, MAX_YEAR, MIN_MONTH, MAX_MONTH,
@@ -1516,7 +1516,7 @@ def execute(month=None, data_dir=DATA_DIR, output_dir=DEFAULT_OUTPUT_DIR,
         success, df = execute(month="2024-01", save_csv=True, save_plots=True, verbose=True)
         if success:
             # Use dataframe for representative operations analysis
-            from representative_ops import extract_representative_ops
+            from operating_point_extractor import extract_representative_ops
             rep_df, diag = extract_representative_ops(df, max_power=850, MAPGL=200)
         
         # Summary only for a specific month

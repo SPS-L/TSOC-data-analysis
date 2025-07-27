@@ -21,7 +21,7 @@ Functions:
 
 import pandas as pd
 import os
-from config import DATA_DIR
+from system_configuration import DATA_DIR
 
 # Task 1.2: Function to load a single Excel file
 def load_excel_file(filename, data_dir=DATA_DIR):
@@ -110,8 +110,4 @@ def convert_index_to_datetime(df):
         
         return df_dt
     except Exception as e:
-        raise ValueError(f"Error converting index to datetime: {str(e)}")
-
-
-
-
+        raise ValueError(f"Error converting index to datetime: {str(e)}") 

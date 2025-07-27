@@ -22,7 +22,7 @@ USAGE EXAMPLES:
 ==============
 
 # Basic configuration access
-from config import FILES, REPRESENTATIVE_OPS
+from system_configuration import FILES, REPRESENTATIVE_OPS
 
 # Use default clustering parameters
 k_max = REPRESENTATIVE_OPS['defaults']['k_max']
@@ -32,7 +32,7 @@ random_state = REPRESENTATIVE_OPS['defaults']['random_state']
 power_limits = DATA_VALIDATION['limit_checks']['power_limits']
 
 # Use shared utilities
-from config import clean_column_name
+from system_configuration import clean_column_name
 clean_name = clean_column_name('ss_mw_STATION1_132REACTOR_REACTIVE_POWER')
 # Result: 'ss_mw_STATION1'
 """
@@ -405,6 +405,4 @@ def clean_column_name(col_name):
             cleaned_name = cleaned_name[:-len(suffix)]
             break
     
-    return cleaned_name
-
- 
+    return cleaned_name 

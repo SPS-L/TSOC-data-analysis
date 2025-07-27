@@ -85,7 +85,7 @@ from sklearn.metrics import (
     calinski_harabasz_score,
     davies_bouldin_score,
 )
-from config import clean_column_name, REPRESENTATIVE_OPS
+from system_configuration import clean_column_name, REPRESENTATIVE_OPS
 
 __all__ = ["extract_representative_ops"]
 
@@ -677,7 +677,7 @@ def extract_representative_ops(
 
     Examples
     --------
-    >>> from representative_ops import extract_representative_ops
+    >>> from operating_point_extractor import extract_representative_ops
     >>> # Basic usage with config defaults
     >>> rep_df, diag = extract_representative_ops(df, max_power=850, MAPGL=200)
     >>> print(f"Selected {len(rep_df)} representative points from {len(df)} total")
@@ -702,7 +702,7 @@ def extract_representative_ops(
     """
     
     # Import analysis functions for net load calculation
-    from analysis import calculate_total_load, calculate_net_load
+    from power_system_analytics import calculate_total_load, calculate_net_load
 
     # Create working copy and calculate net_load
     working = all_power.copy()
