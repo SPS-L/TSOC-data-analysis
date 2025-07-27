@@ -9,36 +9,6 @@ This module serves as the central configuration hub for the entire power system
 analysis toolkit. It provides a single source of truth for all configurable 
 parameters, file mappings, validation settings, and shared utilities.
 
-DESIGN RATIONALE:
-================
-
-Traditional power system analysis tools often suffer from scattered parameters
-throughout multiple files, making them difficult to maintain and customize. This
-centralized approach addresses these challenges by:
-
-1. SINGLE SOURCE OF TRUTH
-   - All parameters defined in one location
-   - Consistent values across all modules  
-   - Easy discovery of configurable options
-   - Comprehensive documentation for each parameter
-
-2. MAINTAINABILITY
-   - Parameter updates require changes in only one file
-   - Reduced risk of inconsistent values
-   - Clear dependency tracking
-   - Simplified testing and validation
-
-3. EXTENSIBILITY  
-   - Easy to add new parameters without touching multiple files
-   - Module independence through configuration contracts
-   - Support for different analysis scenarios
-   - Clear separation of configurable vs. fixed behavior
-
-4. CODE REUSABILITY
-   - Shared utilities like clean_column_name() avoid duplication
-   - Consistent behavior across different analysis workflows
-   - Modular design enables component reuse
-
 CONFIGURATION AREAS:
 ==================
 
