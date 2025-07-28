@@ -94,7 +94,7 @@ from sklearn.metrics import (
     calinski_harabasz_score,
     davies_bouldin_score,
 )
-from system_configuration import clean_column_name, REPRESENTATIVE_OPS
+from system_configuration import clean_column_name, REPRESENTATIVE_OPS, convert_numpy_types
 
 __all__ = ["extract_representative_ops", "loadallpowerdf"]
 
@@ -195,36 +195,58 @@ def _auto_kmeans(
     k_max: int = REPRESENTATIVE_OPS['defaults']['k_max'],
     random_state: int | None = REPRESENTATIVE_OPS['defaults']['random_state'],
 ) -> Tuple[KMeans, Dict[str, float]]:
-    """Fit k-means while automatically selecting k."""
+    """Fit k-means while automatically selecting k with performance optimizations."""
     best_model: KMeans | None = None
     best_score: float = -np.inf
     best_k: int = 0
     best_metrics: dict[str, float] = {}
 
-    for k in range(2, min(k_max, len(x) - 1) + 1):
-        km = KMeans(
-            n_clusters=k, 
-            random_state=random_state, 
-            n_init=REPRESENTATIVE_OPS['kmeans']['n_init']
-        )
-        labels = km.fit_predict(x)
+    # Optimize k range based on data size
+    n_samples = len(x)
+    k_max = min(k_max, n_samples - 1, 20)  # Cap at 20 for performance
+    k_min = max(2, min(5, n_samples // 100))  # Adaptive minimum k
+    
+    # Use parallel processing for multiple k values
+    from joblib import Parallel, delayed
+    
+    def evaluate_k(k):
+        try:
+            km = KMeans(
+                n_clusters=k, 
+                random_state=random_state, 
+                n_init=REPRESENTATIVE_OPS['kmeans']['n_init']
+            )
+            labels = km.fit_predict(x)
 
-        sil = silhouette_score(x, labels)
-        ch = calinski_harabasz_score(x, labels)
-        db = davies_bouldin_score(x, labels)
+            sil = silhouette_score(x, labels)
+            ch = calinski_harabasz_score(x, labels)
+            db = davies_bouldin_score(x, labels)
 
-        # Multi-objective ranking: maximise CH & Sil, minimise DB
-        weights = REPRESENTATIVE_OPS['ranking_weights']
-        combo = (ch * weights['calinski_harabasz_weight'] + 
-                sil * weights['silhouette_weight'] - 
-                db * weights['davies_bouldin_weight'])
-        
-        min_silhouette = REPRESENTATIVE_OPS['quality_thresholds']['min_silhouette']
-        if combo > best_score and sil > min_silhouette:
-            best_score = combo
-            best_model = km
+            # Multi-objective ranking: maximise CH & Sil, minimise DB
+            weights = REPRESENTATIVE_OPS['ranking_weights']
+            combo = (ch * weights['calinski_harabasz_weight'] + 
+                    sil * weights['silhouette_weight'] - 
+                    db * weights['davies_bouldin_weight'])
+            
+            min_silhouette = REPRESENTATIVE_OPS['quality_thresholds']['min_silhouette']
+            if sil > min_silhouette:
+                return k, combo, km, {"silhouette": sil, "ch": ch, "db": db}
+            return k, -np.inf, None, {}
+        except Exception:
+            return k, -np.inf, None, {}
+
+    # Evaluate k values in parallel
+    results = Parallel(n_jobs=-1, prefer="threads")(
+        delayed(evaluate_k)(k) for k in range(k_min, k_max + 1)
+    )
+    
+    # Find best result
+    for k, score, model, metrics in results:
+        if score > best_score and model is not None:
+            best_score = score
+            best_model = model
             best_k = k
-            best_metrics = {"silhouette": sil, "ch": ch, "db": db}
+            best_metrics = metrics
 
     if best_model is None:  # fall-back to default clusters
         fallback_k = REPRESENTATIVE_OPS['defaults']['fallback_clusters']
@@ -245,6 +267,237 @@ def _auto_kmeans(
     return best_model, best_metrics
 
 
+def _create_visualizations(
+    output_dir: str,
+    working: pd.DataFrame,
+    rep_df: pd.DataFrame,
+    info: dict,
+    model: KMeans,
+    scaler: StandardScaler,
+    feat_cols: list,
+    max_power: float,
+    MAPGL: float,
+) -> None:
+    """Create comprehensive visualizations for clustering analysis."""
+    try:
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        from matplotlib.patches import Rectangle
+        import warnings
+        warnings.filterwarnings('ignore')
+        
+        # Set style
+        plt.style.use('seaborn-v0_8')
+        sns.set_palette("husl")
+        
+        # Create figure with subplots
+        fig = plt.figure(figsize=(20, 16))
+        
+        # 1. Clustering Quality Metrics Dashboard
+        ax1 = plt.subplot(3, 3, 1)
+        metrics = ['Silhouette', 'Calinski-Harabasz', 'Davies-Bouldin']
+        values = [info['silhouette'], info['ch'], info['db']]
+        colors = ['green' if info['silhouette'] > 0.5 else 'orange' if info['silhouette'] > 0.25 else 'red',
+                 'green' if info['ch'] > 100 else 'orange' if info['ch'] > 50 else 'red',
+                 'green' if info['db'] < 0.5 else 'orange' if info['db'] < 1.0 else 'red']
+        
+        bars = ax1.bar(metrics, values, color=colors, alpha=0.7)
+        ax1.set_title('Clustering Quality Metrics', fontweight='bold')
+        ax1.set_ylabel('Score')
+        
+        # Add value labels on bars
+        for bar, value in zip(bars, values):
+            height = bar.get_height()
+            ax1.text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                    f'{value:.3f}', ha='center', va='bottom', fontsize=9)
+        
+        # 2. Cluster Size Distribution
+        ax2 = plt.subplot(3, 3, 2)
+        cluster_sizes = info['cluster_sizes']
+        cluster_labels = [f'C{i+1}' for i in range(len(cluster_sizes))]
+        colors = plt.cm.Set3(np.linspace(0, 1, len(cluster_sizes)))
+        
+        wedges, texts, autotexts = ax2.pie(cluster_sizes, labels=cluster_labels, 
+                                          colors=colors, autopct='%1.1f%%', startangle=90)
+        ax2.set_title('Cluster Size Distribution', fontweight='bold')
+        
+        # 3. Net Load Distribution
+        ax3 = plt.subplot(3, 3, 3)
+        if 'net_load' in working.columns:
+            # Original vs Representative
+            ax3.hist(working['net_load'], bins=30, alpha=0.6, label='Original', density=True)
+            ax3.hist(rep_df['net_load'], bins=15, alpha=0.8, label='Representative', density=True)
+            ax3.axvline(MAPGL, color='red', linestyle='--', label=f'MAPGL ({MAPGL} MW)')
+            ax3.axvline(max_power, color='red', linestyle='--', label=f'Max Power ({max_power} MW)')
+            ax3.set_xlabel('Net Load (MW)')
+            ax3.set_ylabel('Density')
+            ax3.set_title('Net Load Distribution', fontweight='bold')
+            ax3.legend()
+        
+        # 4. Feature Importance (Variance)
+        ax4 = plt.subplot(3, 3, 4)
+        if len(feat_cols) > 0:
+            feature_vars = working[feat_cols].var().sort_values(ascending=False)
+            top_features = feature_vars.head(10)
+            feature_names = [col.replace('ss_mw_', '').replace('ss_mvar_', '').replace('wind_mw_', '') 
+                           for col in top_features.index]
+            
+            bars = ax4.barh(range(len(top_features)), top_features.values, alpha=0.7)
+            ax4.set_yticks(range(len(top_features)))
+            ax4.set_yticklabels(feature_names, fontsize=8)
+            ax4.set_xlabel('Variance')
+            ax4.set_title('Top 10 Features by Variance', fontweight='bold')
+            ax4.invert_yaxis()
+        
+        # 5. Compression Analysis
+        ax5 = plt.subplot(3, 3, 5)
+        categories = ['Original', 'Filtered', 'Representative']
+        sizes = [info['original_size'], info['filtered_size'], info['n_total']]
+        colors = ['lightblue', 'lightgreen', 'orange']
+        
+        bars = ax5.bar(categories, sizes, color=colors, alpha=0.7)
+        ax5.set_title('Data Reduction Analysis', fontweight='bold')
+        ax5.set_ylabel('Number of Snapshots')
+        
+        # Add percentage labels
+        for bar, size in zip(bars, sizes):
+            height = bar.get_height()
+            percentage = (size / info['original_size']) * 100
+            ax5.text(bar.get_x() + bar.get_width()/2., height + max(sizes)*0.01,
+                    f'{percentage:.1f}%', ha='center', va='bottom', fontsize=9)
+        
+        # 6. MAPGL Belt Analysis
+        ax6 = plt.subplot(3, 3, 6)
+        if 'net_load' in working.columns:
+            mapgl_multiplier = REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier']
+            belt_mask = (working["net_load"] > MAPGL) & (working["net_load"] < mapgl_multiplier * MAPGL)
+            
+            # Create histogram with MAPGL belt highlighted
+            n, bins, patches = ax6.hist(working['net_load'], bins=50, alpha=0.6, color='lightblue')
+            
+            # Highlight MAPGL belt
+            belt_indices = np.where((bins[:-1] >= MAPGL) & (bins[1:] <= mapgl_multiplier * MAPGL))[0]
+            for idx in belt_indices:
+                patches[idx].set_facecolor('red')
+                patches[idx].set_alpha(0.8)
+            
+            ax6.axvline(MAPGL, color='red', linestyle='--', linewidth=2, label=f'MAPGL ({MAPGL} MW)')
+            ax6.axvline(mapgl_multiplier * MAPGL, color='red', linestyle='--', linewidth=2, 
+                       label=f'MAPGL Belt Upper ({mapgl_multiplier * MAPGL:.1f} MW)')
+            ax6.set_xlabel('Net Load (MW)')
+            ax6.set_ylabel('Frequency')
+            ax6.set_title('MAPGL Belt Analysis', fontweight='bold')
+            ax6.legend()
+        
+        # 7. Cluster Centers Heatmap (if not too many features)
+        ax7 = plt.subplot(3, 3, 7)
+        if len(feat_cols) <= 20:
+            cluster_centers_orig = scaler.inverse_transform(model.cluster_centers_)
+            feature_names_short = [col.replace('ss_mw_', '').replace('ss_mvar_', '').replace('wind_mw_', '') 
+                                 for col in feat_cols]
+            
+            im = ax7.imshow(cluster_centers_orig.T, cmap='RdYlBu_r', aspect='auto')
+            ax7.set_xticks(range(model.n_clusters))
+            ax7.set_xticklabels([f'C{i+1}' for i in range(model.n_clusters)])
+            ax7.set_yticks(range(len(feature_names_short)))
+            ax7.set_yticklabels(feature_names_short, fontsize=8)
+            ax7.set_title('Cluster Centers Heatmap', fontweight='bold')
+            plt.colorbar(im, ax=ax7, label='Feature Value')
+        
+        # 8. Quality Assessment Summary
+        ax8 = plt.subplot(3, 3, 8)
+        ax8.axis('off')
+        
+        # Determine overall quality
+        silhouette_val = info.get('silhouette', 0)
+        compression_ratio = info['original_size'] / info['n_total']
+        
+        if silhouette_val > 0.7 and compression_ratio > 20:
+            overall_quality = "EXCELLENT"
+            quality_color = "green"
+            quality_emoji = "🟢"
+        elif silhouette_val > 0.5 and compression_ratio > 10:
+            overall_quality = "GOOD"
+            quality_color = "orange"
+            quality_emoji = "🟡"
+        elif silhouette_val > 0.25:
+            overall_quality = "ACCEPTABLE"
+            quality_color = "red"
+            quality_emoji = "🟠"
+        else:
+            overall_quality = "POOR"
+            quality_color = "darkred"
+            quality_emoji = "🔴"
+        
+        summary_text = f"""
+{quality_emoji} OVERALL QUALITY: {overall_quality}
+
+📊 CLUSTERING METRICS:
+• Silhouette Score: {silhouette_val:.3f}
+• Calinski-Harabasz: {info['ch']:.1f}
+• Davies-Bouldin: {info['db']:.3f}
+• Optimal Clusters: {info['k']}
+
+📈 DATA REDUCTION:
+• Original: {info['original_size']:,} snapshots
+• Representative: {info['n_total']} snapshots
+• Compression: {compression_ratio:.1f}:1
+• Retention: {(info['n_total']/info['original_size'])*100:.1f}%
+
+⚡ REPRESENTATIVE POINTS:
+• Medoids: {info['n_medoid']}
+• MAPGL Belt: {info['n_belt']}
+• Total: {info['n_total']}
+        """
+        
+        ax8.text(0.05, 0.95, summary_text, transform=ax8.transAxes, fontsize=10,
+                verticalalignment='top', fontfamily='monospace',
+                bbox=dict(boxstyle="round,pad=0.5", facecolor=quality_color, alpha=0.1))
+        
+        # 9. Recommendations
+        ax9 = plt.subplot(3, 3, 9)
+        ax9.axis('off')
+        
+        recommendations = []
+        if silhouette_val < 0.25:
+            recommendations.append("⚠️ Consider increasing dataset size")
+            recommendations.append("⚠️ Review feature selection")
+            recommendations.append("⚠️ Check data quality")
+        elif silhouette_val < 0.5:
+            recommendations.append("⚠️ Validate results carefully")
+            recommendations.append("⚠️ Consider parameter adjustment")
+        
+        if compression_ratio < 5:
+            recommendations.append("ℹ️ Low data reduction - high diversity")
+        
+        if info['n_belt'] == 0:
+            recommendations.append("ℹ️ No MAPGL belt snapshots found")
+        
+        if not recommendations:
+            recommendations.append("✅ Results look good for analysis")
+            recommendations.append("✅ Proceed with power system studies")
+        
+        rec_text = "RECOMMENDATIONS:\n\n" + "\n".join(recommendations)
+        ax9.text(0.05, 0.95, rec_text, transform=ax9.transAxes, fontsize=9,
+                verticalalignment='top', fontfamily='monospace',
+                bbox=dict(boxstyle="round,pad=0.5", facecolor='lightblue', alpha=0.3))
+        
+        plt.tight_layout()
+        
+        # Save the visualization
+        output_files = REPRESENTATIVE_OPS['output_files']
+        viz_filename = os.path.join(output_dir, 'clustering_visualization.png')
+        plt.savefig(viz_filename, dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        print(f"  Visualization: {viz_filename}")
+        
+    except ImportError:
+        print("Warning: matplotlib/seaborn not available. Skipping visualizations.")
+    except Exception as e:
+        print(f"Warning: Could not create visualizations: {e}")
+
+
 def _create_clustering_summary(
     filename: str,
     all_power: pd.DataFrame,
@@ -259,418 +512,196 @@ def _create_clustering_summary(
     model: KMeans,
     scaler: StandardScaler,
 ) -> None:
-    """Create a comprehensive clustering summary report."""
+    """Create a comprehensive clustering summary report with improved formatting."""
     with open(filename, "w", encoding='utf-8') as f:
         f.write("="*80 + "\n")
         f.write("REPRESENTATIVE OPERATING POINTS CLUSTERING SUMMARY\n")
         f.write("="*80 + "\n")
         f.write(f"Author: Sustainable Power Systems Lab (SPSL)\n")
         f.write(f"Web: https://sps-lab.org\n")
-        f.write(f"Contact: info@sps-lab.org\n\n")
+        f.write(f"Contact: info@sps-lab.org\n")
+        f.write(f"Generated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
         
-        # 1. METHODOLOGY OVERVIEW
-        f.write("1. METHODOLOGY OVERVIEW\n")
-        f.write("-"*30 + "\n")
-        f.write("This analysis implements the methodology described in:\n")
-        f.write("'Automated Extraction of Representative Operating Points for a 132 kV Transmission System'\n\n")
-        f.write("Process Steps:\n")
-        f.write("  1. Data filtering based on power limits and MAPGL constraints\n")
-        f.write("  2. Feature extraction from power injection variables\n")
-        f.write("  3. Data standardization using StandardScaler\n")
-        f.write("  4. K-means clustering with automatic cluster count selection\n")
-        f.write("  5. Medoid identification (actual snapshots closest to cluster centers)\n")
-        f.write("  6. Addition of MAPGL-belt snapshots for critical low-load conditions\n\n")
+        # EXECUTIVE SUMMARY
+        f.write("📋 EXECUTIVE SUMMARY\n")
+        f.write("="*50 + "\n")
         
-        # 2. INPUT PARAMETERS
-        f.write("2. INPUT PARAMETERS\n")
-        f.write("-"*30 + "\n")
-        f.write(f"Maximum Power Limit:        {max_power:.2f} MW\n")
-        f.write(f"MAPGL (Min Generation):     {MAPGL:.2f} MW\n")
-        f.write(f"Maximum Clusters Tested:    {k_max}\n")
-        f.write(f"Random State:               {random_state}\n")
-        mapgl_multiplier = REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier']
-        f.write(f"MAPGL Belt Range:           {MAPGL:.2f} - {mapgl_multiplier*MAPGL:.2f} MW\n\n")
-        
-        # 3. DATA PROCESSING SUMMARY
-        f.write("3. DATA PROCESSING SUMMARY\n")
-        f.write("-"*30 + "\n")
-        f.write(f"Original Dataset Size:      {info['original_size']:,} snapshots\n")
-        f.write(f"After Power Filtering:      {info['filtered_size']:,} snapshots\n")
-        f.write(f"Reduction Factor:           {info['original_size']/info['filtered_size']:.2f}x\n\n")
-        
-        f.write("Feature Columns Used for Clustering:\n")
-        for i, col in enumerate(feat_cols, 1):
-            f.write(f"  {i:2d}. {col}\n")
-        f.write(f"\nTotal Features:             {len(feat_cols)}\n\n")
-        
-        # 4. CLUSTERING RESULTS
-        f.write("4. CLUSTERING RESULTS\n")
-        f.write("-"*30 + "\n")
-        f.write(f"Optimal Number of Clusters: {info['k']}\n")
-        f.write(f"Silhouette Score:           {info['silhouette']:.4f}\n")
-        f.write(f"Calinski-Harabasz Index:    {info['ch']:.2f}\n")
-        f.write(f"Davies-Bouldin Index:       {info['db']:.4f}\n\n")
-        
-        f.write("Cluster Composition:\n")
-        for i, size in enumerate(info['cluster_sizes']):
-            percentage = (size / info['filtered_size']) * 100
-            f.write(f"  Cluster {i+1:2d}: {size:6,} snapshots ({percentage:5.1f}%)\n")
-        f.write(f"  Total:       {sum(info['cluster_sizes']):6,} snapshots (100.0%)\n\n")
-        
-        # Add detailed cluster analysis
-        f.write("Cluster Centers (Original Feature Space):\n")
-        # Transform cluster centers back to original space
-        cluster_centers_orig = scaler.inverse_transform(model.cluster_centers_)
-        for i, center in enumerate(cluster_centers_orig):
-            f.write(f"  Cluster {i+1}:\n")
-            max_features_display = min(5, REPRESENTATIVE_OPS['validation']['max_features_to_display'])
-            display_limit = min(max_features_display, len(feat_cols))
-            for j, feature in enumerate(feat_cols[:display_limit]):
-                f.write(f"    {feature}: {center[j]:.3f}\n")
-            if len(feat_cols) > display_limit:
-                f.write(f"    ... and {len(feat_cols)-display_limit} more features\n")
-        f.write("\n")
-        
-        # Within-cluster sum of squares (inertia)
-        f.write(f"Within-Cluster Sum of Squares (WCSS): {model.inertia_:.2f}\n")
-        f.write(f"Average Distance to Centroid:         {model.inertia_/info['filtered_size']:.4f}\n\n")
-        
-        # 5. REPRESENTATIVE POINTS SELECTION
-        f.write("5. REPRESENTATIVE POINTS SELECTION\n")
-        f.write("-"*30 + "\n")
-        f.write(f"Medoids from Clusters:      {info['n_medoid']}\n")
-        f.write(f"MAPGL Belt Snapshots:       {info['n_belt']}\n")
-        f.write(f"Total Representative Points: {info['n_total']}\n")
-        f.write(f"Compression Ratio:          {info['original_size']/info['n_total']:.1f}:1\n")
-        f.write(f"Retention Rate:             {(info['n_total']/info['original_size'])*100:.2f}%\n\n")
-        
-        # Detailed medoid analysis
-        f.write("Medoid Details (Selected Representative Snapshots):\n")
-        # Get medoid information
-        x_raw = working[feat_cols].to_numpy(float)
-        x_scaled = scaler.transform(x_raw)
-        labels = model.labels_
-        
-        for k in range(model.n_clusters):
-            members = np.where(labels == k)[0]
-            if members.size > 0:
-                centre = model.cluster_centers_[k]
-                member_vecs = x_scaled[members]
-                dist2 = ((member_vecs - centre) ** 2).sum(axis=1)
-                medoid_pos = members[int(dist2.argmin())]
-                medoid_id = working.index[medoid_pos]
-                
-                f.write(f"  Cluster {k+1}: Snapshot ID {medoid_id}\n")
-                if 'net_load' in working.columns:
-                    net_load_val = working.loc[medoid_id, 'net_load']
-                    f.write(f"    Net Load: {net_load_val:.2f} MW\n")
-                f.write(f"    Distance to Centroid: {np.sqrt(dist2.min()):.4f}\n")
-        f.write("\n")
-        
-        # Inter-cluster distances
-        f.write("Inter-Cluster Distances (Euclidean):\n")
-        from scipy.spatial.distance import pdist, squareform
-        if model.n_clusters > 1:
-            cluster_distances = pdist(model.cluster_centers_)
-            dist_matrix = squareform(cluster_distances)
-            f.write("  Distance Matrix (scaled feature space):\n")
-            f.write("  " + "".join([f"Clust{i+1:2d}" for i in range(model.n_clusters)]) + "\n")
-            for i in range(model.n_clusters):
-                f.write(f"C{i+1} ")
-                for j in range(model.n_clusters):
-                    f.write(f"{dist_matrix[i,j]:6.3f} ")
-                f.write("\n")
-            f.write(f"  Average Inter-Cluster Distance: {cluster_distances.mean():.4f}\n")
-            f.write(f"  Minimum Inter-Cluster Distance: {cluster_distances.min():.4f}\n")
-            f.write(f"  Maximum Inter-Cluster Distance: {cluster_distances.max():.4f}\n")
-        f.write("\n")
-        
-        # 6. VALIDATION METRICS EXPLANATION
-        f.write("6. CLUSTERING QUALITY METRICS\n")
-        f.write("-"*30 + "\n")
-        f.write("Silhouette Score (-1 to 1):\n")
-        f.write("  Measures how similar points are to their own cluster vs other clusters.\n")
-        f.write("  Values > 0.5 indicate good clustering, > 0.7 excellent.\n")
-        
-        # Determine clustering quality
-        if info['silhouette'] > 0.7:
-            quality = "Excellent clustering"
-        elif info['silhouette'] > 0.5:
-            quality = "Good clustering"
-        elif info['silhouette'] > 0.25:
-            quality = "Acceptable clustering"
-        else:
-            quality = "Poor clustering"
-        
-        f.write(f"  Current score: {info['silhouette']:.4f} - {quality}\n")
-        
-        f.write("\nCalinski-Harabasz Index (higher is better):\n")
-        f.write("  Ratio of between-cluster to within-cluster variance.\n")
-        f.write("  Higher values indicate more compact and well-separated clusters.\n")
-        f.write(f"  Current score: {info['ch']:.2f}\n")
-        
-        f.write("\nDavies-Bouldin Index (lower is better):\n")
-        f.write("  Average similarity ratio of each cluster with most similar cluster.\n")
-        f.write("  Lower values indicate better clustering with distinct clusters.\n")
-        f.write(f"  Current score: {info['db']:.4f}\n\n")
-        
-        # 7. REPRESENTATIVE POINTS DETAILS
-        f.write("7. REPRESENTATIVE POINTS DETAILS\n")
-        f.write("-"*30 + "\n")
-        if 'net_load' in rep_df.columns:
-            f.write("Net Load Statistics for Representative Points:\n")
-            f.write(f"  Minimum:  {rep_df['net_load'].min():.2f} MW\n")
-            f.write(f"  Maximum:  {rep_df['net_load'].max():.2f} MW\n")
-            f.write(f"  Mean:     {rep_df['net_load'].mean():.2f} MW\n")
-            f.write(f"  Median:   {rep_df['net_load'].median():.2f} MW\n")
-            f.write(f"  Std Dev:  {rep_df['net_load'].std():.2f} MW\n\n")
-            
-            # MAPGL belt analysis
-            if info['n_belt'] > 0:
-                mapgl_multiplier = REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier']
-                belt_mask = (working["net_load"] > MAPGL) & (working["net_load"] < mapgl_multiplier * MAPGL)
-                belt_snapshots = working[belt_mask]
-                f.write("MAPGL Belt Snapshots Analysis:\n")
-                f.write(f"  Belt Range: {MAPGL:.2f} - {mapgl_multiplier*MAPGL:.2f} MW\n")
-                f.write(f"  Belt Snapshots: {len(belt_snapshots)}\n")
-                f.write(f"  Belt Net Load Mean: {belt_snapshots['net_load'].mean():.2f} MW\n")
-                f.write(f"  Belt Net Load Std:  {belt_snapshots['net_load'].std():.2f} MW\n\n")
-        
-        # Feature statistics comparison
-        f.write("Feature Statistics (Original vs Representative Points):\n")
-        f.write("  Feature Name               Original        Representative    Ratio\n")
-        f.write("  " + "-"*65 + "\n")
-        max_features_display = REPRESENTATIVE_OPS['validation']['max_features_to_display']
-        display_limit = min(max_features_display, len(feat_cols))
-        for feature in feat_cols[:display_limit]:
-            orig_mean = working[feature].mean()
-            rep_mean = rep_df[feature].mean()
-            ratio = rep_mean / orig_mean if orig_mean != 0 else float('nan')
-            f.write(f"  {feature:<25} {orig_mean:10.3f}    {rep_mean:10.3f}     {ratio:6.3f}\n")
-        if len(feat_cols) > display_limit:
-            f.write(f"  ... and {len(feat_cols)-display_limit} more features\n")
-        f.write("\n")
-        
-        # 7b. ADVANCED CLUSTERING DIAGNOSTICS
-        f.write("7b. ADVANCED CLUSTERING DIAGNOSTICS\n")
-        f.write("-"*30 + "\n")
-        
-        # Individual cluster statistics
-        f.write("Individual Cluster Statistics:\n")
-        for k in range(model.n_clusters):
-            cluster_mask = labels == k
-            cluster_data = working[cluster_mask]
-            f.write(f"  Cluster {k+1} ({info['cluster_sizes'][k]} snapshots):\n")
-            if 'net_load' in cluster_data.columns:
-                f.write(f"    Net Load Range: {cluster_data['net_load'].min():.2f} - {cluster_data['net_load'].max():.2f} MW\n")
-                f.write(f"    Net Load Mean:  {cluster_data['net_load'].mean():.2f} +/- {cluster_data['net_load'].std():.2f} MW\n")
-            
-            # Cluster compactness (average distance to centroid)
-            cluster_vectors = x_scaled[cluster_mask]
-            centroid = model.cluster_centers_[k]
-            distances = np.sqrt(((cluster_vectors - centroid) ** 2).sum(axis=1))
-            f.write(f"    Avg Distance to Centroid: {distances.mean():.4f} +/- {distances.std():.4f}\n")
-            f.write(f"    Max Distance to Centroid: {distances.max():.4f}\n")
-        f.write("\n")
-        
-        # Feature scaling diagnostics
-        f.write("Feature Scaling Diagnostics:\n")
-        f.write("  Original Feature Statistics (before scaling):\n")
-        original_means = np.mean(x_raw, axis=0)
-        original_stds = np.std(x_raw, axis=0)
-        f.write(f"    Mean feature magnitude: {np.mean(np.abs(original_means)):.3f}\n")
-        f.write(f"    Mean feature std dev:   {np.mean(original_stds):.3f}\n")
-        f.write(f"    Feature scale ratio:    {np.max(original_stds)/np.min(original_stds):.2f}:1\n")
-        f.write("  Post-scaling verification:\n")
-        f.write(f"    Scaled means near zero: {np.allclose(np.mean(x_scaled, axis=0), 0, atol=1e-10)}\n")
-        f.write(f"    Scaled std devs = 1:    {np.allclose(np.std(x_scaled, axis=0), 1, atol=1e-10)}\n\n")
-        
-        # 8. TECHNICAL DETAILS
-        f.write("8. TECHNICAL IMPLEMENTATION DETAILS\n")
-        f.write("-"*30 + "\n")
-        f.write("Clustering Algorithm:       K-means with k-means++\n")
-        f.write("Feature Scaling:            StandardScaler (z-score normalization)\n")
-        f.write("Cluster Selection Method:   Multi-objective optimization\n")
-        f.write("  - Maximize: Silhouette Score + Calinski-Harabasz Index\n")
-        f.write("  - Minimize: Davies-Bouldin Index\n")
-        f.write("  - Quality Threshold: Silhouette > 0.25\n")
-        f.write("Medoid Selection:           Euclidean distance to cluster centroid\n")
-        f.write("MAPGL Belt Definition:      1.0 < net_load/MAPGL < 1.1\n\n")
-        
-        # 9. RECOMMENDATIONS
-        f.write("9. RECOMMENDATIONS AND NEXT STEPS\n")
-        f.write("-"*30 + "\n")
-        if info['silhouette'] < 0.25:
-            f.write("⚠️  LOW CLUSTERING QUALITY WARNING:\n")
-            f.write("   Consider:\n")
-            f.write("   - Increasing the dataset size\n")
-            f.write("   - Reviewing feature selection\n")
-            f.write("   - Adjusting power limits or MAPGL\n\n")
-        
-        if info['n_total'] < 10:
-            f.write("⚠️  FEW REPRESENTATIVE POINTS:\n")
-            f.write("   Consider lowering k_max or adjusting clustering parameters\n\n")
-        
-        f.write("For power system analysis:\n")
-        f.write("1. Validate representative points against operational constraints\n")
-        f.write("2. Verify load flow convergence for all selected snapshots\n")
-        f.write("3. Check that critical operating conditions are captured\n")
-        f.write("4. Consider seasonal or temporal patterns if relevant\n\n")
-        
-        # 10. RESULTS INTERPRETATION GUIDE
-        f.write("10. RESULTS INTERPRETATION GUIDE\n")
-        f.write("-"*30 + "\n")
-        
-        # Overall clustering quality assessment
-        f.write("OVERALL CLUSTERING QUALITY ASSESSMENT:\n")
+        # Determine overall quality
         silhouette_val = info.get('silhouette', 0)
         compression_ratio = info['original_size'] / info['n_total']
         
         if silhouette_val > 0.7 and compression_ratio > 20:
             overall_quality = "EXCELLENT"
-            f.write("🟢 EXCELLENT: High-quality clustering with significant data reduction.\n")
+            quality_emoji = "🟢"
         elif silhouette_val > 0.5 and compression_ratio > 10:
             overall_quality = "GOOD"
-            f.write("🟡 GOOD: Acceptable clustering quality with reasonable data reduction.\n")
+            quality_emoji = "🟡"
         elif silhouette_val > 0.25:
             overall_quality = "ACCEPTABLE"
-            f.write("🟠 ACCEPTABLE: Basic clustering quality, results usable with caution.\n")
+            quality_emoji = "🟠"
         else:
             overall_quality = "POOR"
-            f.write("🔴 POOR: Low clustering quality, consider data preprocessing or parameter adjustment.\n")
+            quality_emoji = "🔴"
         
-        f.write(f"Quality Score: {overall_quality}\n")
-        f.write(f"Data Reduction: {compression_ratio:.1f}:1 ({((compression_ratio-1)/compression_ratio)*100:.1f}% reduction)\n\n")
+        f.write(f"{quality_emoji} Overall Quality: {overall_quality}\n")
+        f.write(f"📊 Clustering Score: {silhouette_val:.3f} (Silhouette)\n")
+        f.write(f"📈 Data Reduction: {compression_ratio:.1f}:1 ({((compression_ratio-1)/compression_ratio)*100:.1f}% reduction)\n")
+        f.write(f"⚡ Representative Points: {info['n_total']} from {info['original_size']:,} original\n")
+        f.write(f"🎯 Optimal Clusters: {info['k']}\n\n")
         
-        # Interpretation of clustering metrics
-        f.write("CLUSTERING METRICS INTERPRETATION:\n")
+        # 1. METHODOLOGY OVERVIEW
+        f.write("1. 📚 METHODOLOGY OVERVIEW\n")
+        f.write("-"*30 + "\n")
+        f.write("This analysis implements the methodology described in:\n")
+        f.write("'Automated Extraction of Representative Operating Points for a 132 kV Transmission System'\n\n")
+        f.write("🔄 Process Steps:\n")
+        f.write("   1️⃣ Data filtering based on power limits and MAPGL constraints\n")
+        f.write("   2️⃣ Feature extraction from power injection variables\n")
+        f.write("   3️⃣ Data standardization using StandardScaler\n")
+        f.write("   4️⃣ K-means clustering with automatic cluster count selection\n")
+        f.write("   5️⃣ Medoid identification (actual snapshots closest to cluster centers)\n")
+        f.write("   6️⃣ Addition of MAPGL-belt snapshots for critical low-load conditions\n\n")
         
-        f.write("Silhouette Score Analysis:\n")
+        # 2. INPUT PARAMETERS
+        f.write("2. ⚙️ INPUT PARAMETERS\n")
+        f.write("-"*30 + "\n")
+        f.write(f"🔋 Maximum Power Limit:        {max_power:.2f} MW\n")
+        f.write(f"⚡ MAPGL (Min Generation):     {MAPGL:.2f} MW\n")
+        f.write(f"🎯 Maximum Clusters Tested:    {k_max}\n")
+        f.write(f"🎲 Random State:               {random_state}\n")
+        mapgl_multiplier = REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier']
+        f.write(f"📏 MAPGL Belt Range:           {MAPGL:.2f} - {mapgl_multiplier*MAPGL:.2f} MW\n\n")
+        
+        # 3. DATA PROCESSING SUMMARY
+        f.write("3. 📊 DATA PROCESSING SUMMARY\n")
+        f.write("-"*30 + "\n")
+        f.write(f"📁 Original Dataset Size:      {info['original_size']:,} snapshots\n")
+        f.write(f"🔍 After Power Filtering:      {info['filtered_size']:,} snapshots\n")
+        f.write(f"📉 Reduction Factor:           {info['original_size']/info['filtered_size']:.2f}x\n\n")
+        
+        # Data quality information
+        if 'data_quality' in info:
+            f.write("🔍 Data Quality Assessment:\n")
+            f.write(f"   • Missing Values: {info['data_quality']['missing_values']}\n")
+            f.write(f"   • Infinite Values: {info['data_quality']['infinite_values']}\n")
+            f.write(f"   • Zero Variance Features Excluded: {info['data_quality']['zero_variance_features_excluded']}\n\n")
+        
+        f.write("🎯 Feature Columns Used for Clustering:\n")
+        for i, col in enumerate(feat_cols, 1):
+            f.write(f"   {i:2d}. {col}\n")
+        f.write(f"\n📊 Total Features:             {len(feat_cols)}\n\n")
+        
+        # 4. CLUSTERING RESULTS
+        f.write("4. 🎯 CLUSTERING RESULTS\n")
+        f.write("-"*30 + "\n")
+        f.write(f"🏆 Optimal Number of Clusters: {info['k']}\n")
+        f.write(f"📈 Silhouette Score:           {info['silhouette']:.4f}\n")
+        f.write(f"📊 Calinski-Harabasz Index:    {info['ch']:.2f}\n")
+        f.write(f"📉 Davies-Bouldin Index:       {info['db']:.4f}\n\n")
+        
+        f.write("📊 Cluster Composition:\n")
+        for i, size in enumerate(info['cluster_sizes']):
+            percentage = (size / info['filtered_size']) * 100
+            f.write(f"   Cluster {i+1:2d}: {size:6,} snapshots ({percentage:5.1f}%)\n")
+        f.write(f"   Total:       {sum(info['cluster_sizes']):6,} snapshots (100.0%)\n\n")
+        
+        # 5. REPRESENTATIVE POINTS SELECTION
+        f.write("5. ⚡ REPRESENTATIVE POINTS SELECTION\n")
+        f.write("-"*30 + "\n")
+        f.write(f"🎯 Medoids from Clusters:      {info['n_medoid']}\n")
+        f.write(f"📏 MAPGL Belt Snapshots:       {info['n_belt']}\n")
+        f.write(f"📊 Total Representative Points: {info['n_total']}\n")
+        f.write(f"📉 Compression Ratio:          {info['original_size']/info['n_total']:.1f}:1\n")
+        f.write(f"📈 Retention Rate:             {(info['n_total']/info['original_size'])*100:.2f}%\n\n")
+        
+        # 6. QUALITY ASSESSMENT
+        f.write("6. ✅ QUALITY ASSESSMENT\n")
+        f.write("-"*30 + "\n")
+        
+        f.write("📊 Silhouette Score Analysis:\n")
         if silhouette_val > 0.7:
-            f.write("  ✓ Excellent separation: Clusters are well-defined and distinct\n")
-            f.write("  ✓ Representative points are highly reliable\n")
-            f.write("  ✓ Strong confidence in operating point selection\n")
+            f.write("   ✅ Excellent separation: Clusters are well-defined and distinct\n")
+            f.write("   ✅ Representative points are highly reliable\n")
+            f.write("   ✅ Strong confidence in operating point selection\n")
         elif silhouette_val > 0.5:
-            f.write("  ✓ Good separation: Clusters are reasonably well-defined\n")
-            f.write("  ✓ Representative points are reliable\n")
-            f.write("  ~ Minor overlap between some clusters is acceptable\n")
+            f.write("   ✅ Good separation: Clusters are reasonably well-defined\n")
+            f.write("   ✅ Representative points are reliable\n")
+            f.write("   ⚠️ Minor overlap between some clusters is acceptable\n")
         elif silhouette_val > 0.25:
-            f.write("  ~ Moderate separation: Some cluster overlap present\n")
-            f.write("  ~ Representative points should be validated carefully\n")
-            f.write("  ⚠ Consider additional validation of selected points\n")
+            f.write("   ⚠️ Moderate separation: Some cluster overlap present\n")
+            f.write("   ⚠️ Representative points should be validated carefully\n")
+            f.write("   ⚠️ Consider additional validation of selected points\n")
         else:
-            f.write("  ✗ Poor separation: Significant cluster overlap\n")
-            f.write("  ✗ Representative points may not be reliable\n")
-            f.write("  ⚠ Strong recommendation to revise approach\n")
+            f.write("   ❌ Poor separation: Significant cluster overlap\n")
+            f.write("   ❌ Representative points may not be reliable\n")
+            f.write("   ❌ Strong recommendation to revise approach\n")
         
-        ch_val = info.get('ch', 0)
-        f.write(f"\nCalinski-Harabasz Index Analysis (Current: {ch_val:.1f}):\n")
-        if ch_val > 100:
-            f.write("  ✓ High index: Well-separated, compact clusters\n")
-            f.write("  ✓ Strong internal cluster cohesion\n")
-        elif ch_val > 50:
-            f.write("  ✓ Moderate index: Reasonably good cluster structure\n")
+        f.write(f"\n📈 Calinski-Harabasz Index Analysis (Current: {info['ch']:.1f}):\n")
+        if info['ch'] > 100:
+            f.write("   ✅ High index: Well-separated, compact clusters\n")
+            f.write("   ✅ Strong internal cluster cohesion\n")
+        elif info['ch'] > 50:
+            f.write("   ✅ Moderate index: Reasonably good cluster structure\n")
         else:
-            f.write("  ~ Low index: Clusters may be poorly separated or too diffuse\n")
+            f.write("   ⚠️ Low index: Clusters may be poorly separated or too diffuse\n")
         
-        db_val = info.get('db', float('inf'))
-        f.write(f"\nDavies-Bouldin Index Analysis (Current: {db_val:.3f}):\n")
-        if db_val < 0.5:
-            f.write("  ✓ Excellent: Very low similarity between clusters\n")
-        elif db_val < 1.0:
-            f.write("  ✓ Good: Low similarity between clusters\n")
-        elif db_val < 1.5:
-            f.write("  ~ Acceptable: Moderate similarity between clusters\n")
+        f.write(f"\n📉 Davies-Bouldin Index Analysis (Current: {info['db']:.3f}):\n")
+        if info['db'] < 0.5:
+            f.write("   ✅ Excellent: Very low similarity between clusters\n")
+        elif info['db'] < 1.0:
+            f.write("   ✅ Good: Low similarity between clusters\n")
+        elif info['db'] < 1.5:
+            f.write("   ⚠️ Acceptable: Moderate similarity between clusters\n")
         else:
-            f.write("  ✗ Poor: High similarity between clusters indicates overlap\n")
+            f.write("   ❌ Poor: High similarity between clusters indicates overlap\n")
         f.write("\n")
         
-        # Practical interpretation for power systems
-        f.write("POWER SYSTEM ANALYSIS INTERPRETATION:\n")
-        
-        f.write("Representative Point Validation Checklist:\n")
-        f.write("□ Load flow convergence: Run power flow for each representative point\n")
-        f.write("□ Voltage limits: Check bus voltages within acceptable ranges\n")
-        f.write("□ Thermal limits: Verify line/transformer loadings are feasible\n")
-        f.write("□ Generation limits: Confirm generator outputs respect P/Q limits\n")
-        f.write("□ N-1 security: Test contingency analysis for critical scenarios\n")
-        f.write("□ Operational feasibility: Verify points represent realistic conditions\n\n")
-        
-        # Cluster interpretation
-        f.write("Cluster Interpretation Guidelines:\n")
-        if info['k'] <= 3:
-            f.write("  • Small number of clusters suggests limited operating diversity\n")
-            f.write("  • May indicate stable operating conditions or limited renewable variation\n")
-        elif info['k'] <= 6:
-            f.write("  • Moderate number of clusters indicates typical operating diversity\n")
-            f.write("  • Good balance between detail and simplification\n")
-        else:
-            f.write("  • Large number of clusters suggests high operating diversity\n")
-            f.write("  • May indicate significant renewable variability or complex system behavior\n")
-        
-        f.write(f"  • Data retention: {(info['n_total']/info['original_size'])*100:.1f}% of original time points\n")
-        f.write(f"  • Time coverage: Representative points span the analysis period\n\n")
-        
-        # MAPGL belt analysis interpretation
-        if info['n_belt'] > 0:
-            belt_percentage = (info['n_belt'] / info['n_total']) * 100
-            f.write("MAPGL Belt Analysis:\n")
-            f.write(f"  • {info['n_belt']} snapshots in MAPGL belt ({belt_percentage:.1f}% of representatives)\n")
-            if belt_percentage > 20:
-                f.write("  • High proportion of low-load conditions captured\n")
-                f.write("  • Good representation of minimum generation scenarios\n")
-            else:
-                f.write("  • Limited low-load representation - typical for high-demand periods\n")
-            f.write("  • These points are critical for minimum generation studies\n\n")
-        
-        # Usage recommendations based on results
-        f.write("RECOMMENDED USAGE BASED ON RESULTS:\n")
-        
-        if overall_quality in ["EXCELLENT", "GOOD"]:
-            f.write("✓ HIGH CONFIDENCE APPLICATIONS:\n")
-            f.write("  • Long-term transmission planning studies\n")
-            f.write("  • Investment analysis and capacity expansion\n")
-            f.write("  • Security assessment and contingency analysis\n")
-            f.write("  • Renewable integration studies\n")
-            f.write("  • Grid code compliance verification\n\n")
-        
-        if overall_quality in ["ACCEPTABLE"]:
-            f.write("~ MODERATE CONFIDENCE APPLICATIONS:\n")
-            f.write("  • Preliminary planning studies (with validation)\n")
-            f.write("  • Scenario development for detailed analysis\n")
-            f.write("  • Identification of critical operating conditions\n")
-            f.write("  ⚠ Recommend additional validation before final decisions\n\n")
-        
-        if overall_quality in ["POOR"]:
-            f.write("⚠ LIMITED CONFIDENCE APPLICATIONS:\n")
-            f.write("  • Initial screening studies only\n")
-            f.write("  • Pattern identification in operational data\n")
-            f.write("  • Troubleshooting and methodology development\n")
-            f.write("  ✗ NOT recommended for critical planning decisions\n\n")
-        
-        # Troubleshooting guide
-        f.write("TROUBLESHOOTING COMMON ISSUES:\n")
+        # 7. RECOMMENDATIONS
+        f.write("7. 💡 RECOMMENDATIONS AND NEXT STEPS\n")
+        f.write("-"*30 + "\n")
         
         if silhouette_val < 0.25:
-            f.write("Poor Clustering Quality:\n")
-            f.write("  • Increase dataset size (more time periods)\n")
-            f.write("  • Review feature selection (check power injection columns)\n")
-            f.write("  • Verify data quality (missing values, outliers)\n")
-            f.write("  • Consider different power limits or MAPGL values\n")
-            f.write("  • Check for sufficient operating diversity in data\n\n")
+            f.write("⚠️ LOW CLUSTERING QUALITY WARNING:\n")
+            f.write("   Consider:\n")
+            f.write("   • Increasing the dataset size\n")
+            f.write("   • Reviewing feature selection\n")
+            f.write("   • Adjusting power limits or MAPGL\n\n")
         
-        if compression_ratio < 5:
-            f.write("Low Data Reduction:\n")
-            f.write("  • Dataset may have high natural diversity\n")
-            f.write("  • Consider increasing k_max parameter\n")
-            f.write("  • Review clustering features for redundancy\n")
-            f.write("  • May indicate complex system with many distinct operating states\n\n")
+        if info['n_total'] < 10:
+            f.write("⚠️ FEW REPRESENTATIVE POINTS:\n")
+            f.write("   Consider lowering k_max or adjusting clustering parameters\n\n")
         
-        if info['n_belt'] == 0 and info['filtered_size'] > 100:
-            f.write("No MAPGL Belt Snapshots:\n")
-            f.write("  • All snapshots may be well above MAPGL\n")
-            f.write("  • Consider lowering MAPGL or checking minimum generation scenarios\n")
-            f.write("  • May indicate high-demand period analysis\n\n")
+        f.write("🔧 For power system analysis:\n")
+        f.write("   1. Validate representative points against operational constraints\n")
+        f.write("   2. Verify load flow convergence for all selected snapshots\n")
+        f.write("   3. Check that critical operating conditions are captured\n")
+        f.write("   4. Consider seasonal or temporal patterns if relevant\n\n")
+        
+        # 8. USAGE RECOMMENDATIONS
+        f.write("8. 🎯 RECOMMENDED USAGE BASED ON RESULTS\n")
+        f.write("-"*30 + "\n")
+        
+        if overall_quality in ["EXCELLENT", "GOOD"]:
+            f.write("✅ HIGH CONFIDENCE APPLICATIONS:\n")
+            f.write("   • Long-term transmission planning studies\n")
+            f.write("   • Investment analysis and capacity expansion\n")
+            f.write("   • Security assessment and contingency analysis\n")
+            f.write("   • Renewable integration studies\n")
+            f.write("   • Grid code compliance verification\n\n")
+        
+        if overall_quality in ["ACCEPTABLE"]:
+            f.write("⚠️ MODERATE CONFIDENCE APPLICATIONS:\n")
+            f.write("   • Preliminary planning studies (with validation)\n")
+            f.write("   • Scenario development for detailed analysis\n")
+            f.write("   • Identification of critical operating conditions\n")
+            f.write("   ⚠️ Recommend additional validation before final decisions\n\n")
+        
+        if overall_quality in ["POOR"]:
+            f.write("❌ LIMITED CONFIDENCE APPLICATIONS:\n")
+            f.write("   • Initial screening studies only\n")
+            f.write("   • Pattern identification in operational data\n")
+            f.write("   • Troubleshooting and methodology development\n")
+            f.write("   ❌ NOT recommended for critical planning decisions\n\n")
         
         f.write("="*80 + "\n")
         f.write("END OF CLUSTERING SUMMARY\n")
@@ -795,6 +826,32 @@ def extract_representative_ops(
     >>> print(f"Cluster sizes: {diag['cluster_sizes']}")
     """
     
+    # Input validation
+    if all_power.empty:
+        raise ValueError("Input DataFrame is empty")
+    
+    if max_power <= 0:
+        raise ValueError(f"max_power must be positive, got {max_power}")
+    
+    if MAPGL <= 0:
+        raise ValueError(f"MAPGL must be positive, got {MAPGL}")
+    
+    if MAPGL >= max_power:
+        raise ValueError(f"MAPGL ({MAPGL}) must be less than max_power ({max_power})")
+    
+    if k_max < 2:
+        raise ValueError(f"k_max must be at least 2, got {k_max}")
+    
+    # Data quality checks
+    missing_data = all_power.isnull().sum().sum()
+    if missing_data > 0:
+        print(f"Warning: {missing_data} missing values detected in input data")
+    
+    # Check for infinite values
+    inf_count = np.isinf(all_power.select_dtypes(include=[np.number])).sum().sum()
+    if inf_count > 0:
+        raise ValueError(f"Input data contains {inf_count} infinite values")
+    
     # Import analysis functions for net load calculation
     from power_system_analytics import calculate_total_load, calculate_net_load
 
@@ -820,6 +877,15 @@ def extract_representative_ops(
     feat_cols = _select_feature_columns(working)
     if len(feat_cols) == 0:
         raise ValueError("No suitable feature columns found (ss_mw_*, ss_mvar_*, wind_mw_*)")
+    
+    # Check feature data quality
+    feature_data = working[feat_cols]
+    zero_variance_features = feature_data.var() == 0
+    if zero_variance_features.any():
+        print(f"Warning: {zero_variance_features.sum()} features have zero variance and will be excluded")
+        feat_cols = [col for col in feat_cols if not zero_variance_features[col]]
+        if len(feat_cols) == 0:
+            raise ValueError("No features with non-zero variance found")
     
     x_raw = working[feat_cols].to_numpy(float)
     scaler = StandardScaler()
@@ -862,6 +928,11 @@ def extract_representative_ops(
         "original_size": len(all_power),
         "filtered_size": len(working),
         "feature_columns": feat_cols,
+        "data_quality": {
+            "missing_values": missing_data,
+            "infinite_values": inf_count,
+            "zero_variance_features_excluded": zero_variance_features.sum() if 'zero_variance_features' in locals() else 0
+        }
     }
 
     # 7 ───────────────── Save results
@@ -887,9 +958,40 @@ def extract_representative_ops(
         
         # Also save detailed info as JSON for programmatic access
         json_filename = os.path.join(output_dir, output_files['clustering_info'])
-        with open(json_filename, "w", encoding='utf-8') as f:
-            json.dump(info, f, indent=4)
         
+        # Convert the info dictionary to JSON-safe format
+        json_safe_info = convert_numpy_types(info)
+        
+        try:
+            with open(json_filename, "w", encoding='utf-8') as f:
+                json.dump(json_safe_info, f, indent=4)
+        except (TypeError, ValueError) as e:
+            print(f"Warning: Could not save JSON file due to serialization error: {e}")
+            print("Saving simplified JSON without problematic data types...")
+            
+            # Fallback: save only basic metrics
+            basic_info = {
+                'k': int(info.get('k', 0)),
+                'silhouette': float(info.get('silhouette', 0.0)),
+                'ch': float(info.get('ch', 0.0)),
+                'db': float(info.get('db', 0.0)),
+                'cluster_sizes': [int(x) for x in info.get('cluster_sizes', [])],
+                'n_medoid': int(info.get('n_medoid', 0)),
+                'n_belt': int(info.get('n_belt', 0)),
+                'n_total': int(info.get('n_total', 0)),
+                'original_size': int(info.get('original_size', 0)),
+                'filtered_size': int(info.get('filtered_size', 0)),
+                'feature_columns': list(info.get('feature_columns', [])),
+            }
+            
+            with open(json_filename, "w", encoding='utf-8') as f:
+                json.dump(basic_info, f, indent=4)
+        
+        # Create visualizations
+        _create_visualizations(
+            output_dir, working, rep_df, info, model, scaler, feat_cols, max_power, MAPGL
+        )
+
         print(f"Results saved to:")
         print(f"  Representative points: {filename_rep}")
         print(f"  Clustering summary: {summary_filename}")

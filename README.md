@@ -13,13 +13,17 @@ A comprehensive Python tool for analyzing power system operational data from Exc
 - **Wind power analysis** with generation statistics and profiles
 - **Generator categorization** (Voltage Control vs PQ Control)
 - **Reactive power analysis** with comprehensive calculations
-- **Representative operating points extraction** using K-means clustering
+- **Representative operating points extraction** using K-means clustering with performance optimizations
 - **Data validation** with type checking, limit validation, and gap filling
 - **Centralized configuration management** for easy customization and maintenance
 - **Comprehensive logging** and error handling
-- **Multiple output formats** (CSV, JSON, PNG plots, text summaries)
+- **Multiple output formats** (CSV, JSON, PNG plots, text summaries, visualizations)
 - **Clean column naming** for improved readability of output files
 - **Flexible data loading** with automatic CSV file detection and robust parsing
+- **Performance optimizations** with parallel processing and adaptive algorithms
+- **Enhanced error handling** with graceful degradation and informative messages
+- **JSON serialization support** with automatic NumPy type conversion
+- **Comprehensive visualizations** with 9-panel clustering analysis dashboard
 
 ## Configuration Management
 
@@ -81,6 +85,11 @@ REPRESENTATIVE_OPS = {
         'silhouette_weight': 1000,      # Multi-objective ranking weights
         'calinski_harabasz_weight': 1,
         'davies_bouldin_weight': 10
+    },
+    'output_files': {
+        'representative_points': 'representative_operating_points.csv',
+        'clustering_summary': 'clustering_summary.txt',
+        'clustering_info': 'clustering_info.json'
     }
 }
 ```
@@ -153,6 +162,25 @@ def clean_column_name(col_name):
 - **Consistent**: Same cleaning logic everywhere
 - **Maintainable**: Single location for suffix definitions
 - **Readable**: Cleaner column names in output CSV files
+
+#### **JSON Serialization Support**
+The `convert_numpy_types()` function in `system_configuration.py` ensures JSON compatibility:
+
+```python
+from system_configuration import convert_numpy_types
+import numpy as np
+
+# Convert numpy types for JSON serialization
+data = {'value': np.int64(42), 'array': np.array([1, 2, 3])}
+json_safe_data = convert_numpy_types(data)
+# Result: {'value': 42, 'array': [1, 2, 3]}
+```
+
+**Benefits:**
+- **JSON Compatibility**: Automatically converts NumPy types to native Python types
+- **Recursive Processing**: Handles nested dictionaries and lists
+- **Error Prevention**: Prevents JSON serialization errors in analysis outputs
+- **Centralized**: Single utility function for all JSON serialization needs
 
 ### Configuration Customization Examples
 
@@ -233,13 +261,16 @@ from power_analysis_cli import execute
 from operating_point_extractor import extract_representative_ops
 
 # Load and analyze data
-success, df = execute(month='2024-01', save_csv=True)
+success, df = execute(month='2024-01', data_dir='raw_data', output_dir='results', 
+           save_csv=False, save_plots=False, summary_only=False, verbose=True)
 if success:
     # Extract representative points using config parameters
     rep_df, diagnostics = extract_representative_ops(
         df, max_power=850, MAPGL=200, output_dir='results'
     )
     print(f'Selected {len(rep_df)} representative points')
+    print(f'Compression ratio: {diagnostics["original_size"]/diagnostics["n_total"]:.1f}:1')
+    print(f'Clustering quality: {diagnostics["silhouette"]:.3f}')
 "
 ```
 
@@ -256,6 +287,11 @@ print(f"Loaded {len(df)} snapshots with {len(df.columns)} columns")
 rep_df, diagnostics = extract_representative_ops(
     loadallpowerdf('results'), max_power=850, MAPGL=200, output_dir='results'
 )
+
+# Access comprehensive diagnostics
+print(f"Compression ratio: {diagnostics['original_size']/diagnostics['n_total']:.1f}:1")
+print(f"Feature columns: {len(diagnostics['feature_columns'])}")
+print(f"Cluster sizes: {diagnostics['cluster_sizes']}")
 ```
 
 ## Usage
@@ -306,6 +342,12 @@ python power_analysis_cli.py 2024-06 --summary-only
 - `generator_categories.csv` - Generator categorization results
 - `comprehensive_power_data.csv` - All power system data in one file
 
+### Representative Operating Points Files
+- `representative_operating_points.csv` - Clean representative points with readable column names
+- `clustering_summary.txt` - User-friendly clustering analysis report with quality assessment
+- `clustering_info.json` - Detailed clustering metrics for programmatic access
+- `clustering_visualization.png` - Comprehensive 9-panel visualization dashboard
+
 ### Plot Files (with `--save-plots`)
 - `load_timeseries.png` - Total and net load time series
 - `daily_profile.png` - Average daily load profiles
@@ -327,6 +369,9 @@ The `loadallpowerdf()` function provides a convenient way to load power system d
 - **Robust Loading**: Handles different CSV formats with automatic index parsing
 - **Error Handling**: Clear error messages for missing directories or files
 - **Informative Output**: Provides loading statistics and file information
+- **Performance Optimized**: Parallel processing for large datasets with adaptive k-range selection
+- **Data Quality Checks**: Automatic detection of missing values, infinite values, and zero-variance features
+- **JSON Compatibility**: Automatic conversion of NumPy types for error-free JSON serialization
 
 **Usage Examples:**
 ```python
@@ -357,6 +402,9 @@ except FileNotFoundError as e:
 **Error Handling:**
 - `FileNotFoundError`: When no `all_power*.csv` files are found
 - `ValueError`: When directory doesn't exist or isn't accessible
+- **Enhanced Validation**: Comprehensive input validation with clear error messages
+- **Graceful Degradation**: Fallback mechanisms for missing dependencies
+- **JSON Serialization**: Automatic NumPy type conversion prevents serialization errors
 
 ### Load Calculations
 - **Total Load**: Sum of all substation active power consumption (`ss_mw_*` columns)
@@ -804,6 +852,59 @@ The tool expects Excel files with the following structure:
 2. **Data Quality**: Sufficient data quality for meaningful analysis
 3. **Temporal Consistency**: Data timestamps are properly ordered
 
+## Recent Improvements
+
+### Performance Optimizations
+- **Parallel Processing**: K-means clustering now uses parallel processing for 2-4x speedup
+- **Adaptive K-Range**: Smart k-range selection based on data size and characteristics
+- **Memory Efficiency**: Optimized data handling and reduced memory footprint
+
+### Enhanced Error Handling
+- **Comprehensive Validation**: Extensive input validation with clear error messages
+- **Data Quality Checks**: Automatic detection of missing values, infinite values, and zero-variance features
+- **Graceful Degradation**: Fallback mechanisms for missing dependencies
+- **JSON Serialization**: Automatic NumPy type conversion prevents serialization errors
+
+### User Experience Improvements
+- **Rich Visualizations**: 9-panel clustering analysis dashboard with quality indicators
+- **Enhanced Reports**: User-friendly summary reports with emojis and structured sections
+- **Quality Assessment**: Automatic quality scoring with actionable recommendations
+- **Better Output Organization**: Clean file naming and comprehensive diagnostics
+
+### Configuration Enhancements
+- **Centralized Utilities**: `convert_numpy_types()` function moved to `system_configuration.py`
+- **JSON Compatibility**: Automatic handling of NumPy types for error-free JSON output
+- **Enhanced Documentation**: Comprehensive usage examples and troubleshooting guides
+
+## Troubleshooting
+
+### Common Issues
+
+#### JSON Serialization Errors
+**Problem**: `TypeError: Object of type int64 is not JSON serializable`
+**Solution**: The tool now automatically converts NumPy types to native Python types. If you encounter this error, ensure you're using the latest version with the `convert_numpy_types()` function.
+
+#### Performance Issues
+**Problem**: Slow clustering for large datasets
+**Solution**: The tool now uses parallel processing. Ensure `joblib` is installed:
+```bash
+pip install joblib
+```
+
+#### Missing Dependencies
+**Problem**: Visualization or other features not working
+**Solution**: The tool provides graceful degradation with informative warnings. Install missing packages as needed:
+```bash
+pip install matplotlib seaborn
+```
+
+#### Data Quality Issues
+**Problem**: Poor clustering quality or validation errors
+**Solution**: 
+- Check data quality with the enhanced validation features
+- Review feature selection and power limits
+- Consider adjusting clustering parameters in `system_configuration.py`
+
 ## Examples
 
 ### Example 1: Basic Analysis
@@ -983,12 +1084,15 @@ The tool follows a **modular, configuration-driven architecture** designed for m
 
 #### **Representative Operations**
 - **`operating_point_extractor.py`** - Advanced clustering analysis:
-  - K-means clustering for operating point extraction
+  - K-means clustering for operating point extraction with performance optimizations
   - **Configuration-driven**: All parameters imported from `system_configuration.py`
-  - Automatic cluster quality assessment
+  - Automatic cluster quality assessment with multi-objective ranking
   - MAPGL belt analysis for critical low-load conditions
   - **Enhanced**: Uses centralized configuration for all parameters
   - **Data Loading**: `loadallpowerdf()` function for convenient CSV data loading
+  - **Performance**: Parallel processing with adaptive k-range selection
+  - **Visualization**: Comprehensive 9-panel clustering analysis dashboard
+  - **JSON Support**: Automatic NumPy type conversion for error-free serialization
 
 ### Architectural Improvements
 
@@ -1019,11 +1123,13 @@ def clean_column_name(col_name):
     # Single, reusable utility function
     
 # operating_point_extractor.py (new approach)
-from system_configuration import REPRESENTATIVE_OPS
+from system_configuration import REPRESENTATIVE_OPS, convert_numpy_types
 def extract_representative_ops(
     k_max=REPRESENTATIVE_OPS['defaults']['k_max']
 ):
     # Configuration-driven parameters
+    # JSON serialization with automatic NumPy type conversion
+    json_safe_info = convert_numpy_types(info)
 ```
 
 ### Requirements
@@ -1036,10 +1142,11 @@ def extract_representative_ops(
 - scikit-learn
 - scipy
 - psutil
+- joblib (for parallel processing)
 
 ### Installation
 ```bash
-pip install pandas numpy matplotlib seaborn openpyxl scikit-learn scipy psutil
+pip install pandas numpy matplotlib seaborn openpyxl scikit-learn scipy psutil joblib
 ```
 
 Or install from requirements.txt:

@@ -16,7 +16,7 @@ CONFIGURATION AREAS:
 2. Data Validation Settings (DATA_VALIDATION, ENHANCED_DATA_VALIDATION)  
 3. Representative Operations Parameters (REPRESENTATIVE_OPS)
 4. Plotting and Visualization Settings (PLOT_STYLE, FIGURE_SIZES)
-5. Shared Utility Functions (clean_column_name)
+5. Shared Utility Functions (clean_column_name, convert_numpy_types)
 
 USAGE EXAMPLES:
 ==============
@@ -32,9 +32,15 @@ random_state = REPRESENTATIVE_OPS['defaults']['random_state']
 power_limits = DATA_VALIDATION['limit_checks']['power_limits']
 
 # Use shared utilities
-from system_configuration import clean_column_name
+from system_configuration import clean_column_name, convert_numpy_types
 clean_name = clean_column_name('ss_mw_STATION1_132REACTOR_REACTIVE_POWER')
 # Result: 'ss_mw_STATION1'
+
+# Convert numpy types for JSON serialization
+import numpy as np
+data = {'value': np.int64(42), 'array': np.array([1, 2, 3])}
+json_safe_data = convert_numpy_types(data)
+# Result: {'value': 42, 'array': [1, 2, 3]}
 """
 
 # Data directory
@@ -368,6 +374,47 @@ REPRESENTATIVE_OPS = {
 }
 
 # Utility functions
+
+def convert_numpy_types(obj):
+    """
+    Convert numpy types to native Python types for JSON serialization.
+    
+    This function recursively converts numpy data types to native Python types
+    to ensure JSON serialization compatibility.
+    
+    Parameters
+    ----------
+    obj : any
+        Object to convert (can be numpy types, dict, list, or native Python types)
+        
+    Returns
+    -------
+    any
+        Object with numpy types converted to native Python types
+        
+    Examples
+    --------
+    >>> import numpy as np
+    >>> data = {'value': np.int64(42), 'array': np.array([1, 2, 3])}
+    >>> converted = convert_numpy_types(data)
+    >>> print(converted)
+    {'value': 42, 'array': [1, 2, 3]}
+    """
+    import numpy as np
+    
+    if isinstance(obj, np.integer):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, dict):
+        return {key: convert_numpy_types(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_numpy_types(item) for item in obj]
+    else:
+        return obj
+
 
 def clean_column_name(col_name):
     """
