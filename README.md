@@ -19,6 +19,7 @@ A comprehensive Python tool for analyzing power system operational data from Exc
 - **Comprehensive logging** and error handling
 - **Multiple output formats** (CSV, JSON, PNG plots, text summaries)
 - **Clean column naming** for improved readability of output files
+- **Flexible data loading** with automatic CSV file detection and robust parsing
 
 ## Configuration Management
 
@@ -242,6 +243,21 @@ if success:
 "
 ```
 
+### Loading All Power Data
+```python
+# Load all_power*.csv files from directory
+from operating_point_extractor import loadallpowerdf
+
+# Load data from results directory
+df = loadallpowerdf('results')
+print(f"Loaded {len(df)} snapshots with {len(df.columns)} columns")
+
+# Use in representative operating points extraction
+rep_df, diagnostics = extract_representative_ops(
+    loadallpowerdf('results'), max_power=850, MAPGL=200, output_dir='results'
+)
+```
+
 ## Usage
 
 ### Basic Analysis
@@ -300,6 +316,47 @@ python power_analysis_cli.py 2024-06 --summary-only
 - `logs/analysis_YYYY-MM.log` - Detailed analysis logs with timestamps
 
 ## Analysis Features
+
+### Data Loading and Management
+
+#### Loading All Power Data
+The `loadallpowerdf()` function provides a convenient way to load power system data from CSV files:
+
+**Key Features:**
+- **Pattern Matching**: Automatically finds files matching `all_power*.csv` pattern
+- **Robust Loading**: Handles different CSV formats with automatic index parsing
+- **Error Handling**: Clear error messages for missing directories or files
+- **Informative Output**: Provides loading statistics and file information
+
+**Usage Examples:**
+```python
+from operating_point_extractor import loadallpowerdf
+
+# Basic loading from directory
+df = loadallpowerdf('results')
+print(f"Loaded {len(df)} snapshots with {len(df.columns)} columns")
+
+# Combined workflow with representative points extraction
+rep_df, diagnostics = extract_representative_ops(
+    loadallpowerdf('results'), max_power=850, MAPGL=200, output_dir='results'
+)
+
+# Error handling example
+try:
+    df = loadallpowerdf('nonexistent_directory')
+except FileNotFoundError as e:
+    print(f"Error: {e}")
+```
+
+**Function Parameters:**
+- `directory` (str): Directory path to search for `all_power*.csv` files
+
+**Returns:**
+- `pd.DataFrame`: Loaded power system data with preserved timestamps
+
+**Error Handling:**
+- `FileNotFoundError`: When no `all_power*.csv` files are found
+- `ValueError`: When directory doesn't exist or isn't accessible
 
 ### Load Calculations
 - **Total Load**: Sum of all substation active power consumption (`ss_mw_*` columns)
@@ -767,6 +824,52 @@ python power_analysis_cli.py 2024-09 --data-dir "my_data_folder" --output-dir "m
 python power_analysis_cli.py 2024-09 --output-dir "analysis_results_2024"
 ```
 
+### Example 3: Representative Operating Points with Data Loading
+```python
+# Complete workflow: Load data and extract representative points
+from operating_point_extractor import loadallpowerdf, extract_representative_ops
+
+# Load all_power data from results directory
+load_dir = 'results'
+df = loadallpowerdf(load_dir)
+print(f"Loaded {len(df)} snapshots from {load_dir}")
+
+# Extract representative operating points
+rep_df, diagnostics = extract_representative_ops(
+    df, max_power=850, MAPGL=200, output_dir='results'
+)
+
+# Display results
+print(f"Selected {len(rep_df)} representative points")
+print(f"Compression ratio: {diagnostics['original_size']/diagnostics['n_total']:.1f}:1")
+print(f"Clustering quality: {diagnostics['silhouette']:.3f}")
+```
+
+### Example 4: Advanced Data Loading Workflow
+```python
+# Multi-step analysis with data loading
+from operating_point_extractor import loadallpowerdf, extract_representative_ops
+from power_system_analytics import calculate_total_load, calculate_net_load
+
+# Step 1: Load data
+df = loadallpowerdf('results')
+
+# Step 2: Basic analysis
+total_load = calculate_total_load(df)
+net_load = calculate_net_load(df, total_load)
+print(f"Average net load: {net_load.mean():.2f} MW")
+
+# Step 3: Extract representative points
+rep_df, diagnostics = extract_representative_ops(
+    df, max_power=850, MAPGL=200, output_dir='results'
+)
+
+# Step 4: Validate representative points
+rep_total_load = calculate_total_load(rep_df)
+rep_net_load = calculate_net_load(rep_df, rep_total_load)
+print(f"Representative points average net load: {rep_net_load.mean():.2f} MW")
+```
+
 ## Sample Results
 
 ### Analysis Summary
@@ -885,6 +988,7 @@ The tool follows a **modular, configuration-driven architecture** designed for m
   - Automatic cluster quality assessment
   - MAPGL belt analysis for critical low-load conditions
   - **Enhanced**: Uses centralized configuration for all parameters
+  - **Data Loading**: `loadallpowerdf()` function for convenient CSV data loading
 
 ### Architectural Improvements
 

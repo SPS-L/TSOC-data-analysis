@@ -45,6 +45,7 @@ ENHANCED FEATURES:
 - POWER SYSTEM FOCUS: Specialized for electrical power system analysis
 
 Functions:
+- loadallpowerdf(): Load all_power*.csv files from directory
 - extract_representative_ops(): Main function to extract representative points
 - _select_feature_columns(): Helper to identify clustering features (config-driven)
 - _auto_kmeans(): Helper for automatic K-means cluster selection (config-driven)
@@ -52,6 +53,9 @@ Functions:
 
 USAGE EXAMPLES:
 ==============
+
+# Load all_power data from directory
+df = loadallpowerdf('results')
 
 # Basic usage with default configuration
 rep_df, diagnostics = extract_representative_ops(
@@ -62,6 +66,11 @@ rep_df, diagnostics = extract_representative_ops(
 rep_df, diagnostics = extract_representative_ops(
     all_power=df, max_power=850, MAPGL=200, 
     output_dir="results"  # Uses config file names
+)
+
+# Combined workflow: load data and extract representative points
+rep_df, diagnostics = extract_representative_ops(
+    loadallpowerdf('results'), max_power=850, MAPGL=200, output_dir='results'
 )
 
 # Custom parameters (overrides config defaults)
@@ -87,7 +96,92 @@ from sklearn.metrics import (
 )
 from system_configuration import clean_column_name, REPRESENTATIVE_OPS
 
-__all__ = ["extract_representative_ops"]
+__all__ = ["extract_representative_ops", "loadallpowerdf"]
+
+
+def loadallpowerdf(directory: str) -> pd.DataFrame:
+    """
+    Load all_power*.csv file from the specified directory into a DataFrame.
+    
+    This function searches for files matching the pattern 'all_power*.csv' in the
+    specified directory and loads the first matching file. It's designed to work
+    with the power system analysis workflow where all_power data files are
+    generated with timestamps or version suffixes.
+    
+    Parameters
+    ----------
+    directory : str
+        Directory path to search for all_power*.csv files.
+        
+    Returns
+    -------
+    pd.DataFrame
+        Loaded DataFrame with power system data. The index is preserved as
+        timestamps if present in the original CSV file.
+        
+    Raises
+    ------
+    FileNotFoundError
+        If no all_power*.csv file is found in the specified directory.
+    ValueError
+        If the directory doesn't exist or is not accessible.
+        
+    Examples
+    --------
+    >>> # Load all_power data from results directory
+    >>> df = loadallpowerdf('results')
+    >>> print(f"Loaded {len(df)} snapshots with {len(df.columns)} columns")
+    
+    >>> # Use in representative operating points extraction
+    >>> rep_df, diagnostics = extract_representative_ops(
+    ...     loadallpowerdf('results'), max_power=850, MAPGL=200, output_dir='results'
+    ... )
+    
+    Notes
+    -----
+    - Searches for files matching pattern 'all_power*.csv'
+    - Uses pandas.read_csv() with automatic index parsing
+    - Preserves original column names and data types
+    - Handles common CSV formats with comma or semicolon separators
+    """
+    import glob
+    
+    # Check if directory exists
+    if not os.path.exists(directory):
+        raise ValueError(f"Directory '{directory}' does not exist")
+    
+    if not os.path.isdir(directory):
+        raise ValueError(f"'{directory}' is not a directory")
+    
+    # Search for all_power*.csv files
+    pattern = os.path.join(directory, "all_power*.csv")
+    matching_files = glob.glob(pattern)
+    
+    if not matching_files:
+        raise FileNotFoundError(
+            f"No all_power*.csv files found in directory '{directory}'. "
+            f"Searched pattern: {pattern}"
+        )
+    
+    # Use the first matching file (most recent if sorted)
+    file_path = sorted(matching_files)[0]
+    
+    try:
+        # Try to read with automatic index parsing (for timestamps)
+        df = pd.read_csv(file_path, index_col=0, parse_dates=True)
+    except (ValueError, TypeError):
+        # Fallback: read without index parsing if it fails
+        try:
+            df = pd.read_csv(file_path, index_col=0)
+        except (ValueError, TypeError):
+            # Final fallback: read without index
+            df = pd.read_csv(file_path)
+    
+    print(f"Loaded all_power data from: {file_path}")
+    print(f"  Shape: {df.shape[0]} rows × {df.shape[1]} columns")
+    print(f"  Columns: {list(df.columns[:5])}{'...' if len(df.columns) > 5 else ''}")
+    
+    return df
 
 
 def _select_feature_columns(df: pd.DataFrame) -> list[str]:
