@@ -1,3 +1,6 @@
+User Guide
+==========
+
 Getting Started
 --------------
 
@@ -21,7 +24,7 @@ The package consists of several interconnected modules:
 - **Power System Visualizer**: Visualization and plotting functions
 
 Key Features
------------
+------------
 
 - **Month-based data filtering** for efficient processing of large datasets
 - **Load calculations** (Total Load, Net Load) with comprehensive statistics
@@ -33,7 +36,7 @@ Key Features
 - **Comprehensive logging** and error handling
 
 Data Requirements
-----------------
+-----------------
 
 Input Data Format
 ~~~~~~~~~~~~~~~~
@@ -92,7 +95,7 @@ Data Quality Requirements
 * **Missing Data**: Gaps up to 3 time steps are interpolated linearly
 
 Basic Workflow
--------------
+--------------
 
 #. **Data Preparation**: Organize Excel files in the correct format
 #. **Data Loading**: Use the package to load and merge data
@@ -103,7 +106,7 @@ Basic Workflow
 #. **Results**: Save analysis results and reports
 
 Python API Usage
----------------
+----------------
 
 For programmatic access and custom workflows:
 
@@ -182,7 +185,7 @@ For programmatic access and custom workflows:
    print(f"  Missing values: {validation_results['missing_values']}")
 
 Output Files
------------
+------------  
 
 The package generates various output files depending on the options selected:
 

@@ -18,7 +18,6 @@ A comprehensive Python tool for analyzing the TSOC power system operational data
 
    installation
    user_guide
-   api_reference
    configuration
    examples
    troubleshooting
@@ -36,7 +35,7 @@ Features
 * **Comprehensive logging** and error handling
 
 Quick Start
-----------
+-----------
 
 .. code-block:: python
 
@@ -51,7 +50,7 @@ Quick Start
        )
 
 Command Line Usage
------------------
+------------------
 
 .. code-block:: bash
 

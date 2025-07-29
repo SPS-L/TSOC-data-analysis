@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting Started &mdash; TSOC Data Analysis 1.0.0 documentation</title>
+  <title>User Guide &mdash; TSOC Data Analysis 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -45,16 +45,19 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#key-features">Key Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#data-requirements">Data Requirements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#input-data-format">Input Data Format</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#data-quality-requirements">Data Quality Requirements</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-features">Key Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-requirements">Data Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#input-data-format">Input Data Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-quality-requirements">Data Quality Requirements</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#basic-workflow">Basic Workflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#python-api-usage">Python API Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#output-files">Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-workflow">Basic Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-api-usage">Python API Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output-files">Output Files</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
@@ -74,7 +77,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="breadcrumb-item active">User Guide</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/user_guide.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -84,8 +87,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="getting-started">
-<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+  <section id="user-guide">
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h1>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
 <p>The TSOC Data Analysis package is designed to be user-friendly while providing powerful analysis capabilities. This guide will walk you through the essential workflows and best practices.</p>
 <p>The package consists of several interconnected modules:</p>
 <p><strong>Core Analysis Modules</strong></p>
@@ -105,7 +110,7 @@
 </ul>
 </section>
 <section id="key-features">
-<h1>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h1>
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><strong>Month-based data filtering</strong> for efficient processing of large datasets</p></li>
 <li><p><strong>Load calculations</strong> (Total Load, Net Load) with comprehensive statistics</p></li>
@@ -118,9 +123,9 @@
 </ul>
 </section>
 <section id="data-requirements">
-<h1>Data Requirements<a class="headerlink" href="#data-requirements" title="Link to this heading"></a></h1>
+<h2>Data Requirements<a class="headerlink" href="#data-requirements" title="Link to this heading"></a></h2>
 <section id="input-data-format">
-<h2>Input Data Format<a class="headerlink" href="#input-data-format" title="Link to this heading"></a></h2>
+<h3>Input Data Format<a class="headerlink" href="#input-data-format" title="Link to this heading"></a></h3>
 <p>The package expects Excel files with the following structure:</p>
 <p><strong>Substation Data</strong></p>
 <ul class="simple">
@@ -170,7 +175,7 @@
 </ul>
 </section>
 <section id="data-quality-requirements">
-<h2>Data Quality Requirements<a class="headerlink" href="#data-quality-requirements" title="Link to this heading"></a></h2>
+<h3>Data Quality Requirements<a class="headerlink" href="#data-quality-requirements" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>Time Series Continuity</strong>: Data should be continuous with regular time intervals</p></li>
 <li><p><strong>Unit Consistency</strong>: All power values in MW/MVAR, voltages in KV</p></li>
@@ -186,7 +191,7 @@
 </section>
 </section>
 <section id="basic-workflow">
-<h1>Basic Workflow<a class="headerlink" href="#basic-workflow" title="Link to this heading"></a></h1>
+<h2>Basic Workflow<a class="headerlink" href="#basic-workflow" title="Link to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p><strong>Data Preparation</strong>: Organize Excel files in the correct format</p></li>
 <li><p><strong>Data Loading</strong>: Use the package to load and merge data</p></li>
@@ -198,7 +203,7 @@
 </ol>
 </section>
 <section id="python-api-usage">
-<h1>Python API Usage<a class="headerlink" href="#python-api-usage" title="Link to this heading"></a></h1>
+<h2>Python API Usage<a class="headerlink" href="#python-api-usage" title="Link to this heading"></a></h2>
 <p>For programmatic access and custom workflows:</p>
 <p><strong>Basic Analysis:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute</span>
@@ -270,7 +275,7 @@
 </div>
 </section>
 <section id="output-files">
-<h1>Output Files<a class="headerlink" href="#output-files" title="Link to this heading"></a></h1>
+<h2>Output Files<a class="headerlink" href="#output-files" title="Link to this heading"></a></h2>
 <p>The package generates various output files depending on the options selected:</p>
 <p><strong>Analysis Results:</strong></p>
 <ul class="simple">
@@ -292,6 +297,7 @@
 <li><p><cite>daily_load_profiles.png</cite> - Daily load profile analysis</p></li>
 <li><p><cite>comprehensive_analysis.png</cite> - Multi-panel analysis dashboard</p></li>
 </ul>
+</section>
 </section>
 
 
