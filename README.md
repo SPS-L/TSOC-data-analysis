@@ -222,7 +222,7 @@ Run power system analysis with various options:
 tsoc-analyze 2024-01 --output-dir results --save-plots --save-csv
 
 # Run analysis with specific data directory for March 2024
-tsoc-analyze 2024-03 --data-dir "2024-2025 data" --verbose
+tsoc-analyze 2024-03 --data-dir "raw_data" --verbose
 
 # Run analysis and save only summary report for December 2024
 tsoc-analyze 2024-12 --output-dir results --summary-only

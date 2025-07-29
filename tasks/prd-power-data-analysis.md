@@ -19,7 +19,7 @@ This document outlines the requirements for a Python script designed to be a reu
 
 ## 4. Functional Requirements
 
-- **FR1: Data Loading:** The script must load all specified Excel (`.xlsx`) files from the `/2024-2025 data` directory.
+- **FR1: Data Loading:** The script must load all specified Excel (`.xlsx`) files from the `/raw_data` directory.
 - **FR2: Header and Index:**
     - The script must use the second row of the Excel files to determine the names of substations, generators, etc., and use them as column headers.
     - It must identify the timestamp column and set it as the index for each DataFrame.

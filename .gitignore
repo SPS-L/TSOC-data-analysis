@@ -112,7 +112,7 @@ logs*/
 # Snapshots directory (contains large data files)
 Snapshots/
 
-# 2024-2025 data directory (contains large Excel files)
+# raw_data directory (contains large Excel files)
 raw_data/
 
 # Temporary files

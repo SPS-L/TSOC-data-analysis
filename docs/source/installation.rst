@@ -38,9 +38,3 @@ After installation, you can verify that the package is working correctly:
 
    import tsoc_data_analysis
    print(tsoc_data_analysis.__version__)
-
-Or test the command-line interface:
-
-.. code-block:: bash
-
-   tsoc-analyze --help

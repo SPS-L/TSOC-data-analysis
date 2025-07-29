@@ -153,7 +153,6 @@ latex_elements = {
     # Additional options for better PDF output
     'extraclassoptions': 'openany,oneside',
     'babel': '\\usepackage[english]{babel}',
-    'figure_caption': '\\usepackage[font=small,labelfont=bf]{caption}',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

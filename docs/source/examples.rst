@@ -23,6 +23,7 @@ Simple Load Analysis
 **Objective:** Calculate total and net load from power system data.
 
 **Data Requirements:**
+
 - Substation active power data (``ss_mw_*`` columns)
 - Wind farm active power data (``wind_mw_*`` columns)
 
@@ -71,6 +72,7 @@ Generator Categorization
 **Objective:** Categorize generators as voltage control or PQ control based on their reactive power characteristics.
 
 **Data Requirements:**
+
 - Generator reactive power data (``gen_mvar_*`` columns)
 - Generator voltage setpoints data (``gen_v_*`` columns)
 
@@ -113,6 +115,7 @@ Basic Clustering Analysis
 **Objective:** Extract representative operating points using K-means clustering.
 
 **Data Requirements:**
+
 - All power system data (substations, generators, wind farms)
 
 **Example Code:**

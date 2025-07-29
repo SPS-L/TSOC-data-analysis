@@ -1,4 +1,3 @@
 [build]
-base = ""
-publish = "_build/html"
-command = ""
+  publish = "_build/html"
+  command = "pip install -r ../requirements.txt && pip install -e .. && make html"

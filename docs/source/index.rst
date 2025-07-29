@@ -59,7 +59,7 @@ Command Line Usage
    tsoc-analyze 2024-01 --output-dir results --save-plots --save-csv
    
    # Run analysis with specific data directory for March 2024
-   tsoc-analyze 2024-03 --data-dir "2024-2025 data" --verbose
+   tsoc-analyze 2024-03 --data-dir "raw_data" --verbose
 
 Indices and tables
 ==================
