@@ -2,9 +2,9 @@
 
 **Author:** Sustainable Power Systems Lab (SPSL), [https://sps-lab.org](https://sps-lab.org), contact: info@sps-lab.org
 
-A comprehensive Python tool for analyzing power system operational data from Excel files. The tool provides a powerful command-line interface (CLI) and modular Python API for load analysis, generator categorization, wind power analysis, reactive power calculations, and representative operating point extraction.
+A comprehensive Python tool for analyzing the TSOC power system operational data from Excel files. The tool provides a powerful command-line interface (CLI) and modular Python API for load analysis, generator categorization, wind power analysis, reactive power calculations, and representative operating point extraction.
 
-**Pure Python Implementation**: This tool is implemented entirely in Python with no external dependencies on notebook environments. It can be used from the command line, imported as Python modules, or integrated into automated analysis pipelines.
+**Pure Python Implementation**: This tool is implemented entirely in Python. It can be used from the command line, imported as Python modules, or integrated into automated analysis pipelines.
 
 ## Features
 
@@ -13,61 +13,48 @@ A comprehensive Python tool for analyzing power system operational data from Exc
 - **Wind power analysis** with generation statistics and profiles
 - **Generator categorization** (Voltage Control vs PQ Control)
 - **Reactive power analysis** with comprehensive calculations
-- **Representative operating points extraction** using K-means clustering with performance optimizations
 - **Data validation** with type checking, limit validation, and gap filling
-- **Centralized configuration management** for easy customization and maintenance
+- **Representative operating points extraction** using K-means clustering with performance optimizations
 - **Comprehensive logging** and error handling
-- **Multiple output formats** (CSV, JSON, PNG plots, text summaries, visualizations)
-- **Clean column naming** for improved readability of output files
-- **Flexible data loading** with automatic CSV file detection and robust parsing
-- **Performance optimizations** with parallel processing and adaptive algorithms
-- **Enhanced error handling** with graceful degradation and informative messages
-- **JSON serialization support** with automatic NumPy type conversion
-- **Comprehensive visualizations** with 9-panel clustering analysis dashboard
 
 ## Configuration Management
 
-### Design Philosophy and Rationale
-
-The tool implements a **centralized configuration architecture** designed to address common challenges in power system analysis software:
-
-#### **Problem: Scattered Parameters**
-Traditional power system analysis tools often suffer from:
-- Hardcoded parameters scattered throughout multiple files
-- Difficulty in customizing analysis behavior
-- Inconsistent parameter values across different modules
-- Poor maintainability when parameters need updates
-- Code duplication for common utilities
-
-#### **Solution: Centralized Configuration**
 This tool centralizes all configuration in `system_configuration.py`, providing:
-
-**🎯 Single Source of Truth**
-- All parameters defined in one location (`system_configuration.py`)
-- Consistent values across all modules
-- Easy discovery of configurable options
-- Comprehensive documentation for each parameter
-
-**🔧 Easy Customization**
-- Modify analysis behavior by changing config values
-- No need to hunt through multiple files
-- Immediate effect across all modules using the parameter
-- Support for different analysis scenarios through configuration
-
-**📚 Better Maintainability**
-- Parameter updates require changes in only one file
-- Reduced risk of inconsistent values
-- Clear dependency tracking
-- Simplified testing and validation
-
-**♻️ Code Reusability**
-- Shared utilities like `clean_column_name()` avoid duplication
-- Consistent behavior across different analysis workflows
-- Modular design enables component reuse
 
 ### Key Configuration Areas
 
-#### **1. Representative Operations Configuration**
+#### **File Structure Configuration**
+```python
+FILES = {
+    'substation_mw': 'substation_active_power.xlsx',
+    'wind_power': 'wind_farm_active_power.xlsx',
+    # ... other file mappings
+}
+
+COLUMN_PREFIXES = {
+    'substation_mw': 'ss_mw_',
+    'wind_power': 'wind_mw_',
+    # ... other prefixes
+}
+```
+
+#### **Data Validation Configuration**
+```python
+DATA_VALIDATION = {
+    'type_checks': {
+        'real_numbers': ['ss_mw_', 'ss_mvar_', 'wind_mw_'],
+        'integers': ['shunt_tap_']
+    },
+    'limit_checks': {
+        'power_limits': {
+            'wind': {'min_mw': 0, 'max_mw': 100},
+            'substation': {'min_mw': -100, 'max_mw': 100}
+        }
+    }
+}
+```
+
+#### **Representative Operations Configuration**
 ```python
 REPRESENTATIVE_OPS = {
     'defaults': {
@@ -93,94 +80,6 @@ REPRESENTATIVE_OPS = {
     }
 }
 ```
-
-#### **2. Data Validation Configuration**
-```python
-DATA_VALIDATION = {
-    'type_checks': {
-        'real_numbers': ['ss_mw_', 'ss_mvar_', 'wind_mw_'],
-        'integers': ['shunt_tap_']
-    },
-    'limit_checks': {
-        'power_limits': {
-            'wind': {'min_mw': 0, 'max_mw': 100},
-            'substation': {'min_mw': -100, 'max_mw': 100}
-        }
-    }
-}
-```
-
-#### **3. File Structure Configuration**
-```python
-FILES = {
-    'substation_mw': 'substation_active_power.xlsx',
-    'wind_power': 'wind_farm_active_power.xlsx',
-    # ... other file mappings
-}
-
-COLUMN_PREFIXES = {
-    'substation_mw': 'ss_mw_',
-    'wind_power': 'wind_mw_',
-    # ... other prefixes
-}
-```
-
-### Configuration Benefits in Practice
-
-#### **For Researchers**
-- Quickly adjust clustering parameters for different studies
-- Modify validation thresholds for different power system types
-- Easy comparison of different parameter sets
-- Reproducible research through documented configurations
-
-#### **For Operators**
-- Customize limits based on actual system constraints
-- Adjust analysis sensitivity for different operational conditions
-- Configure file locations for different data sources
-- Maintain consistent analysis across different time periods
-
-#### **For Developers**
-- Add new parameters without modifying multiple files
-- Clear understanding of configurable vs. fixed behavior
-- Easier testing with different parameter combinations
-- Simplified maintenance and updates
-
-### Utility Functions
-
-#### **Clean Column Naming**
-The `clean_column_name()` function in `system_configuration.py` provides consistent column name cleaning:
-
-```python
-def clean_column_name(col_name):
-    """Remove verbose suffixes for cleaner output files."""
-    # Removes suffixes like '_132REACTOR_REACTIVE_POWER'
-    # Result: 'ss_mw_STATION1' instead of 'ss_mw_STATION1_132REACTOR_REACTIVE_POWER'
-```
-
-**Benefits:**
-- **Reusable**: Used across multiple modules (CLI and representative ops)
-- **Consistent**: Same cleaning logic everywhere
-- **Maintainable**: Single location for suffix definitions
-- **Readable**: Cleaner column names in output CSV files
-
-#### **JSON Serialization Support**
-The `convert_numpy_types()` function in `system_configuration.py` ensures JSON compatibility:
-
-```python
-from system_configuration import convert_numpy_types
-import numpy as np
-
-# Convert numpy types for JSON serialization
-data = {'value': np.int64(42), 'array': np.array([1, 2, 3])}
-json_safe_data = convert_numpy_types(data)
-# Result: {'value': 42, 'array': [1, 2, 3]}
-```
-
-**Benefits:**
-- **JSON Compatibility**: Automatically converts NumPy types to native Python types
-- **Recursive Processing**: Handles nested dictionaries and lists
-- **Error Prevention**: Prevents JSON serialization errors in analysis outputs
-- **Centralized**: Single utility function for all JSON serialization needs
 
 ### Configuration Customization Examples
 
@@ -245,18 +144,10 @@ REPRESENTATIVE_OPS['output_files'] = {
 ## Quick Start
 
 ### Basic Analysis
-```bash
-# Run analysis for September 2024
-python power_analysis_cli.py 2024-09 --save-csv --save-plots
 
-# Run analysis for all data
-python power_analysis_cli.py --save-csv --save-plots --verbose
-```
-
-### Representative Operating Points
 ```bash
 # Extract representative points with default parameters
-python -c "
+```python
 from power_analysis_cli import execute
 from operating_point_extractor import extract_representative_ops
 
@@ -268,13 +159,12 @@ if success:
     rep_df, diagnostics = extract_representative_ops(
         df, max_power=850, MAPGL=200, output_dir='results'
     )
-    print(f'Selected {len(rep_df)} representative points')
-    print(f'Compression ratio: {diagnostics["original_size"]/diagnostics["n_total"]:.1f}:1')
-    print(f'Clustering quality: {diagnostics["silhouette"]:.3f}')
-"
 ```
 
 ### Loading All Power Data
+
+If the load and analyze data has been executed before, we can load the clean extracted data from the `results` folder using `loadallpowerdf`:
+
 ```python
 # Load all_power*.csv files from directory
 from operating_point_extractor import loadallpowerdf
@@ -287,16 +177,11 @@ print(f"Loaded {len(df)} snapshots with {len(df.columns)} columns")
 rep_df, diagnostics = extract_representative_ops(
     loadallpowerdf('results'), max_power=850, MAPGL=200, output_dir='results'
 )
-
-# Access comprehensive diagnostics
-print(f"Compression ratio: {diagnostics['original_size']/diagnostics['n_total']:.1f}:1")
-print(f"Feature columns: {len(diagnostics['feature_columns'])}")
-print(f"Cluster sizes: {diagnostics['cluster_sizes']}")
 ```
 
-## Usage
+### Command line execution of data loading and analysis
 
-### Basic Analysis
+
 
 Run power system analysis with various options:
 
@@ -317,7 +202,7 @@ python power_analysis_cli.py --output-dir results --save-plots --save-csv
 python power_analysis_cli.py 2024-06 --summary-only
 ```
 
-### Command Line Options
+#### Command Line Options
 
 | Option | Description | Default |
 |--------|-------------|---------|
@@ -331,9 +216,11 @@ python power_analysis_cli.py 2024-06 --summary-only
 | `--version` | Show version information | - |
 | `-h, --help` | Show help message | - |
 
-## Output Files
+The same options can be passed to the `execute()` function as arguments.
 
-### Standard Analysis Files
+#### Output Files
+
+Standard Analysis Files:
 - `analysis_summary.json` - Complete analysis results in JSON format
 - `analysis_summary.txt` - Human-readable analysis summary
 - `total_load.csv` - Total load time series data
@@ -342,69 +229,22 @@ python power_analysis_cli.py 2024-06 --summary-only
 - `generator_categories.csv` - Generator categorization results
 - `comprehensive_power_data.csv` - All power system data in one file
 
-### Representative Operating Points Files
+Representative Operating Points Files:
 - `representative_operating_points.csv` - Clean representative points with readable column names
 - `clustering_summary.txt` - User-friendly clustering analysis report with quality assessment
 - `clustering_info.json` - Detailed clustering metrics for programmatic access
 - `clustering_visualization.png` - Comprehensive 9-panel visualization dashboard
 
-### Plot Files (with `--save-plots`)
+Plot Files (with `--save-plots`):
 - `load_timeseries.png` - Total and net load time series
 - `daily_profile.png` - Average daily load profiles
 - `monthly_profile.png` - Monthly load profiles
 - `comprehensive_analysis.png` - Combined analysis plots
 
-### Log Files
+Log Files:
 - `logs/analysis_YYYY-MM.log` - Detailed analysis logs with timestamps
 
 ## Analysis Features
-
-### Data Loading and Management
-
-#### Loading All Power Data
-The `loadallpowerdf()` function provides a convenient way to load power system data from CSV files:
-
-**Key Features:**
-- **Pattern Matching**: Automatically finds files matching `all_power*.csv` pattern
-- **Robust Loading**: Handles different CSV formats with automatic index parsing
-- **Error Handling**: Clear error messages for missing directories or files
-- **Informative Output**: Provides loading statistics and file information
-- **Performance Optimized**: Parallel processing for large datasets with adaptive k-range selection
-- **Data Quality Checks**: Automatic detection of missing values, infinite values, and zero-variance features
-- **JSON Compatibility**: Automatic conversion of NumPy types for error-free JSON serialization
-
-**Usage Examples:**
-```python
-from operating_point_extractor import loadallpowerdf
-
-# Basic loading from directory
-df = loadallpowerdf('results')
-print(f"Loaded {len(df)} snapshots with {len(df.columns)} columns")
-
-# Combined workflow with representative points extraction
-rep_df, diagnostics = extract_representative_ops(
-    loadallpowerdf('results'), max_power=850, MAPGL=200, output_dir='results'
-)
-
-# Error handling example
-try:
-    df = loadallpowerdf('nonexistent_directory')
-except FileNotFoundError as e:
-    print(f"Error: {e}")
-```
-
-**Function Parameters:**
-- `directory` (str): Directory path to search for `all_power*.csv` files
-
-**Returns:**
-- `pd.DataFrame`: Loaded power system data with preserved timestamps
-
-**Error Handling:**
-- `FileNotFoundError`: When no `all_power*.csv` files are found
-- `ValueError`: When directory doesn't exist or isn't accessible
-- **Enhanced Validation**: Comprehensive input validation with clear error messages
-- **Graceful Degradation**: Fallback mechanisms for missing dependencies
-- **JSON Serialization**: Automatic NumPy type conversion prevents serialization errors
 
 ### Load Calculations
 - **Total Load**: Sum of all substation active power consumption (`ss_mw_*` columns)
@@ -420,7 +260,7 @@ except FileNotFoundError as e:
 
 ### Generator Categorization
 - **Voltage Control Generators**: Generators with voltage setpoint data (`gen_v_*` columns)
-- **PQ Control Generators**: Generators with reactive power data (`gen_mvar_*` columns)
+- **PQ Control Generators**: Generators with reactive power data with Q control (`gen_mvar_*` columns)
 - **Automatic Detection**: Based on data availability in voltage setpoint files
 
 ### Reactive Power Analysis
@@ -445,17 +285,12 @@ except FileNotFoundError as e:
 - **Voltage Limits**: 0-20 KV
 - **Tap Position Limits**: 1-20
 
-### Gap Filling
-- **Linear Interpolation**: Fills gaps up to 3 time steps
-- **Maximum Gap Size**: Gaps larger than 3 steps are marked as NaN
-- **Data Quality**: Rows with >50% missing data are removed
-
 ### Data Quality Checks
 - **Missing Data Threshold**: Maximum 10% missing data allowed
 - **Minimum Records**: At least 100 valid records required
 - **Timestamp Validation**: Ensures proper chronological order
 
-## Enhanced Data Validation with Advanced Gap Filling
+## Data Validation with Advanced Gap Filling
 
 The enhanced data validation system provides a comprehensive three-step validation workflow that includes sophisticated gap filling techniques and advanced anomaly detection capabilities. The system implements a complete power systems data validation pipeline with intelligent gap processing.
 
@@ -495,11 +330,9 @@ The enhanced data validation system provides a comprehensive three-step validati
 - **`'knn'`**: K-Nearest Neighbors using temporal features (hour, day, seasonality)
 - **`'ml'`**: Random Forest-based with lagged features and cross-variable relationships
 
-### ⚙️ **Configuration Architecture**
+### ⚙️ **Configuration**
 
 All validation parameters are centrally managed in `system_configuration.py` with separate sections for different validation aspects and automatic adaptation to actual data structure.
-
-### Enhanced Validation Features
 
 #### Statistical Outlier Detection
 - **IQR (Interquartile Range)**: Detects outliers using configurable IQR multiplier (default: 1.5×IQR)
@@ -516,15 +349,14 @@ All validation parameters are centrally managed in `system_configuration.py` wit
 
 #### Power System Specific Validation
 - **Variable Grouping**: Intelligent grouping of related power system variables
-  - Generators: `gen_mvar_*` (reactive power)
-  - Substations: `ss_mw_*`, `ss_mvar_*` (active/reactive power)
-  - Wind Farms: `wind_mw_*` (active power)
+  - Generators: `gen_mvar_*` (reactive power of Q control generators)
+  - Substations: `ss_mw_*`, `ss_mvar_*` (active/reactive power consumption)
+  - Wind Farms: `wind_mw_*` (active power generation of wind parcs)
   - Shunt Elements: `shunt_mvar_*`, `shunt_tap_*` (reactive power, tap positions)
-  - Voltages: `gen_v_*` (voltage setpoints)
+  - Voltages: `gen_v_*` (voltage setpoints of Constant V generators)
 
-### Configuration Management
 
-**Enhanced Gap Filling Settings (`system_configuration.py`):**
+#### Settings in `system_configuration.py`:
 ```python
 ENHANCED_DATA_VALIDATION = {
     'advanced_gap_filling': {
@@ -576,67 +408,6 @@ ENHANCED_DATA_VALIDATION = {
         'epsilon': 1e-6,
     }
 }
-```
-
-### Usage Examples
-
-**Complete Enhanced Validation (Recommended):**
-```python
-from power_data_validator import EnhancedDataValidator
-
-# Create enhanced validator with all features
-validator = EnhancedDataValidator()
-
-# Execute complete 3-step validation workflow
-validated_data = validator.validate_dataframe_enhanced(raw_data)
-
-# Review comprehensive results
-summary = validator.get_enhanced_validation_summary()
-print(f"Simple validation - Gaps filled: {summary['gaps_filled']}")
-print(f"Advanced detection - Anomalies: {summary['total_anomalies']}")
-```
-
-**Advanced Gap Filling Focus:**
-```python
-# Apply advanced gap filling with specific method
-filled_data = validator.advanced_gap_filling(data, method='adaptive')
-
-# Test different gap filling approaches
-methods = ['adaptive', 'spline', 'polynomial', 'knn']
-for method in methods:
-    test_data = validator.advanced_gap_filling(data.copy(), method=method)
-    filled_count = data.isna().sum().sum() - test_data.isna().sum().sum()
-    print(f"Method '{method}': Filled {filled_count} gaps")
-```
-
-**Step-by-Step Workflow Control:**
-```python
-# Manual control over each validation step
-step1_data = validator.validate_dataframe(raw_data)              # Simple validation
-step2_data = validator.comprehensive_anomaly_detection(step1_data)  # Anomaly detection
-step3_data = validator.advanced_gap_filling(step2_data)          # Advanced gap filling
-
-# Or with custom settings
-validated_data = validator.validate_dataframe_enhanced(
-    raw_data,
-    use_comprehensive_anomaly_detection=True,   # Enable advanced detection
-    use_advanced_gap_filling=True               # Enable sophisticated gap filling
-)
-```
-
-**Gap-Aware Anomaly Detection:**
-```python
-# Automatic gap analysis and conservative processing
-gap_analysis = validator.detect_large_gaps(data)
-
-if gap_analysis['large_gaps_found']:
-    print(f"Large gaps detected in {len(gap_analysis['gap_columns'])} columns")
-    # System automatically applies conservative settings:
-    # - Higher rate violation thresholds (+50%)
-    # - Reduced correlation sensitivity
-    # - Selective method application based on gap percentage
-    
-validated_data = validator.comprehensive_anomaly_detection_gap_aware(data, gap_analysis)
 ```
 
 ### Validation Results and Reporting
@@ -721,23 +492,6 @@ The complete validation workflow follows this intelligent three-step process:
 - **KNN**: Time-aware K-Nearest Neighbors using temporal features
 - **ML**: Random Forest with lagged features and cross-variable relationships
 - **Adaptive**: Intelligent method selection based on gap characteristics
-
-**Configuration Examples:**
-```python
-# Enable advanced gap filling
-DATA_VALIDATION['gap_filling']['enable_advanced_gap_filling'] = True
-ENHANCED_DATA_VALIDATION['advanced_gap_filling']['default_method'] = 'adaptive'
-
-# Customize gap size thresholds
-ENHANCED_DATA_VALIDATION['advanced_gap_filling']['adaptive_thresholds'] = {
-    'small_gap_size': 3,      # Linear interpolation limit
-    'medium_gap_size': 6,     # Spline interpolation limit  
-    'large_gap_size': 12,     # Advanced method limit
-}
-
-# Set removal threshold for very large gaps
-DATA_VALIDATION['gap_filling']['remove_large_gaps_threshold'] = 24
-```
 
 ## Detailed Calculations
 
@@ -852,30 +606,6 @@ The tool expects Excel files with the following structure:
 2. **Data Quality**: Sufficient data quality for meaningful analysis
 3. **Temporal Consistency**: Data timestamps are properly ordered
 
-## Recent Improvements
-
-### Performance Optimizations
-- **Parallel Processing**: K-means clustering now uses parallel processing for 2-4x speedup
-- **Adaptive K-Range**: Smart k-range selection based on data size and characteristics
-- **Memory Efficiency**: Optimized data handling and reduced memory footprint
-
-### Enhanced Error Handling
-- **Comprehensive Validation**: Extensive input validation with clear error messages
-- **Data Quality Checks**: Automatic detection of missing values, infinite values, and zero-variance features
-- **Graceful Degradation**: Fallback mechanisms for missing dependencies
-- **JSON Serialization**: Automatic NumPy type conversion prevents serialization errors
-
-### User Experience Improvements
-- **Rich Visualizations**: 9-panel clustering analysis dashboard with quality indicators
-- **Enhanced Reports**: User-friendly summary reports with emojis and structured sections
-- **Quality Assessment**: Automatic quality scoring with actionable recommendations
-- **Better Output Organization**: Clean file naming and comprehensive diagnostics
-
-### Configuration Enhancements
-- **Centralized Utilities**: `convert_numpy_types()` function moved to `system_configuration.py`
-- **JSON Compatibility**: Automatic handling of NumPy types for error-free JSON output
-- **Enhanced Documentation**: Comprehensive usage examples and troubleshooting guides
-
 ## Troubleshooting
 
 ### Common Issues
@@ -907,25 +637,7 @@ pip install matplotlib seaborn
 
 ## Examples
 
-### Example 1: Basic Analysis
-```bash
-# Run analysis for September 2024 with all outputs
-python power_analysis_cli.py 2024-09 --save-csv --save-plots --verbose
-
-# Run analysis for all data with summary only
-python power_analysis_cli.py --summary-only
-```
-
-### Example 2: Custom Data Location
-```bash
-# Use custom data directory
-python power_analysis_cli.py 2024-09 --data-dir "my_data_folder" --output-dir "my_results"
-
-# Use custom output directory
-python power_analysis_cli.py 2024-09 --output-dir "analysis_results_2024"
-```
-
-### Example 3: Representative Operating Points with Data Loading
+### Representative Operating Points with Data Loading
 ```python
 # Complete workflow: Load data and extract representative points
 from operating_point_extractor import loadallpowerdf, extract_representative_ops
@@ -946,7 +658,7 @@ print(f"Compression ratio: {diagnostics['original_size']/diagnostics['n_total']:
 print(f"Clustering quality: {diagnostics['silhouette']:.3f}")
 ```
 
-### Example 4: Advanced Data Loading Workflow
+### Advanced Data Loading Workflow
 ```python
 # Multi-step analysis with data loading
 from operating_point_extractor import loadallpowerdf, extract_representative_ops
