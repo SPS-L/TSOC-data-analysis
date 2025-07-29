@@ -239,6 +239,7 @@ Configuration Integration
 The module uses configuration from `system_configuration.py`:
 
 **Plot Configuration:**
+
 .. code-block:: python
 
    # Plotting settings
@@ -264,6 +265,7 @@ The module uses configuration from `system_configuration.py`:
    }
 
 **Customization Examples:**
+
 .. code-block:: python
 
    # For larger plots
@@ -277,7 +279,7 @@ The module uses configuration from `system_configuration.py`:
    FONT_SIZES['axis_label'] = 16
 
 Usage Examples
--------------
+--------------
 
 Basic Time Series Plotting
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -390,6 +392,7 @@ Output Formats
 - **Metadata**: Embedded plot information
 
 **Example:**
+
 .. code-block:: python
 
    # High-quality output

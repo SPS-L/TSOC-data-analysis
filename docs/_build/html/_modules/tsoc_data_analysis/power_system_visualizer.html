@@ -1,0 +1,437 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tsoc_data_analysis.power_system_visualizer &mdash; TSOC Data Analysis 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TSOC Data Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TSOC Data Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tsoc_data_analysis.power_system_visualizer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tsoc_data_analysis.power_system_visualizer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Plotting Module for Power System Data Visualization</span>
+
+<span class="sd">Author: Sustainable Power Systems Lab (SPSL)</span>
+<span class="sd">Web: https://sps-lab.org</span>
+<span class="sd">Contact: info@sps-lab.org</span>
+
+<span class="sd">This module provides functions for creating various plots and visualizations of power system</span>
+<span class="sd">operational data, including load time series, daily profiles, monthly profiles, and comprehensive</span>
+<span class="sd">analysis plots.</span>
+
+<span class="sd">The module creates publication-quality plots with consistent styling and formatting,</span>
+<span class="sd">suitable for reports and presentations.</span>
+
+<span class="sd">Functions:</span>
+<span class="sd">- plot_load_timeseries(): Create time series plots of total and net load</span>
+<span class="sd">- plot_total_load_daily_profile(): Generate daily profile for total load</span>
+<span class="sd">- plot_net_load_daily_profile(): Generate daily profile for net load</span>
+<span class="sd">- plot_monthly_profile(): Create monthly load profile comparisons</span>
+<span class="sd">- create_comprehensive_plots(): Generate a comprehensive multi-panel analysis plot</span>
+
+<span class="sd">Plot Features:</span>
+<span class="sd">- Consistent styling with seaborn theme</span>
+<span class="sd">- Professional color schemes</span>
+<span class="sd">- Clear labels and legends</span>
+<span class="sd">- Grid lines for readability</span>
+<span class="sd">- Optimized figure sizes for different use cases</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.system_configuration</span><span class="w"> </span><span class="kn">import</span> <span class="n">PLOT_STYLE</span><span class="p">,</span> <span class="n">PLOT_PALETTE</span><span class="p">,</span> <span class="n">FIGURE_SIZES</span><span class="p">,</span> <span class="n">FONT_SIZES</span>
+
+<span class="c1"># Set style for better-looking plots</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">PLOT_STYLE</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="n">PLOT_PALETTE</span><span class="p">)</span>
+
+<span class="c1"># Task 4.1: Function to plot load time series</span>
+<div class="viewcode-block" id="plot_load_timeseries">
+<a class="viewcode-back" href="../../api/power_system_visualizer.html#tsoc_data_analysis.power_system_visualizer.plot_load_timeseries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_load_timeseries</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">FIGURE_SIZES</span><span class="p">[</span><span class="s1">&#39;timeseries&#39;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a time series plot of total load and net load.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        total_load (pandas.Series): Time series of total load values</span>
+<span class="sd">        net_load (pandas.Series): Time series of net load values</span>
+<span class="sd">        ax (matplotlib.axes.Axes, optional): Matplotlib axes object for plotting</span>
+<span class="sd">        figsize (tuple, optional): Figure size (width, height)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.axes.Axes: The axes object with the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    
+    <span class="c1"># Plot total load and net load</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">total_load</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">total_load</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Total Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">net_load</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">net_load</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Net Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    
+    <span class="c1"># Customize the plot</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Load Time Series&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;axis_label&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Load (MW)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;axis_label&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;legend&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    
+    <span class="c1"># Rotate x-axis labels for better readability</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Adjust layout to prevent label cutoff</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+
+
+<div class="viewcode-block" id="plot_total_load_daily_profile">
+<a class="viewcode-back" href="../../api/power_system_visualizer.html#tsoc_data_analysis.power_system_visualizer.plot_total_load_daily_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_total_load_daily_profile</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">FIGURE_SIZES</span><span class="p">[</span><span class="s1">&#39;daily_profile&#39;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the daily profile for total load showing average, minimum, and maximum values.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        total_load (pandas.Series): Time series of total load values</span>
+<span class="sd">        ax (matplotlib.axes.Axes, optional): Matplotlib axes object for plotting</span>
+<span class="sd">        figsize (tuple, optional): Figure size (width, height)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.axes.Axes: The axes object with the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate daily statistics for total load</span>
+    <span class="n">daily_avg</span> <span class="o">=</span> <span class="n">total_load</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">total_load</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">time</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">daily_min</span> <span class="o">=</span> <span class="n">total_load</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">total_load</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">time</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">daily_max</span> <span class="o">=</span> <span class="n">total_load</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">total_load</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">time</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    
+    <span class="c1"># Helper function to convert to hourly data</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_to_hourly</span><span class="p">(</span><span class="n">daily_data</span><span class="p">):</span>
+        <span class="n">hourly_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">daily_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">hour</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">hour</span>
+            <span class="k">if</span> <span class="n">hour</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hourly_data</span><span class="p">:</span>
+                <span class="n">hourly_data</span><span class="p">[</span><span class="n">hour</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">hourly_data</span><span class="p">[</span><span class="n">hour</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+        <span class="n">hourly_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">hour</span> <span class="ow">in</span> <span class="n">hourly_data</span><span class="p">:</span>
+                <span class="n">hourly_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">hourly_data</span><span class="p">[</span><span class="n">hour</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hourly_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hourly_values</span>
+    
+    <span class="c1"># Convert to hourly data</span>
+    <span class="n">hourly_avg</span> <span class="o">=</span> <span class="n">convert_to_hourly</span><span class="p">(</span><span class="n">daily_avg</span><span class="p">)</span>
+    <span class="n">hourly_min</span> <span class="o">=</span> <span class="n">convert_to_hourly</span><span class="p">(</span><span class="n">daily_min</span><span class="p">)</span>
+    <span class="n">hourly_max</span> <span class="o">=</span> <span class="n">convert_to_hourly</span><span class="p">(</span><span class="n">daily_max</span><span class="p">)</span>
+    
+    <span class="c1"># Create time labels for x-axis (24-hour format)</span>
+    <span class="n">time_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hour</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:00&quot;</span> <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">)]</span>
+    
+    <span class="c1"># Plot daily profile with all statistics</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">),</span> <span class="n">hourly_avg</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Avg Total Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">),</span> <span class="n">hourly_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Min Total Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">),</span> <span class="n">hourly_max</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Max Total Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;^&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Customize the plot</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Total Load Daily Profile&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Hour of Day&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;axis_label&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Load (MW)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;axis_label&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;legend&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    
+    <span class="c1"># Set x-axis ticks and labels</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="n">time_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+    
+    <span class="c1"># Adjust layout</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="plot_net_load_daily_profile">
+<a class="viewcode-back" href="../../api/power_system_visualizer.html#tsoc_data_analysis.power_system_visualizer.plot_net_load_daily_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_net_load_daily_profile</span><span class="p">(</span><span class="n">net_load</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">FIGURE_SIZES</span><span class="p">[</span><span class="s1">&#39;daily_profile&#39;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the daily profile for net load showing average, minimum, and maximum values.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        net_load (pandas.Series): Time series of net load values</span>
+<span class="sd">        ax (matplotlib.axes.Axes, optional): Matplotlib axes object for plotting</span>
+<span class="sd">        figsize (tuple, optional): Figure size (width, height)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.axes.Axes: The axes object with the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate daily statistics for net load</span>
+    <span class="n">daily_avg</span> <span class="o">=</span> <span class="n">net_load</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">net_load</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">time</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">daily_min</span> <span class="o">=</span> <span class="n">net_load</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">net_load</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">time</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">daily_max</span> <span class="o">=</span> <span class="n">net_load</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">net_load</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">time</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    
+    <span class="c1"># Helper function to convert to hourly data</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_to_hourly</span><span class="p">(</span><span class="n">daily_data</span><span class="p">):</span>
+        <span class="n">hourly_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">daily_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">hour</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">hour</span>
+            <span class="k">if</span> <span class="n">hour</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hourly_data</span><span class="p">:</span>
+                <span class="n">hourly_data</span><span class="p">[</span><span class="n">hour</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">hourly_data</span><span class="p">[</span><span class="n">hour</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+        <span class="n">hourly_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">hour</span> <span class="ow">in</span> <span class="n">hourly_data</span><span class="p">:</span>
+                <span class="n">hourly_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">hourly_data</span><span class="p">[</span><span class="n">hour</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hourly_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hourly_values</span>
+    
+    <span class="c1"># Convert to hourly data</span>
+    <span class="n">hourly_avg</span> <span class="o">=</span> <span class="n">convert_to_hourly</span><span class="p">(</span><span class="n">daily_avg</span><span class="p">)</span>
+    <span class="n">hourly_min</span> <span class="o">=</span> <span class="n">convert_to_hourly</span><span class="p">(</span><span class="n">daily_min</span><span class="p">)</span>
+    <span class="n">hourly_max</span> <span class="o">=</span> <span class="n">convert_to_hourly</span><span class="p">(</span><span class="n">daily_max</span><span class="p">)</span>
+    
+    <span class="c1"># Create time labels for x-axis (24-hour format)</span>
+    <span class="n">time_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hour</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:00&quot;</span> <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">)]</span>
+    
+    <span class="c1"># Plot daily profile with all statistics</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">),</span> <span class="n">hourly_avg</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Avg Net Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">),</span> <span class="n">hourly_min</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Min Net Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">),</span> <span class="n">hourly_max</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Max Net Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;^&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Customize the plot</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Net Load Daily Profile&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Hour of Day&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;axis_label&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Load (MW)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;axis_label&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;legend&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    
+    <span class="c1"># Set x-axis ticks and labels</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="n">time_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+    
+    <span class="c1"># Adjust layout</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<span class="c1"># Task 4.3: Function to plot monthly load profile</span>
+<div class="viewcode-block" id="plot_monthly_profile">
+<a class="viewcode-back" href="../../api/power_system_visualizer.html#tsoc_data_analysis.power_system_visualizer.plot_monthly_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_monthly_profile</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">FIGURE_SIZES</span><span class="p">[</span><span class="s1">&#39;monthly_profile&#39;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate and plot the average load profile across months.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        total_load (pandas.Series): Time series of total load values</span>
+<span class="sd">        net_load (pandas.Series, optional): Time series of net load values</span>
+<span class="sd">        ax (matplotlib.axes.Axes, optional): Matplotlib axes object for plotting</span>
+<span class="sd">        figsize (tuple, optional): Figure size (width, height)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.axes.Axes: The axes object with the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate monthly average for total load</span>
+    <span class="n">monthly_total</span> <span class="o">=</span> <span class="n">total_load</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">total_load</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    
+    <span class="c1"># Month names for x-axis labels</span>
+    <span class="n">month_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Jan&#39;</span><span class="p">,</span> <span class="s1">&#39;Feb&#39;</span><span class="p">,</span> <span class="s1">&#39;Mar&#39;</span><span class="p">,</span> <span class="s1">&#39;Apr&#39;</span><span class="p">,</span> <span class="s1">&#39;May&#39;</span><span class="p">,</span> <span class="s1">&#39;Jun&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;Jul&#39;</span><span class="p">,</span> <span class="s1">&#39;Aug&#39;</span><span class="p">,</span> <span class="s1">&#39;Sep&#39;</span><span class="p">,</span> <span class="s1">&#39;Oct&#39;</span><span class="p">,</span> <span class="s1">&#39;Nov&#39;</span><span class="p">,</span> <span class="s1">&#39;Dec&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># Check if we have data for all months or just some months</span>
+    <span class="n">available_months</span> <span class="o">=</span> <span class="n">monthly_total</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    
+    <span class="c1"># Plot monthly profile for total load</span>
+    <span class="c1"># Use only available months for x-axis</span>
+    <span class="n">x_values</span> <span class="o">=</span> <span class="n">available_months</span>
+    <span class="n">y_values</span> <span class="o">=</span> <span class="n">monthly_total</span><span class="o">.</span><span class="n">values</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">y_values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Total Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate and plot monthly average for net load if provided</span>
+    <span class="k">if</span> <span class="n">net_load</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">monthly_net</span> <span class="o">=</span> <span class="n">net_load</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">net_load</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        
+        <span class="c1"># Use same x-axis as total load</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">monthly_net</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Net Load&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+    
+    <span class="c1"># Customize the plot</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Average Monthly Load Profile&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;axis_label&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Average Load (MW)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;axis_label&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;legend&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    
+    <span class="c1"># Set x-axis ticks and labels based on available months</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x_values</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="n">month_names</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x_values</span><span class="p">])</span>
+    
+    <span class="c1"># Adjust layout</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">ax</span> </div>
+
+
+<span class="c1"># Task 4.4: Summary function to demonstrate plotting flexibility</span>
+<div class="viewcode-block" id="create_comprehensive_plots">
+<a class="viewcode-back" href="../../api/power_system_visualizer.html#tsoc_data_analysis.power_system_visualizer.create_comprehensive_plots">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_comprehensive_plots</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">FIGURE_SIZES</span><span class="p">[</span><span class="s1">&#39;comprehensive&#39;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a comprehensive set of plots demonstrating the flexibility of the plotting functions.</span>
+<span class="sd">    This function shows how all plotting functions accept Matplotlib axes objects and include</span>
+<span class="sd">    clear titles, labels, and legends.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        total_load (pandas.Series): Time series of total load values</span>
+<span class="sd">        net_load (pandas.Series): Time series of net load values</span>
+<span class="sd">        figsize (tuple, optional): Figure size (width, height)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.figure.Figure: The figure containing all plots</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create a figure with subplots</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    
+    <span class="c1"># Plot 1: Time series (top left)</span>
+    <span class="n">plot_load_timeseries</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    
+    <span class="c1"># Plot 2: Total Load Daily Profile (top right)</span>
+    <span class="n">plot_total_load_daily_profile</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    
+    <span class="c1"># Plot 3: Monthly profile (bottom left)</span>
+    <span class="n">plot_monthly_profile</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    
+    <span class="c1"># Plot 4: Statistics summary (bottom right)</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Max Load&#39;</span><span class="p">:</span> <span class="n">total_load</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+        <span class="s1">&#39;Min Load&#39;</span><span class="p">:</span> <span class="n">total_load</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+        <span class="s1">&#39;Mean Load&#39;</span><span class="p">:</span> <span class="n">total_load</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="s1">&#39;Max Net Load&#39;</span><span class="p">:</span> <span class="n">net_load</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+        <span class="s1">&#39;Min Net Load&#39;</span><span class="p">:</span> <span class="n">net_load</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+        <span class="s1">&#39;Mean Net Load&#39;</span><span class="p">:</span> <span class="n">net_load</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># Create a bar plot of statistics</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">)),</span> <span class="nb">list</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Load Statistics Summary&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Statistics&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Load (MW)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">)))</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    
+    <span class="c1"># Adjust layout</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">fig</span> </div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Sustainable Power Systems Lab (SPSL).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

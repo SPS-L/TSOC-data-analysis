@@ -1,0 +1,567 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tsoc_data_analysis.system_configuration &mdash; TSOC Data Analysis 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TSOC Data Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TSOC Data Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tsoc_data_analysis.system_configuration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tsoc_data_analysis.system_configuration</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Central Configuration Module for Power System Analysis</span>
+
+<span class="sd">Author: Sustainable Power Systems Lab (SPSL)</span>
+<span class="sd">Web: https://sps-lab.org</span>
+<span class="sd">Contact: info@sps-lab.org</span>
+
+<span class="sd">This module serves as the central configuration hub for the entire power system </span>
+<span class="sd">analysis toolkit. It provides a single source of truth for all configurable </span>
+<span class="sd">parameters, file mappings, validation settings, and shared utilities.</span>
+
+<span class="sd">CONFIGURATION AREAS:</span>
+<span class="sd">==================</span>
+
+<span class="sd">1. Data File Mappings (FILES, COLUMN_PREFIXES)</span>
+<span class="sd">2. Data Validation Settings (DATA_VALIDATION, ENHANCED_DATA_VALIDATION)  </span>
+<span class="sd">3. Representative Operations Parameters (REPRESENTATIVE_OPS)</span>
+<span class="sd">4. Plotting and Visualization Settings (PLOT_STYLE, FIGURE_SIZES)</span>
+<span class="sd">5. Shared Utility Functions (clean_column_name, convert_numpy_types)</span>
+
+<span class="sd">USAGE EXAMPLES:</span>
+<span class="sd">==============</span>
+
+<span class="sd"># Basic configuration access</span>
+<span class="sd">from system_configuration import FILES, REPRESENTATIVE_OPS</span>
+
+<span class="sd"># Use default clustering parameters</span>
+<span class="sd">k_max = REPRESENTATIVE_OPS[&#39;defaults&#39;][&#39;k_max&#39;]</span>
+<span class="sd">random_state = REPRESENTATIVE_OPS[&#39;defaults&#39;][&#39;random_state&#39;]</span>
+
+<span class="sd"># Access validation settings</span>
+<span class="sd">power_limits = DATA_VALIDATION[&#39;limit_checks&#39;][&#39;power_limits&#39;]</span>
+
+<span class="sd"># Use shared utilities</span>
+<span class="sd">from system_configuration import clean_column_name, convert_numpy_types</span>
+<span class="sd">clean_name = clean_column_name(&#39;ss_mw_STATION1_132REACTOR_REACTIVE_POWER&#39;)</span>
+<span class="sd"># Result: &#39;ss_mw_STATION1&#39;</span>
+
+<span class="sd"># Convert numpy types for JSON serialization</span>
+<span class="sd">import numpy as np</span>
+<span class="sd">data = {&#39;value&#39;: np.int64(42), &#39;array&#39;: np.array([1, 2, 3])}</span>
+<span class="sd">json_safe_data = convert_numpy_types(data)</span>
+<span class="sd"># Result: {&#39;value&#39;: 42, &#39;array&#39;: [1, 2, 3]}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Data directory</span>
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="s1">&#39;raw_data/&#39;</span>
+
+<span class="c1"># File mapping for different data types</span>
+<span class="c1"># Note: These are the actual Excel file names used in the system</span>
+<span class="n">FILES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;substation_mw&#39;</span><span class="p">:</span> <span class="s1">&#39;substation_active_power.xlsx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;substation_mvar&#39;</span><span class="p">:</span> <span class="s1">&#39;substation_reactive_power.xlsx&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;wind_power&#39;</span><span class="p">:</span> <span class="s1">&#39;wind_farm_active_power.xlsx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;shunt_elements&#39;</span><span class="p">:</span> <span class="s1">&#39;shunt_element_reactive_power.xlsx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gen_voltage&#39;</span><span class="p">:</span> <span class="s1">&#39;generator_voltage_setpoints.xlsx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gen_mvar&#39;</span><span class="p">:</span> <span class="s1">&#39;generator_reactive_power.xlsx&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># Column prefixes for merging (to avoid name collisions)</span>
+<span class="n">COLUMN_PREFIXES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;substation_mw&#39;</span><span class="p">:</span> <span class="s1">&#39;ss_mw_&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;substation_mvar&#39;</span><span class="p">:</span> <span class="s1">&#39;ss_mvar_&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;wind_power&#39;</span><span class="p">:</span> <span class="s1">&#39;wind_mw_&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;shunt_elements&#39;</span><span class="p">:</span> <span class="s1">&#39;shunt_&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gen_voltage&#39;</span><span class="p">:</span> <span class="s1">&#39;gen_v_&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gen_mvar&#39;</span><span class="p">:</span> <span class="s1">&#39;gen_mvar_&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># Data type descriptions for documentation</span>
+<span class="n">DATA_TYPE_DESCRIPTIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;substation_mw&#39;</span><span class="p">:</span> <span class="s1">&#39;Substation active power data (MW)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;substation_mvar&#39;</span><span class="p">:</span> <span class="s1">&#39;Substation reactive power data (MVAR)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;wind_power&#39;</span><span class="p">:</span> <span class="s1">&#39;Wind farm active power data (MW)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;shunt_elements&#39;</span><span class="p">:</span> <span class="s1">&#39;Shunt element reactive power data (MVAR)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gen_voltage&#39;</span><span class="p">:</span> <span class="s1">&#39;Generator voltage setpoints data (KV)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gen_mvar&#39;</span><span class="p">:</span> <span class="s1">&#39;Generator reactive power data (MVAR)&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># Default settings</span>
+<span class="n">DEFAULT_OUTPUT_DIR</span> <span class="o">=</span> <span class="s1">&#39;results&#39;</span>
+
+<span class="n">DEFAULT_VERBOSE</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># Excel file structure constants</span>
+<span class="n">TIMESTAMP_COLUMN</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Column C (0-indexed)</span>
+<span class="n">DATA_START_ROW</span> <span class="o">=</span> <span class="mi">5</span>    <span class="c1"># Row 6 (0-indexed)</span>
+<span class="n">SUBSTATION_NAME_ROW</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Row 2 (0-indexed)</span>
+<span class="n">GENERATOR_NAME_ROW</span> <span class="o">=</span> <span class="mi">2</span>   <span class="c1"># Row 3 (0-indexed)</span>
+<span class="n">DATA_COLUMN_START</span> <span class="o">=</span> <span class="mi">6</span>    <span class="c1"># Column G (0-indexed)</span>
+<span class="n">DATA_COLUMN_STEP</span> <span class="o">=</span> <span class="mi">2</span>     <span class="c1"># Skip every other column </span>
+
+
+
+<span class="c1"># Plotting settings</span>
+<span class="n">PLOT_STYLE</span> <span class="o">=</span> <span class="s1">&#39;seaborn-v0_8&#39;</span>
+<span class="n">PLOT_PALETTE</span> <span class="o">=</span> <span class="s1">&#39;husl&#39;</span>
+
+<span class="c1"># Figure sizes for different plot types</span>
+<span class="n">FIGURE_SIZES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;timeseries&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="s1">&#39;daily_profile&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="s1">&#39;monthly_profile&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="s1">&#39;comprehensive&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+
+<span class="p">}</span>
+
+<span class="c1"># Font sizes for plots</span>
+<span class="n">FONT_SIZES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s1">&#39;axis_label&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s1">&#39;legend&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;tick&#39;</span><span class="p">:</span> <span class="mi">10</span>
+<span class="p">}</span>
+
+<span class="c1"># Date validation settings</span>
+<span class="n">MIN_YEAR</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="n">MAX_YEAR</span> <span class="o">=</span> <span class="mi">2100</span>
+<span class="n">MIN_MONTH</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">MAX_MONTH</span> <span class="o">=</span> <span class="mi">12</span>
+
+<span class="c1"># Data validation settings</span>
+<span class="n">DATA_VALIDATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Type checks for different data categories</span>
+    <span class="s1">&#39;type_checks&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;real_numbers&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;ss_mw_&#39;</span><span class="p">,</span>      <span class="c1"># Substation active power (MW)</span>
+            <span class="s1">&#39;ss_mvar_&#39;</span><span class="p">,</span>    <span class="c1"># Substation reactive power (MVAR)</span>
+            <span class="s1">&#39;wind_mw_&#39;</span><span class="p">,</span>       <span class="c1"># Wind generation (MW)</span>
+            <span class="s1">&#39;shunt_mvar_&#39;</span><span class="p">,</span> <span class="c1"># Shunt element reactive power (MVAR)</span>
+            <span class="s1">&#39;gen_mvar_&#39;</span><span class="p">,</span>      <span class="c1"># Generator reactive power (MVAR)</span>
+            <span class="s1">&#39;gen_v_&#39;</span>       <span class="c1"># Generator voltage setpoints (KV)</span>
+        <span class="p">],</span>
+        <span class="s1">&#39;integers&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;shunt_tap_&#39;</span>   <span class="c1"># Shunt element tap positions</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Limit checks for different data categories</span>
+    <span class="s1">&#39;limit_checks&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;non_negative&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;wind_mw_&#39;</span>        <span class="c1"># Wind power cannot be negative</span>
+        <span class="p">],</span>
+        <span class="s1">&#39;voltage_limits&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>    <span class="c1"># Minimum voltage in KV</span>
+            <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="mf">20.0</span>     <span class="c1"># Maximum voltage in KV</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;power_limits&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;wind&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;min_mw&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>      <span class="c1"># Wind power cannot be negative</span>
+                <span class="s1">&#39;max_mw&#39;</span><span class="p">:</span> <span class="mi">100</span>   <span class="c1"># Maximum reasonable wind power in MW</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;substation&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;min_mw&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span>  <span class="c1"># Substation can consume or produce power</span>
+                <span class="s1">&#39;max_mw&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>   <span class="c1"># Maximum reasonable substation power in MW</span>
+                <span class="s1">&#39;min_mvar&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="c1"># Substation can consume or produce reactive power</span>
+                <span class="s1">&#39;max_mvar&#39;</span><span class="p">:</span> <span class="mi">100</span>   <span class="c1"># Maximum reasonable substation reactive power in MVAR</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;shunt&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;min_mvar&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="c1"># Shunt can consume or produce reactive power</span>
+                <span class="s1">&#39;max_mvar&#39;</span><span class="p">:</span> <span class="mi">100</span>   <span class="c1"># Maximum reasonable shunt reactive power in MVAR</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;generator&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;min_q&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span>    <span class="c1"># Generator can consume or produce reactive power</span>
+                <span class="s1">&#39;max_q&#39;</span><span class="p">:</span> <span class="mi">100</span>      <span class="c1"># Maximum reasonable generator reactive power in MVAR</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;tap_limits&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>    <span class="c1"># Minimum tap position</span>
+            <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="mi">20</span>      <span class="c1"># Maximum tap position</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Gap filling settings</span>
+    <span class="s1">&#39;gap_filling&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;max_gap_steps&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>     <span class="c1"># Maximum gap size for interpolation (in time steps)</span>
+        <span class="s1">&#39;interpolation_method&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>  <span class="c1"># Interpolation method to use</span>
+        <span class="s1">&#39;max_nan_percentage&#39;</span><span class="p">:</span> <span class="mf">50.0</span><span class="p">,</span>  <span class="c1"># Maximum percentage of NaN values allowed in a row before removal</span>
+        <span class="s1">&#39;enable_advanced_gap_filling&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable advanced gap filling methods</span>
+        <span class="s1">&#39;advanced_max_gap_steps&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>  <span class="c1"># Maximum gap size for advanced methods (larger than basic)</span>
+        <span class="s1">&#39;remove_large_gaps_threshold&#39;</span><span class="p">:</span> <span class="mi">24</span>  <span class="c1"># Remove gaps larger than this completely</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Data quality thresholds</span>
+    <span class="s1">&#39;quality_thresholds&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;max_missing_percentage&#39;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>  <span class="c1"># Maximum percentage of missing data allowed</span>
+        <span class="s1">&#39;min_valid_records&#39;</span><span class="p">:</span> <span class="mi">100</span>         <span class="c1"># Minimum number of valid records required</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Validation error messages</span>
+<span class="n">VALIDATION_MESSAGES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;type_error&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;real_number&#39;</span><span class="p">:</span> <span class="s1">&#39;Value must be a real number&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;integer&#39;</span><span class="p">:</span> <span class="s1">&#39;Value must be an integer&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;non_negative&#39;</span><span class="p">:</span> <span class="s1">&#39;Value must be non-negative&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;voltage_range&#39;</span><span class="p">:</span> <span class="s1">&#39;Voltage must be between </span><span class="si">{min}</span><span class="s1"> and </span><span class="si">{max}</span><span class="s1"> KV&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;power_range&#39;</span><span class="p">:</span> <span class="s1">&#39;Power must be between 0 and </span><span class="si">{max}</span><span class="s1"> </span><span class="si">{unit}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;tap_range&#39;</span><span class="p">:</span> <span class="s1">&#39;Tap position must be between </span><span class="si">{min}</span><span class="s1"> and </span><span class="si">{max}</span><span class="s1">&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;gap_filling&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;interpolated&#39;</span><span class="p">:</span> <span class="s1">&#39;Applied linear interpolation to fill </span><span class="si">{count}</span><span class="s1"> gaps of size &lt;= </span><span class="si">{max_steps}</span><span class="s1"> steps&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;gap_too_large&#39;</span><span class="p">:</span> <span class="s1">&#39;Gap of </span><span class="si">{size}</span><span class="s1"> steps exceeds maximum allowed size of </span><span class="si">{max_steps}</span><span class="s1"> steps&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;no_interpolation&#39;</span><span class="p">:</span> <span class="s1">&#39;No interpolation applied - gap size </span><span class="si">{size}</span><span class="s1"> exceeds limit of </span><span class="si">{max_steps}</span><span class="s1">&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Enhanced Data Validation Settings</span>
+<span class="n">ENHANCED_DATA_VALIDATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># General settings</span>
+    <span class="s1">&#39;enable_ml_validation&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable machine learning-based validation methods</span>
+    <span class="s1">&#39;min_data_points&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>         <span class="c1"># Minimum data points required for analysis</span>
+    
+    <span class="c1"># Statistical outlier detection parameters</span>
+    <span class="s1">&#39;outlier_detection&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;default_methods&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;iqr&#39;</span><span class="p">,</span> <span class="s1">&#39;isolation_forest&#39;</span><span class="p">],</span>  <span class="c1"># Default outlier detection methods</span>
+        <span class="s1">&#39;contamination&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>                            <span class="c1"># Expected proportion of outliers for ML methods</span>
+        <span class="s1">&#39;zscore_threshold&#39;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>                         <span class="c1"># Z-score threshold for outlier detection</span>
+        <span class="s1">&#39;modified_zscore_threshold&#39;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">,</span>                <span class="c1"># Modified Z-score threshold</span>
+        <span class="s1">&#39;iqr_multiplier&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>                          <span class="c1"># IQR multiplier for outlier detection</span>
+        <span class="s1">&#39;mad_constant&#39;</span><span class="p">:</span> <span class="mf">0.6745</span>                          <span class="c1"># Constant for modified Z-score (MAD-based)</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Rate of change violation detection</span>
+    <span class="s1">&#39;rate_validation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;enable_rate_check&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>                       <span class="c1"># Enable rate of change validation</span>
+        <span class="s1">&#39;adaptive_threshold_multiplier&#39;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>           <span class="c1"># Multiplier for adaptive threshold (n * std)</span>
+        <span class="s1">&#39;min_points_for_rate_check&#39;</span><span class="p">:</span> <span class="mi">3</span>                  <span class="c1"># Minimum points needed for rate calculation</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Correlation anomaly detection</span>
+    <span class="s1">&#39;correlation_validation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;enable_correlation_check&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>               <span class="c1"># Enable correlation anomaly detection</span>
+        <span class="s1">&#39;correlation_threshold&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>                  <span class="c1"># Minimum correlation threshold for related variables</span>
+        <span class="s1">&#39;window_size_ratio&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>                      <span class="c1"># Window size as ratio of total data (max 50 points)</span>
+        <span class="s1">&#39;min_window_size&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>                         <span class="c1"># Minimum window size for correlation analysis</span>
+        <span class="s1">&#39;max_window_size&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>                         <span class="c1"># Maximum window size for correlation analysis</span>
+        <span class="s1">&#39;correlation_break_threshold&#39;</span><span class="p">:</span> <span class="mf">0.5</span>             <span class="c1"># Threshold for detecting correlation breaks</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Power balance validation</span>
+    <span class="s1">&#39;power_balance&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;enable_power_balance_check&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>            <span class="c1"># Enable power balance validation</span>
+        <span class="s1">&#39;tolerance&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>                             <span class="c1"># Tolerance for power balance violations (5%)</span>
+        <span class="s1">&#39;epsilon&#39;</span><span class="p">:</span> <span class="mf">1e-6</span>                                <span class="c1"># Small value to avoid division by zero</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Clustering-based anomaly detection</span>
+    <span class="s1">&#39;clustering_validation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;enable_clustering_check&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>               <span class="c1"># Enable clustering-based anomaly detection</span>
+        <span class="s1">&#39;algorithm&#39;</span><span class="p">:</span> <span class="s1">&#39;DBSCAN&#39;</span><span class="p">,</span>                         <span class="c1"># Clustering algorithm to use</span>
+        <span class="s1">&#39;eps&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>                                    <span class="c1"># Maximum distance between samples for DBSCAN</span>
+        <span class="s1">&#39;min_samples&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>                              <span class="c1"># Minimum samples for core point in DBSCAN</span>
+        <span class="s1">&#39;min_points_multiplier&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>                    <span class="c1"># Minimum data points = min_samples * multiplier</span>
+        <span class="s1">&#39;power_column_prefixes&#39;</span><span class="p">:</span> <span class="p">[</span>                     <span class="c1"># Column prefixes for power data clustering</span>
+            <span class="s1">&#39;gen_mvar_&#39;</span><span class="p">,</span> <span class="s1">&#39;ss_mw_&#39;</span><span class="p">,</span> <span class="s1">&#39;ss_mvar_&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_mw_&#39;</span><span class="p">,</span> <span class="s1">&#39;shunt_mvar_&#39;</span><span class="p">,</span> <span class="s1">&#39;shunt_tap_&#39;</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Variable grouping for correlation analysis</span>
+    <span class="s1">&#39;variable_groups&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;generators&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gen_mvar_&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;substations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ss_mw_&#39;</span><span class="p">,</span> <span class="s1">&#39;ss_mvar_&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;wind&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;wind_mw_&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;shunts&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;shunt_mvar_&#39;</span><span class="p">,</span> <span class="s1">&#39;shunt_tap_&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;voltages&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gen_v_&#39;</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Comprehensive anomaly detection settings</span>
+    <span class="s1">&#39;comprehensive_detection&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;enable_all_methods&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>                    <span class="c1"># Enable all detection methods by default</span>
+        <span class="s1">&#39;fill_gaps_after_detection&#39;</span><span class="p">:</span> <span class="kc">True</span>             <span class="c1"># Fill gaps after anomaly removal</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Advanced gap filling settings</span>
+    <span class="s1">&#39;advanced_gap_filling&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;enable_advanced_gap_filling&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>          <span class="c1"># Enable advanced gap filling methods</span>
+        <span class="s1">&#39;default_method&#39;</span><span class="p">:</span> <span class="s1">&#39;adaptive&#39;</span><span class="p">,</span>                 <span class="c1"># Default method: &#39;adaptive&#39;, &#39;spline&#39;, &#39;polynomial&#39;, &#39;knn&#39;, &#39;ml&#39;</span>
+        <span class="s1">&#39;context_size_ratio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>                   <span class="c1"># Context size as ratio of total data (max 48 points)</span>
+        <span class="s1">&#39;min_context_points&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>                     <span class="c1"># Minimum context points needed for advanced methods</span>
+        <span class="s1">&#39;spline_smoothing&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>                      <span class="c1"># Smoothing parameter for spline (0 = interpolating spline)</span>
+        <span class="s1">&#39;polynomial_max_degree&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>                   <span class="c1"># Maximum polynomial degree</span>
+        <span class="s1">&#39;knn_neighbors&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>                           <span class="c1"># Number of neighbors for KNN imputation</span>
+        <span class="s1">&#39;adaptive_thresholds&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;variance_trend_ratio&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>              <span class="c1"># Threshold for trend vs variance comparison</span>
+            <span class="s1">&#39;high_variance_multiplier&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>          <span class="c1"># Multiplier for high variance detection</span>
+            <span class="s1">&#39;small_gap_size&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>                      <span class="c1"># Size threshold for small gaps (use linear)</span>
+            <span class="s1">&#39;medium_gap_size&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>                     <span class="c1"># Size threshold for medium gaps (use spline)</span>
+            <span class="s1">&#39;large_gap_size&#39;</span><span class="p">:</span> <span class="mi">12</span>                      <span class="c1"># Size threshold for large gaps (use KNN)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Enhanced validation error messages</span>
+<span class="n">ENHANCED_VALIDATION_MESSAGES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;outlier_detection&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;iqr&#39;</span><span class="p">:</span> <span class="s1">&#39;IQR outlier detected: value outside </span><span class="si">{lower_bound:.2f}</span><span class="s1"> to </span><span class="si">{upper_bound:.2f}</span><span class="s1"> range&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;zscore&#39;</span><span class="p">:</span> <span class="s1">&#39;Z-score outlier detected: |z-score| &gt; </span><span class="si">{threshold}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;modified_zscore&#39;</span><span class="p">:</span> <span class="s1">&#39;Modified Z-score outlier detected: |modified z-score| &gt; </span><span class="si">{threshold}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;isolation_forest&#39;</span><span class="p">:</span> <span class="s1">&#39;Isolation Forest anomaly detected&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;lof&#39;</span><span class="p">:</span> <span class="s1">&#39;Local Outlier Factor anomaly detected&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;insufficient_data&#39;</span><span class="p">:</span> <span class="s1">&#39;Insufficient data points (</span><span class="si">{count}</span><span class="s1">) for </span><span class="si">{method}</span><span class="s1"> analysis (minimum: </span><span class="si">{min_required}</span><span class="s1">)&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;rate_validation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;violation&#39;</span><span class="p">:</span> <span class="s1">&#39;Rate of change violation: </span><span class="si">{rate:.2f}</span><span class="s1"> exceeds threshold </span><span class="si">{threshold:.2f}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;insufficient_data&#39;</span><span class="p">:</span> <span class="s1">&#39;Insufficient data points for rate of change analysis (minimum: </span><span class="si">{min_required}</span><span class="s1">)&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;correlation_validation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;anomaly&#39;</span><span class="p">:</span> <span class="s1">&#39;Correlation anomaly detected: </span><span class="si">{var1}</span><span class="s1"> vs </span><span class="si">{var2}</span><span class="s1"> correlation changed from </span><span class="si">{expected:.2f}</span><span class="s1"> to </span><span class="si">{observed:.2f}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;insufficient_data&#39;</span><span class="p">:</span> <span class="s1">&#39;Insufficient data for correlation analysis in window&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;power_balance&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;violation&#39;</span><span class="p">:</span> <span class="s1">&#39;Power balance violation: </span><span class="si">{imbalance:.2f}% e</span><span class="s1">xceeds tolerance </span><span class="si">{tolerance:.1f}</span><span class="s1">%&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;insufficient_data&#39;</span><span class="p">:</span> <span class="s1">&#39;Insufficient generation or load data for power balance validation&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;clustering&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;anomaly&#39;</span><span class="p">:</span> <span class="s1">&#39;Clustering anomaly detected using </span><span class="si">{algorithm}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;insufficient_data&#39;</span><span class="p">:</span> <span class="s1">&#39;Insufficient data points (</span><span class="si">{count}</span><span class="s1">) for clustering analysis (minimum: </span><span class="si">{min_required}</span><span class="s1">)&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;insufficient_columns&#39;</span><span class="p">:</span> <span class="s1">&#39;Insufficient power columns (</span><span class="si">{count}</span><span class="s1">) for clustering analysis (minimum: 2)&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="c1"># Representative Operations Configuration</span>
+<span class="n">REPRESENTATIVE_OPS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Default parameters for representative operations extraction</span>
+    <span class="s1">&#39;defaults&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;k_max&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>                    <span class="c1"># Maximum number of clusters to test</span>
+        <span class="s1">&#39;random_state&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>             <span class="c1"># Random seed for reproducibility</span>
+        <span class="s1">&#39;mapgl_belt_multiplier&#39;</span><span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>   <span class="c1"># MAPGL belt upper limit (MAPGL * multiplier)</span>
+        <span class="s1">&#39;fallback_clusters&#39;</span><span class="p">:</span> <span class="mi">2</span>          <span class="c1"># Fallback number of clusters if none meet quality criteria</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># K-means clustering configuration</span>
+    <span class="s1">&#39;kmeans&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;n_init&#39;</span><span class="p">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>              <span class="c1"># Number of initialization runs for K-means</span>
+        <span class="s1">&#39;algorithm&#39;</span><span class="p">:</span> <span class="s1">&#39;auto&#39;</span>            <span class="c1"># K-means algorithm variant</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Clustering quality thresholds</span>
+    <span class="s1">&#39;quality_thresholds&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;min_silhouette&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>        <span class="c1"># Minimum silhouette score for acceptable clustering</span>
+        <span class="s1">&#39;silhouette_excellent&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>   <span class="c1"># Silhouette score threshold for excellent clustering</span>
+        <span class="s1">&#39;silhouette_good&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>        <span class="c1"># Silhouette score threshold for good clustering</span>
+        <span class="s1">&#39;silhouette_acceptable&#39;</span><span class="p">:</span> <span class="mf">0.25</span>  <span class="c1"># Silhouette score threshold for acceptable clustering</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Multi-objective ranking weights for cluster selection</span>
+    <span class="s1">&#39;ranking_weights&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;silhouette_weight&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>     <span class="c1"># Weight for silhouette score in ranking</span>
+        <span class="s1">&#39;calinski_harabasz_weight&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Weight for Calinski-Harabasz index in ranking</span>
+        <span class="s1">&#39;davies_bouldin_weight&#39;</span><span class="p">:</span> <span class="mi">10</span>    <span class="c1"># Weight for Davies-Bouldin index in ranking (negative)</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Feature selection configuration</span>
+    <span class="s1">&#39;feature_columns&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;clustering_prefixes&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ss_mw_&#39;</span><span class="p">,</span> <span class="s1">&#39;ss_mvar_&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_mw_&#39;</span><span class="p">],</span>  <span class="c1"># Column prefixes for clustering features</span>
+        <span class="s1">&#39;power_injection_types&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;substation_active&#39;</span><span class="p">,</span> <span class="s1">&#39;substation_reactive&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_generation&#39;</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Output file naming</span>
+    <span class="s1">&#39;output_files&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;representative_points&#39;</span><span class="p">:</span> <span class="s1">&#39;representative_operating_points.csv&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;clustering_summary&#39;</span><span class="p">:</span> <span class="s1">&#39;clustering_summary.txt&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;clustering_info&#39;</span><span class="p">:</span> <span class="s1">&#39;clustering_info.json&#39;</span>
+    <span class="p">},</span>
+    
+    <span class="c1"># Clustering validation and diagnostics</span>
+    <span class="s1">&#39;validation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;min_data_points&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>         <span class="c1"># Minimum data points required for clustering</span>
+        <span class="s1">&#39;max_features_to_display&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="c1"># Maximum number of features to display in summaries</span>
+        <span class="s1">&#39;display_clusters_limit&#39;</span><span class="p">:</span> <span class="mi">20</span>   <span class="c1"># Maximum number of clusters to display detailed info</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Utility functions</span>
+
+<div class="viewcode-block" id="convert_numpy_types">
+<a class="viewcode-back" href="../../api/system_configuration.html#tsoc_data_analysis.system_configuration.convert_numpy_types">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_numpy_types</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert numpy types to native Python types for JSON serialization.</span>
+<span class="sd">    </span>
+<span class="sd">    This function recursively converts numpy data types to native Python types</span>
+<span class="sd">    to ensure JSON serialization compatibility.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj : any</span>
+<span class="sd">        Object to convert (can be numpy types, dict, list, or native Python types)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    any</span>
+<span class="sd">        Object with numpy types converted to native Python types</span>
+<span class="sd">        </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; data = {&#39;value&#39;: np.int64(42), &#39;array&#39;: np.array([1, 2, 3])}</span>
+<span class="sd">    &gt;&gt;&gt; converted = convert_numpy_types(data)</span>
+<span class="sd">    &gt;&gt;&gt; print(converted)</span>
+<span class="sd">    {&#39;value&#39;: 42, &#39;array&#39;: [1, 2, 3]}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">convert_numpy_types</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">convert_numpy_types</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+
+
+<div class="viewcode-block" id="clean_column_name">
+<a class="viewcode-back" href="../../api/system_configuration.html#tsoc_data_analysis.system_configuration.clean_column_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_column_name</span><span class="p">(</span><span class="n">col_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove specific suffixes from column names for cleaner CSV output.</span>
+<span class="sd">    </span>
+<span class="sd">    This function standardizes column names by removing verbose suffixes that</span>
+<span class="sd">    are commonly found in power system data files. The cleaned names are more</span>
+<span class="sd">    readable and suitable for analysis outputs.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        col_name (str): Original column name to clean</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Cleaned column name with suffix removed if found</span>
+<span class="sd">        </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; clean_column_name(&#39;ss_mw_STATION1_132REACTOR_REACTIVE_POWER&#39;)</span>
+<span class="sd">        &#39;ss_mw_STATION1&#39;</span>
+<span class="sd">        &gt;&gt;&gt; clean_column_name(&#39;gen_mvar_GEN1_GEN_GENERATED_MVAR&#39;)</span>
+<span class="sd">        &#39;gen_mvar_GEN1&#39;</span>
+<span class="sd">        &gt;&gt;&gt; clean_column_name(&#39;simple_name&#39;)</span>
+<span class="sd">        &#39;simple_name&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Remove specific suffixes that make column names verbose</span>
+    <span class="n">suffixes_to_remove</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;_132REACTOR_REACTIVE_POWER&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_GEN_GENERATED_MVAR&#39;</span><span class="p">,</span> 
+        <span class="s1">&#39;_132REACTOR_TAP_POSITION&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_TOTAL_GEN_MW&#39;</span>
+    <span class="p">]</span>
+    
+    <span class="n">cleaned_name</span> <span class="o">=</span> <span class="n">col_name</span>
+    <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="n">suffixes_to_remove</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cleaned_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">):</span>
+            <span class="n">cleaned_name</span> <span class="o">=</span> <span class="n">cleaned_name</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">suffix</span><span class="p">)]</span>
+            <span class="k">break</span>
+    
+    <span class="k">return</span> <span class="n">cleaned_name</span> </div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Sustainable Power Systems Lab (SPSL).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

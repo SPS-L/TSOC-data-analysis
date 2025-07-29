@@ -21,9 +21,16 @@ clean:
 	rm -rf $(BUILDDIR)/*
 
 html:
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	$(SPHINXBUILD) -b html $(SPHINXOPTS) "$(SOURCEDIR)" "$(BUILDDIR)/html"
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
+pdf:
+	$(SPHINXBUILD) -b latex $(SPHINXOPTS) "$(SOURCEDIR)" "$(BUILDDIR)/latex"
+	@echo "Running LaTeX files through pdflatex..."
+	$(MAKE) -C $(BUILDDIR)/latex all-pdf
+	@echo
+	@echo "Build finished. The PDF file is in $(BUILDDIR)/latex/."
 
 .PHONY: help Makefile
 

@@ -1,0 +1,700 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Power System Visualizer Module &mdash; TSOC Data Analysis 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Power Data Validator Module" href="power_data_validator.html" />
+    <link rel="prev" title="Power System Analytics Module" href="power_system_analytics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            TSOC Data Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="system_configuration.html">System Configuration Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_system_analytics.html">Power System Analytics Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Power System Visualizer Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.power_system_visualizer.plot_load_timeseries"><code class="docutils literal notranslate"><span class="pre">plot_load_timeseries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.power_system_visualizer.plot_total_load_daily_profile"><code class="docutils literal notranslate"><span class="pre">plot_total_load_daily_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.power_system_visualizer.plot_net_load_daily_profile"><code class="docutils literal notranslate"><span class="pre">plot_net_load_daily_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.power_system_visualizer.plot_monthly_profile"><code class="docutils literal notranslate"><span class="pre">plot_monthly_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.power_system_visualizer.create_comprehensive_plots"><code class="docutils literal notranslate"><span class="pre">create_comprehensive_plots()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-overview">Module Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#core-functions">Core Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#time-series-visualization">Time Series Visualization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#daily-profile-functions">Daily Profile Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comprehensive-analysis">Comprehensive Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#visualization-features">Visualization Features</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plot-styling">Plot Styling</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-types">Plot Types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#time-series-plots">Time Series Plots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#daily-profile-plots">Daily Profile Plots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#monthly-profile-plots">Monthly Profile Plots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comprehensive-dashboards">Comprehensive Dashboards</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-integration">Configuration Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basic-time-series-plotting">Basic Time Series Plotting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#daily-profile-analysis">Daily Profile Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Comprehensive Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#custom-plotting">Custom Plotting</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#integration-with-analysis-pipeline">Integration with Analysis Pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-formats">Output Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-considerations">Performance Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integration-with-other-modules">Integration with Other Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html">Power Data Validator Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#module-overview">Module Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#validation-workflow">Validation Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#core-classes">Core Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#advanced-gap-filling">Advanced Gap Filling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#anomaly-detection">Anomaly Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#power-system-specific-validation">Power System Specific Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#usage-examples">Usage Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#integration-with-analysis-pipeline">Integration with Analysis Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#performance-considerations">Performance Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#error-handling">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operating_point_extractor.html">Operating Point Extractor Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="excel_data_processor.html">Excel Data Processor Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_analysis_cli.html">Power Analysis CLI Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#package-overview">Package Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#quick-import-guide">Quick Import Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">TSOC Data Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api_reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Power System Visualizer Module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/power_system_visualizer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tsoc_data_analysis.power_system_visualizer">
+<span id="power-system-visualizer-module"></span><h1>Power System Visualizer Module<a class="headerlink" href="#module-tsoc_data_analysis.power_system_visualizer" title="Link to this heading"></a></h1>
+<p>Plotting Module for Power System Data Visualization</p>
+<p>Author: Sustainable Power Systems Lab (SPSL)
+Web: <a class="reference external" href="https://sps-lab.org">https://sps-lab.org</a>
+Contact: <a class="reference external" href="mailto:info&#37;&#52;&#48;sps-lab&#46;org">info<span>&#64;</span>sps-lab<span>&#46;</span>org</a></p>
+<p>This module provides functions for creating various plots and visualizations of power system
+operational data, including load time series, daily profiles, monthly profiles, and comprehensive
+analysis plots.</p>
+<p>The module creates publication-quality plots with consistent styling and formatting,
+suitable for reports and presentations.</p>
+<p>Functions:
+- plot_load_timeseries(): Create time series plots of total and net load
+- plot_total_load_daily_profile(): Generate daily profile for total load
+- plot_net_load_daily_profile(): Generate daily profile for net load
+- plot_monthly_profile(): Create monthly load profile comparisons
+- create_comprehensive_plots(): Generate a comprehensive multi-panel analysis plot</p>
+<p>Plot Features:
+- Consistent styling with seaborn theme
+- Professional color schemes
+- Clear labels and legends
+- Grid lines for readability
+- Optimized figure sizes for different use cases</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_system_visualizer.plot_load_timeseries">
+<span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.power_system_visualizer.</span></span><span class="sig-name descname"><span class="pre">plot_load_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total_load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">6)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_system_visualizer.html#plot_load_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_system_visualizer.plot_load_timeseries" title="Link to this definition"></a></dt>
+<dd><p>Generate a time series plot of total load and net load.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>total_load</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.1)"><em>pandas.Series</em></a>) – Time series of total load values</p></li>
+<li><p><strong>net_load</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.1)"><em>pandas.Series</em></a>) – Time series of net load values</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Matplotlib axes object for plotting</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>, </em><em>optional</em>) – Figure size (width, height)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes object with the plot</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_system_visualizer.plot_total_load_daily_profile">
+<span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.power_system_visualizer.</span></span><span class="sig-name descname"><span class="pre">plot_total_load_daily_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total_load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">6)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_system_visualizer.html#plot_total_load_daily_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_system_visualizer.plot_total_load_daily_profile" title="Link to this definition"></a></dt>
+<dd><p>Plot the daily profile for total load showing average, minimum, and maximum values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>total_load</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.1)"><em>pandas.Series</em></a>) – Time series of total load values</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Matplotlib axes object for plotting</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>, </em><em>optional</em>) – Figure size (width, height)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes object with the plot</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_system_visualizer.plot_net_load_daily_profile">
+<span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.power_system_visualizer.</span></span><span class="sig-name descname"><span class="pre">plot_net_load_daily_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">6)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_system_visualizer.html#plot_net_load_daily_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_system_visualizer.plot_net_load_daily_profile" title="Link to this definition"></a></dt>
+<dd><p>Plot the daily profile for net load showing average, minimum, and maximum values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>net_load</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.1)"><em>pandas.Series</em></a>) – Time series of net load values</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Matplotlib axes object for plotting</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>, </em><em>optional</em>) – Figure size (width, height)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes object with the plot</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_system_visualizer.plot_monthly_profile">
+<span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.power_system_visualizer.</span></span><span class="sig-name descname"><span class="pre">plot_monthly_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total_load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">6)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_system_visualizer.html#plot_monthly_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_system_visualizer.plot_monthly_profile" title="Link to this definition"></a></dt>
+<dd><p>Calculate and plot the average load profile across months.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>total_load</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.1)"><em>pandas.Series</em></a>) – Time series of total load values</p></li>
+<li><p><strong>net_load</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.1)"><em>pandas.Series</em></a><em>, </em><em>optional</em>) – Time series of net load values</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Matplotlib axes object for plotting</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>, </em><em>optional</em>) – Figure size (width, height)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes object with the plot</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_system_visualizer.create_comprehensive_plots">
+<span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.power_system_visualizer.</span></span><span class="sig-name descname"><span class="pre">create_comprehensive_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total_load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(15,</span> <span class="pre">12)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_system_visualizer.html#create_comprehensive_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_system_visualizer.create_comprehensive_plots" title="Link to this definition"></a></dt>
+<dd><p>Create a comprehensive set of plots demonstrating the flexibility of the plotting functions.
+This function shows how all plotting functions accept Matplotlib axes objects and include
+clear titles, labels, and legends.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>total_load</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.1)"><em>pandas.Series</em></a>) – Time series of total load values</p></li>
+<li><p><strong>net_load</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.3.1)"><em>pandas.Series</em></a>) – Time series of net load values</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>, </em><em>optional</em>) – Figure size (width, height)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure containing all plots</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="module-overview">
+<h2>Module Overview<a class="headerlink" href="#module-overview" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">power_system_visualizer</span></code> module provides comprehensive visualization capabilities for power system operational data. It includes functions for creating time series plots, daily and monthly profiles, and comprehensive analysis dashboards.</p>
+<p>The module is designed to work with the analysis results from other modules and provides publication-quality visualizations with consistent styling and formatting.</p>
+</section>
+<section id="core-functions">
+<h2>Core Functions<a class="headerlink" href="#core-functions" title="Link to this heading"></a></h2>
+<section id="time-series-visualization">
+<h3>Time Series Visualization<a class="headerlink" href="#time-series-visualization" title="Link to this heading"></a></h3>
+<section id="plot-load-timeseries">
+<h4>plot_load_timeseries()<a class="headerlink" href="#plot-load-timeseries" title="Link to this heading"></a></h4>
+<p>Create time series plots for total and net load.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_load_timeseries</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create time series plots for total and net load.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        total_load: Time series of total load values</span>
+<span class="sd">        net_load: Time series of net load values</span>
+<span class="sd">        save_path: Optional path to save the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p>from tsoc_data_analysis import plot_load_timeseries, calculate_total_load, calculate_net_load</p>
+<p># Calculate loads
+total_load = calculate_total_load(df)
+net_load = calculate_net_load(df, total_load)</p>
+<p># Create time series plot
+plot_load_timeseries(total_load, net_load, save_path=’load_timeseries.png’)</p>
+</div></blockquote>
+</section>
+<section id="plot-monthly-profile">
+<h4>plot_monthly_profile()<a class="headerlink" href="#plot-monthly-profile" title="Link to this heading"></a></h4>
+<p>Create monthly load profile plots.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_monthly_profile</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create monthly load profile plots.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        total_load: Time series of total load values</span>
+<span class="sd">        net_load: Time series of net load values</span>
+<span class="sd">        save_path: Optional path to save the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="daily-profile-functions">
+<h3>Daily Profile Functions<a class="headerlink" href="#daily-profile-functions" title="Link to this heading"></a></h3>
+<section id="plot-total-load-daily-profile">
+<h4>plot_total_load_daily_profile()<a class="headerlink" href="#plot-total-load-daily-profile" title="Link to this heading"></a></h4>
+<p>Create average daily load profile for total load.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_total_load_daily_profile</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create average daily load profile for total load.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        total_load: Time series of total load values</span>
+<span class="sd">        save_path: Optional path to save the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-net-load-daily-profile">
+<h4>plot_net_load_daily_profile()<a class="headerlink" href="#plot-net-load-daily-profile" title="Link to this heading"></a></h4>
+<p>Create average daily load profile for net load.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_net_load_daily_profile</span><span class="p">(</span><span class="n">net_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create average daily load profile for net load.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        net_load: Time series of net load values</span>
+<span class="sd">        save_path: Optional path to save the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="comprehensive-analysis">
+<h3>Comprehensive Analysis<a class="headerlink" href="#comprehensive-analysis" title="Link to this heading"></a></h3>
+<section id="create-comprehensive-plots">
+<h4>create_comprehensive_plots()<a class="headerlink" href="#create-comprehensive-plots" title="Link to this heading"></a></h4>
+<p>Create comprehensive analysis plots including multiple visualizations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_comprehensive_plots</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create comprehensive analysis plots.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: DataFrame with power system data</span>
+<span class="sd">        total_load: Time series of total load values</span>
+<span class="sd">        net_load: Time series of net load values</span>
+<span class="sd">        save_path: Optional path to save the plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p>from tsoc_data_analysis import create_comprehensive_plots</p>
+<p># Create comprehensive analysis
+create_comprehensive_plots(df, total_load, net_load, save_path=’comprehensive_analysis.png’)</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+<section id="visualization-features">
+<h2>Visualization Features<a class="headerlink" href="#visualization-features" title="Link to this heading"></a></h2>
+<section id="plot-styling">
+<h3>Plot Styling<a class="headerlink" href="#plot-styling" title="Link to this heading"></a></h3>
+<p>The module uses consistent styling with configurable parameters:</p>
+<p><strong>Style Settings:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p>PLOT_STYLE = ‘seaborn-v0_8’
+PLOT_PALETTE = ‘husl’</p>
+<dl class="simple">
+<dt>FIGURE_SIZES = {</dt><dd><p>‘timeseries’: (12, 8),
+‘daily_profile’: (10, 6),
+‘monthly_profile’: (10, 6),
+‘comprehensive’: (15, 10),
+‘clustering’: (16, 12)</p>
+</dd>
+</dl>
+<p>}</p>
+<dl class="simple">
+<dt>FONT_SIZES = {</dt><dd><p>‘title’: 16,
+‘axis_label’: 14,
+‘tick_label’: 12,
+‘legend’: 12,
+‘annotation’: 10</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p><strong>Customization:</strong>
+Users can customize plot appearance by modifying configuration values:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Customize plot styling</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="plot-types">
+<h2>Plot Types<a class="headerlink" href="#plot-types" title="Link to this heading"></a></h2>
+<section id="time-series-plots">
+<h3>Time Series Plots<a class="headerlink" href="#time-series-plots" title="Link to this heading"></a></h3>
+<p><strong>Features:</strong>
+- Dual-axis plots for total and net load
+- Automatic date formatting
+- Grid lines for readability
+- Legend with clear labels
+- Configurable color schemes</p>
+<p><strong>Example Output:</strong>
+- Shows load variations over time
+- Highlights peak and minimum loads
+- Displays load patterns and trends</p>
+</section>
+<section id="daily-profile-plots">
+<h3>Daily Profile Plots<a class="headerlink" href="#daily-profile-plots" title="Link to this heading"></a></h3>
+<p><strong>Features:</strong>
+- 24-hour average profiles
+- Error bars showing variability
+- Hour-of-day x-axis
+- Multiple load types on same plot
+- Statistical summaries</p>
+<p><strong>Example Output:</strong>
+- Shows typical daily load patterns
+- Highlights peak hours
+- Displays load variability</p>
+</section>
+<section id="monthly-profile-plots">
+<h3>Monthly Profile Plots<a class="headerlink" href="#monthly-profile-plots" title="Link to this heading"></a></h3>
+<p><strong>Features:</strong>
+- Monthly average patterns
+- Seasonal variations
+- Multiple years comparison
+- Statistical analysis
+- Trend identification</p>
+<p><strong>Example Output:</strong>
+- Shows seasonal load patterns
+- Highlights monthly variations
+- Displays long-term trends</p>
+</section>
+<section id="comprehensive-dashboards">
+<h3>Comprehensive Dashboards<a class="headerlink" href="#comprehensive-dashboards" title="Link to this heading"></a></h3>
+<p><strong>Features:</strong>
+- Multi-panel layouts
+- Multiple visualization types
+- Statistical summaries
+- Interactive elements (if supported)
+- Publication-quality output</p>
+<p><strong>Example Output:</strong>
+- Complete system overview
+- Multiple analysis perspectives
+- Professional presentation quality</p>
+</section>
+</section>
+<section id="configuration-integration">
+<h2>Configuration Integration<a class="headerlink" href="#configuration-integration" title="Link to this heading"></a></h2>
+<p>The module uses configuration from <cite>system_configuration.py</cite>:</p>
+<p><strong>Plot Configuration:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plotting settings</span>
+<span class="n">PLOT_STYLE</span> <span class="o">=</span> <span class="s1">&#39;seaborn-v0_8&#39;</span>
+<span class="n">PLOT_PALETTE</span> <span class="o">=</span> <span class="s1">&#39;husl&#39;</span>
+
+<span class="c1"># Figure sizes for different plot types</span>
+<span class="n">FIGURE_SIZES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;timeseries&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="s1">&#39;daily_profile&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="s1">&#39;monthly_profile&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="s1">&#39;comprehensive&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="s1">&#39;clustering&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># Font sizes for different elements</span>
+<span class="n">FONT_SIZES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s1">&#39;axis_label&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s1">&#39;tick_label&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s1">&#39;legend&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s1">&#39;annotation&#39;</span><span class="p">:</span> <span class="mi">10</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Customization Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For larger plots</span>
+<span class="n">FIGURE_SIZES</span><span class="p">[</span><span class="s1">&#39;timeseries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># For different color schemes</span>
+<span class="n">PLOT_PALETTE</span> <span class="o">=</span> <span class="s1">&#39;viridis&#39;</span>
+
+<span class="c1"># For larger fonts</span>
+<span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">18</span>
+<span class="n">FONT_SIZES</span><span class="p">[</span><span class="s1">&#39;axis_label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16</span>
+</pre></div>
+</div>
+</section>
+<section id="usage-examples">
+<h2>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading"></a></h2>
+<section id="basic-time-series-plotting">
+<h3>Basic Time Series Plotting<a class="headerlink" href="#basic-time-series-plotting" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">plot_load_timeseries</span><span class="p">,</span>
+    <span class="n">calculate_total_load</span><span class="p">,</span>
+    <span class="n">calculate_net_load</span>
+<span class="p">)</span>
+
+<span class="c1"># Calculate loads</span>
+<span class="n">total_load</span> <span class="o">=</span> <span class="n">calculate_total_load</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">net_load</span> <span class="o">=</span> <span class="n">calculate_net_load</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">total_load</span><span class="p">)</span>
+
+<span class="c1"># Create time series plot</span>
+<span class="n">plot_load_timeseries</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;load_timeseries.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="daily-profile-analysis">
+<h3>Daily Profile Analysis<a class="headerlink" href="#daily-profile-analysis" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">plot_total_load_daily_profile</span><span class="p">,</span>
+    <span class="n">plot_net_load_daily_profile</span>
+<span class="p">)</span>
+
+<span class="c1"># Create daily profiles</span>
+<span class="n">plot_total_load_daily_profile</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;total_load_daily.png&#39;</span><span class="p">)</span>
+<span class="n">plot_net_load_daily_profile</span><span class="p">(</span><span class="n">net_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;net_load_daily.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h3>Comprehensive Analysis<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_comprehensive_plots</span>
+
+<span class="c1"># Create comprehensive analysis</span>
+<span class="n">create_comprehensive_plots</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span>
+    <span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;comprehensive_analysis.png&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-plotting">
+<h3>Custom Plotting<a class="headerlink" href="#custom-plotting" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="c1"># Custom styling</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8&#39;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s1">&#39;husl&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create custom plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">total_load</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">total_load</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Total Load&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">net_load</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">net_load</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Net Load&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Load (MW)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Power System Load Analysis&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;custom_plot.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="integration-with-analysis-pipeline">
+<h2>Integration with Analysis Pipeline<a class="headerlink" href="#integration-with-analysis-pipeline" title="Link to this heading"></a></h2>
+<p>The visualizer integrates seamlessly with the analysis workflow:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">execute</span><span class="p">,</span>
+    <span class="n">plot_load_timeseries</span><span class="p">,</span>
+    <span class="n">create_comprehensive_plots</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 1: Perform analysis</span>
+<span class="n">success</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">month</span><span class="o">=</span><span class="s1">&#39;2024-01&#39;</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;raw_data&#39;</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+    <span class="c1"># Step 2: Calculate loads</span>
+    <span class="n">total_load</span> <span class="o">=</span> <span class="n">calculate_total_load</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">net_load</span> <span class="o">=</span> <span class="n">calculate_net_load</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">total_load</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Create visualizations</span>
+    <span class="n">plot_load_timeseries</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;results/load_timeseries.png&#39;</span><span class="p">)</span>
+    <span class="n">create_comprehensive_plots</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;results/comprehensive.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="output-formats">
+<h2>Output Formats<a class="headerlink" href="#output-formats" title="Link to this heading"></a></h2>
+<p><strong>Supported Formats:</strong>
+- <strong>PNG</strong>: High-quality raster images
+- <strong>PDF</strong>: Vector graphics for publications
+- <strong>SVG</strong>: Scalable vector graphics
+- <strong>JPG</strong>: Compressed images for web</p>
+<p><strong>Quality Settings:</strong>
+- <strong>DPI</strong>: Configurable resolution (default: 300 DPI)
+- <strong>Compression</strong>: Optimized file sizes
+- <strong>Transparency</strong>: Support for transparent backgrounds
+- <strong>Metadata</strong>: Embedded plot information</p>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># High-quality output</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;plot.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+<span class="c1"># Vector output for publications</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;plot.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="performance-considerations">
+<h2>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading"></a></h2>
+<p><strong>Optimization Features:</strong>
+- <strong>Efficient Plotting</strong>: Optimized for large datasets
+- <strong>Memory Management</strong>: Efficient handling of large time series
+- <strong>Batch Processing</strong>: Can create multiple plots efficiently
+- <strong>Caching</strong>: Caches processed data for repeated plotting</p>
+<p><strong>Scalability:</strong>
+- <strong>Large Datasets</strong>: Handles time series with thousands of points
+- <strong>Multiple Plots</strong>: Efficiently creates multiple visualizations
+- <strong>High Resolution</strong>: Supports high-DPI output without memory issues
+- <strong>Batch Operations</strong>: Can process multiple datasets simultaneously</p>
+</section>
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading"></a></h2>
+<p><strong>Comprehensive Error Handling:</strong>
+- <strong>Data Validation</strong>: Checks for valid input data
+- <strong>Missing Data</strong>: Handles missing or invalid values gracefully
+- <strong>File Operations</strong>: Graceful handling of file I/O errors
+- <strong>Memory Issues</strong>: Handles out-of-memory conditions</p>
+<p><strong>User-Friendly Messages:</strong>
+- <strong>Clear Error Messages</strong>: Informative error descriptions
+- <strong>Suggestions</strong>: Provides helpful suggestions for fixing issues
+- <strong>Fallback Options</strong>: Offers alternative approaches when possible</p>
+</section>
+<section id="integration-with-other-modules">
+<h2>Integration with Other Modules<a class="headerlink" href="#integration-with-other-modules" title="Link to this heading"></a></h2>
+<p>This module integrates seamlessly with other package modules:</p>
+<ul class="simple">
+<li><p><strong>Data Loading</strong>: Works with data from <cite>excel_data_processor</cite></p></li>
+<li><p><strong>Analysis</strong>: Visualizes results from <cite>power_system_analytics</cite></p></li>
+<li><p><strong>Representative Points</strong>: Can visualize clustering results from <cite>operating_point_extractor</cite></p></li>
+<li><p><strong>Validation</strong>: Can show validation results from <cite>power_data_validator</cite></p></li>
+<li><p><strong>Configuration</strong>: Uses centralized configuration from <cite>system_configuration</cite></p></li>
+</ul>
+<p>The module is designed to be flexible and user-friendly, providing high-quality visualizations while maintaining good performance and comprehensive error handling.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="power_system_analytics.html" class="btn btn-neutral float-left" title="Power System Analytics Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="power_data_validator.html" class="btn btn-neutral float-right" title="Power Data Validator Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Sustainable Power Systems Lab (SPSL).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

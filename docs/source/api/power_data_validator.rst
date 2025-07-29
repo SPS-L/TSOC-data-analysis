@@ -312,7 +312,7 @@ Custom Configuration
    clean_df = validator.validate_data(df, enable_enhanced=True)
 
 Integration with Analysis Pipeline
-==================================
+===================================
 
 The validator seamlessly integrates with the existing analysis workflow:
 

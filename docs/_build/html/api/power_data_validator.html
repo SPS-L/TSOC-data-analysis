@@ -1,0 +1,974 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Power Data Validator Module &mdash; TSOC Data Analysis 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Operating Point Extractor Module" href="operating_point_extractor.html" />
+    <link rel="prev" title="Power System Visualizer Module" href="power_system_visualizer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            TSOC Data Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="system_configuration.html">System Configuration Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_system_analytics.html">Power System Analytics Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_system_visualizer.html">Power System Visualizer Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Power Data Validator Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator"><code class="docutils literal notranslate"><span class="pre">DataValidator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.__init__"><code class="docutils literal notranslate"><span class="pre">DataValidator.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.log"><code class="docutils literal notranslate"><span class="pre">DataValidator.log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.validate_data_types"><code class="docutils literal notranslate"><span class="pre">DataValidator.validate_data_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.validate_limits"><code class="docutils literal notranslate"><span class="pre">DataValidator.validate_limits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.fill_gaps"><code class="docutils literal notranslate"><span class="pre">DataValidator.fill_gaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.advanced_gap_filling"><code class="docutils literal notranslate"><span class="pre">DataValidator.advanced_gap_filling()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.remove_rows_with_excessive_gaps"><code class="docutils literal notranslate"><span class="pre">DataValidator.remove_rows_with_excessive_gaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.validate_load_consistency"><code class="docutils literal notranslate"><span class="pre">DataValidator.validate_load_consistency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.get_validation_summary"><code class="docutils literal notranslate"><span class="pre">DataValidator.get_validation_summary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator.validate_dataframe"><code class="docutils literal notranslate"><span class="pre">DataValidator.validate_dataframe()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.__init__"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_statistical_outliers"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.detect_statistical_outliers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_rate_violations"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.detect_rate_violations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_correlation_anomalies"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.detect_correlation_anomalies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.validate_power_balance"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.validate_power_balance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_clustering_anomalies"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.detect_clustering_anomalies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.comprehensive_anomaly_detection"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.comprehensive_anomaly_detection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.get_enhanced_validation_summary"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.get_enhanced_validation_summary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_large_gaps"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.detect_large_gaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.validate_dataframe_enhanced"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.validate_dataframe_enhanced()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.comprehensive_anomaly_detection_gap_aware"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.comprehensive_anomaly_detection_gap_aware()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_rate_violations_gap_aware"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.detect_rate_violations_gap_aware()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_correlation_anomalies_gap_aware"><code class="docutils literal notranslate"><span class="pre">EnhancedDataValidator.detect_correlation_anomalies_gap_aware()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.power_data_validator.example_enhanced_validation"><code class="docutils literal notranslate"><span class="pre">example_enhanced_validation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-overview">Module Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validation-workflow">Validation Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-classes">Core Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#datavalidator">DataValidator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validate-data">validate_data()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-validation-summary">get_validation_summary()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-gap-filling">Advanced Gap Filling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#anomaly-detection">Anomaly Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#power-system-specific-validation">Power System Specific Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-validation">Basic Validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enhanced-validation">Enhanced Validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-configuration">Custom Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#integration-with-analysis-pipeline">Integration with Analysis Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-considerations">Performance Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-handling">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operating_point_extractor.html">Operating Point Extractor Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="excel_data_processor.html">Excel Data Processor Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_analysis_cli.html">Power Analysis CLI Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#package-overview">Package Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#quick-import-guide">Quick Import Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">TSOC Data Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api_reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Power Data Validator Module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/power_data_validator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tsoc_data_analysis.power_data_validator">
+<span id="power-data-validator-module"></span><h1>Power Data Validator Module<a class="headerlink" href="#module-tsoc_data_analysis.power_data_validator" title="Link to this heading"></a></h1>
+<p>Data Validation Module for Power System Analysis</p>
+<p>Author: Sustainable Power Systems Lab (SPSL)
+Web: <a class="reference external" href="https://sps-lab.org">https://sps-lab.org</a>
+Contact: <a class="reference external" href="mailto:info&#37;&#52;&#48;sps-lab&#46;org">info<span>&#64;</span>sps-lab<span>&#46;</span>org</a></p>
+<p>This module provides comprehensive data validation functionality for power system
+operational data, including type checks, limit validation, and gap filling.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.power_data_validator.</span></span><span class="sig-name descname"><span class="pre">DataValidator</span></span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Comprehensive data validator for power system operational data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the data validator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> – Optional logger object for recording validation results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.log" title="Link to this definition"></a></dt>
+<dd><p>Log a message using the provided logger or print to console.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
+<li><p><strong>level</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.validate_data_types">
+<span class="sig-name descname"><span class="pre">validate_data_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.validate_data_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.validate_data_types" title="Link to this definition"></a></dt>
+<dd><p>Validate data types for all columns in the DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to validate</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with validated data types</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.validate_limits">
+<span class="sig-name descname"><span class="pre">validate_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.validate_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.validate_limits" title="Link to this definition"></a></dt>
+<dd><p>Validate data limits for all columns in the DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to validate</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with validated limits</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.fill_gaps">
+<span class="sig-name descname"><span class="pre">fill_gaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.fill_gaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.fill_gaps" title="Link to this definition"></a></dt>
+<dd><p>Fill gaps in the data using linear interpolation for short gaps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to fill gaps in</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with gaps filled</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.advanced_gap_filling">
+<span class="sig-name descname"><span class="pre">advanced_gap_filling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.advanced_gap_filling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.advanced_gap_filling" title="Link to this definition"></a></dt>
+<dd><p>Fill gaps using advanced interpolation methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to fill gaps in</p></li>
+<li><p><strong>method</strong> – Gap filling method (‘adaptive’, ‘spline’, ‘polynomial’, ‘knn’, ‘ml’, None uses config default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+</dl>
+<p>Methods:
+- ‘adaptive’: Choose method based on gap characteristics
+- ‘spline’: Cubic spline interpolation
+- ‘polynomial’: Polynomial interpolation
+- ‘knn’: K-Nearest Neighbors imputation
+- ‘ml’: Machine learning-based imputation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.remove_rows_with_excessive_gaps">
+<span class="sig-name descname"><span class="pre">remove_rows_with_excessive_gaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_nan_percentage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.remove_rows_with_excessive_gaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.remove_rows_with_excessive_gaps" title="Link to this definition"></a></dt>
+<dd><p>Remove rows that have too many NaN values (indicating large gaps that couldn’t be filled).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to clean</p></li>
+<li><p><strong>max_nan_percentage</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Maximum percentage of NaN values allowed in a row (default: 50%)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with rows containing excessive gaps removed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.validate_load_consistency">
+<span class="sig-name descname"><span class="pre">validate_load_consistency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.validate_load_consistency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.validate_load_consistency" title="Link to this definition"></a></dt>
+<dd><p>Validate load consistency (Total Load &gt; Net Load).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame containing load data</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with validation results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.get_validation_summary">
+<span class="sig-name descname"><span class="pre">get_validation_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.get_validation_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.get_validation_summary" title="Link to this definition"></a></dt>
+<dd><p>Get a summary of all validation results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with validation summary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.DataValidator.validate_dataframe">
+<span class="sig-name descname"><span class="pre">validate_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#DataValidator.validate_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.DataValidator.validate_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Perform comprehensive validation on a DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to validate</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Validated DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.power_data_validator.</span></span><span class="sig-name descname"><span class="pre">EnhancedDataValidator</span></span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tsoc_data_analysis.power_data_validator.DataValidator" title="tsoc_data_analysis.power_data_validator.DataValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataValidator</span></code></a></p>
+<p>Enhanced data validator with advanced outlier detection and anomaly identification.</p>
+<p>Features:
+- Statistical outlier detection (IQR, Z-score, Modified Z-score)
+- Machine learning-based anomaly detection (Isolation Forest, LOF)
+- Rate of change violation detection
+- Correlation anomaly detection
+- Power balance validation
+- Advanced clustering-based anomaly detection</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_ml_validation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the enhanced data validator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger</strong> – Optional logger object for recording validation results</p></li>
+<li><p><strong>enable_ml_validation</strong> – Enable machine learning-based validation methods (None uses config default)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_statistical_outliers">
+<span class="sig-name descname"><span class="pre">detect_statistical_outliers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contamination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.detect_statistical_outliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_statistical_outliers" title="Link to this definition"></a></dt>
+<dd><p>Detect outliers using multiple statistical methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to analyze</p></li>
+<li><p><strong>method</strong> – ‘iqr’, ‘zscore’, ‘modified_zscore’, ‘isolation_forest’, ‘lof’ (None uses config default)</p></li>
+<li><p><strong>contamination</strong> – Expected proportion of outliers (for ML methods, None uses config default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with outliers handled</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_rate_violations">
+<span class="sig-name descname"><span class="pre">detect_rate_violations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_change_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.detect_rate_violations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_rate_violations" title="Link to this definition"></a></dt>
+<dd><p>Detect violations in rate of change for time series data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to analyze</p></li>
+<li><p><strong>max_change_rate</strong> – Maximum allowed rate of change per time step (None uses adaptive threshold)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with rate violations handled</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_correlation_anomalies">
+<span class="sig-name descname"><span class="pre">detect_correlation_anomalies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.detect_correlation_anomalies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_correlation_anomalies" title="Link to this definition"></a></dt>
+<dd><p>Detect anomalies based on correlation patterns between related variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to analyze</p></li>
+<li><p><strong>correlation_threshold</strong> – Minimum correlation threshold for related variables (None uses config default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with correlation anomalies flagged</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.validate_power_balance">
+<span class="sig-name descname"><span class="pre">validate_power_balance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.validate_power_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.validate_power_balance" title="Link to this definition"></a></dt>
+<dd><p>Validate power balance equations in the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to analyze</p></li>
+<li><p><strong>tolerance</strong> – Tolerance for power balance violations (as fraction, None uses config default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with power balance violations flagged</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_clustering_anomalies">
+<span class="sig-name descname"><span class="pre">detect_clustering_anomalies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.detect_clustering_anomalies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_clustering_anomalies" title="Link to this definition"></a></dt>
+<dd><p>Detect anomalies using clustering techniques (DBSCAN).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to analyze</p></li>
+<li><p><strong>eps</strong> – The maximum distance between samples (None uses config default)</p></li>
+<li><p><strong>min_samples</strong> – The number of samples in neighborhood for core point (None uses config default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with clustering anomalies flagged</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.comprehensive_anomaly_detection">
+<span class="sig-name descname"><span class="pre">comprehensive_anomaly_detection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outlier_methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_rate_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_correlation_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_power_balance_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_clustering_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.comprehensive_anomaly_detection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.comprehensive_anomaly_detection" title="Link to this definition"></a></dt>
+<dd><p>Perform comprehensive anomaly detection using multiple methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to analyze</p></li>
+<li><p><strong>outlier_methods</strong> – List of outlier detection methods to apply (None uses config default)</p></li>
+<li><p><strong>enable_rate_check</strong> – Enable rate of change violation detection (None uses config default)</p></li>
+<li><p><strong>enable_correlation_check</strong> – Enable correlation anomaly detection (None uses config default)</p></li>
+<li><p><strong>enable_power_balance_check</strong> – Enable power balance validation (None uses config default)</p></li>
+<li><p><strong>enable_clustering_check</strong> – Enable clustering-based anomaly detection (None uses config default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with all anomalies detected and handled</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.get_enhanced_validation_summary">
+<span class="sig-name descname"><span class="pre">get_enhanced_validation_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.get_enhanced_validation_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.get_enhanced_validation_summary" title="Link to this definition"></a></dt>
+<dd><p>Get a comprehensive summary of all validation and anomaly detection results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with detailed validation summary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_large_gaps">
+<span class="sig-name descname"><span class="pre">detect_large_gaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.detect_large_gaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_large_gaps" title="Link to this definition"></a></dt>
+<dd><p>Detect large gaps in the data that might affect enhanced validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to analyze</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with gap analysis results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.validate_dataframe_enhanced">
+<span class="sig-name descname"><span class="pre">validate_dataframe_enhanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_comprehensive_anomaly_detection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_advanced_gap_filling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.validate_dataframe_enhanced"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.validate_dataframe_enhanced" title="Link to this definition"></a></dt>
+<dd><p>Perform enhanced comprehensive validation on a DataFrame with advanced gap filling.</p>
+<p>Workflow:
+1. Simple validation (basic gap filling, type validation, etc.)
+2. Comprehensive validation (anomaly detection, if enabled)
+3. Advanced gap filling (with large gap removal)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to validate</p></li>
+<li><p><strong>use_comprehensive_anomaly_detection</strong> – Whether to use advanced anomaly detection (None uses config default)</p></li>
+<li><p><strong>use_advanced_gap_filling</strong> – Whether to use advanced gap filling (None uses config default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Validated DataFrame with comprehensive validation and advanced gap filling applied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.comprehensive_anomaly_detection_gap_aware">
+<span class="sig-name descname"><span class="pre">comprehensive_anomaly_detection_gap_aware</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap_analysis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.comprehensive_anomaly_detection_gap_aware"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.comprehensive_anomaly_detection_gap_aware" title="Link to this definition"></a></dt>
+<dd><p>Apply enhanced validation with awareness of large gaps in the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to validate</p></li>
+<li><p><strong>gap_analysis</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – Results from gap analysis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with gap-aware enhanced validation applied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_rate_violations_gap_aware">
+<span class="sig-name descname"><span class="pre">detect_rate_violations_gap_aware</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_multiplier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.detect_rate_violations_gap_aware"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_rate_violations_gap_aware" title="Link to this definition"></a></dt>
+<dd><p>Detect rate violations with awareness of potential interpolation artifacts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to analyze</p></li>
+<li><p><strong>threshold_multiplier</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Conservative threshold multiplier for gap-affected data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with rate violations handled</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_correlation_anomalies_gap_aware">
+<span class="sig-name descname"><span class="pre">detect_correlation_anomalies_gap_aware</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#EnhancedDataValidator.detect_correlation_anomalies_gap_aware"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.EnhancedDataValidator.detect_correlation_anomalies_gap_aware" title="Link to this definition"></a></dt>
+<dd><p>Detect correlation anomalies with reduced sensitivity for gap-affected data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – DataFrame to analyze</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with correlation anomalies flagged</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsoc_data_analysis.power_data_validator.example_enhanced_validation">
+<span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.power_data_validator.</span></span><span class="sig-name descname"><span class="pre">example_enhanced_validation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/power_data_validator.html#example_enhanced_validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.power_data_validator.example_enhanced_validation" title="Link to this definition"></a></dt>
+<dd><p>Example usage of the EnhancedDataValidator class.</p>
+<p>This function demonstrates how to use the enhanced validation features
+for power system data analysis.</p>
+</dd></dl>
+
+</section>
+<section id="module-overview">
+<h1>Module Overview<a class="headerlink" href="#module-overview" title="Link to this heading"></a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">power_data_validator</span></code> module provides comprehensive data quality assurance for power system operational data. It implements a sophisticated three-step validation workflow that includes advanced gap filling techniques and anomaly detection capabilities.</p>
+<p>The module implements a complete power systems data validation pipeline with intelligent gap processing and enhanced anomaly detection.</p>
+</section>
+<section id="validation-workflow">
+<h1>Validation Workflow<a class="headerlink" href="#validation-workflow" title="Link to this heading"></a></h1>
+<p>The enhanced data validation system provides a comprehensive three-step validation workflow:</p>
+<p><strong>Step 1: Simple Validation</strong>
+- Basic gap filling (≤3 time steps using linear interpolation)
+- Data type validation and correction
+- Limit checking and constraint enforcement
+- Shunt tap integer conversion</p>
+<p><strong>Step 2: Comprehensive Validation</strong> <em>(if enabled)</em>
+- Advanced outlier detection using multiple statistical and ML methods
+- Rate of change violation detection with gap-aware sensitivity
+- Correlation anomaly identification between related variables
+- Power balance validation for energy conservation
+- Clustering-based anomaly detection for operational patterns</p>
+<p><strong>Step 3: Advanced Gap Filling</strong> <em>(if enabled)</em>
+- <strong>Intelligent method selection</strong> based on gap characteristics and data patterns
+- <strong>Multiple sophisticated techniques</strong>: spline, polynomial, KNN, ML-based imputation
+- <strong>Large gap removal</strong>: gaps ≥24 time steps completely removed
+- <strong>Adaptive algorithms</strong>: automatically choose optimal method per gap</p>
+</section>
+<section id="core-classes">
+<h1>Core Classes<a class="headerlink" href="#core-classes" title="Link to this heading"></a></h1>
+<section id="datavalidator">
+<h2>DataValidator<a class="headerlink" href="#datavalidator" title="Link to this heading"></a></h2>
+<p>Main validation class that orchestrates the complete validation workflow.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">DataValidator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Comprehensive data validator for power system operational data.</span>
+
+<span class="sd">    Implements a three-step validation workflow with advanced gap filling</span>
+<span class="sd">    and anomaly detection capabilities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p><strong>Key Methods:</strong></p>
+<section id="validate-data">
+<h3>validate_data()<a class="headerlink" href="#validate-data" title="Link to this heading"></a></h3>
+<p>Main validation method that performs the complete validation workflow.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">validate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">enable_enhanced</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform comprehensive data validation and cleaning.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: Input DataFrame with power system data</span>
+<span class="sd">        enable_enhanced: Whether to enable enhanced validation features</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Cleaned and validated DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p>from tsoc_data_analysis import DataValidator</p>
+<p># Create validator instance
+validator = DataValidator()</p>
+<p># Perform validation
+clean_df = validator.validate_data(df, enable_enhanced=True)
+print(f”Validation completed. Cleaned {len(clean_df)} records.”)</p>
+</div></blockquote>
+</section>
+<section id="get-validation-summary">
+<h3>get_validation_summary()<a class="headerlink" href="#get-validation-summary" title="Link to this heading"></a></h3>
+<p>Get a comprehensive summary of validation results.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_validation_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get comprehensive validation summary.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary with validation statistics and error details</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p># Get validation summary
+summary = validator.get_validation_summary()
+print(f”Records processed: {summary[‘total_records’]}”)
+print(f”Records with errors: {summary[‘records_with_errors’]}”)
+print(f”Gaps filled: {summary[‘gaps_filled’]}”)</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+<section id="advanced-gap-filling">
+<h1>Advanced Gap Filling<a class="headerlink" href="#advanced-gap-filling" title="Link to this heading"></a></h1>
+<p>The module provides sophisticated gap filling capabilities with multiple algorithms:</p>
+<p><strong>Intelligent Method Selection:</strong>
+- <strong>Small gaps (≤3 steps)</strong>: Linear interpolation for simple continuity
+- <strong>Medium gaps (4-6 steps)</strong>: Cubic spline interpolation for smooth curves
+- <strong>Large gaps (7-12 steps)</strong>: KNN or polynomial based on data variance and trends
+- <strong>Very large gaps (≥24 steps)</strong>: Complete removal to maintain data integrity</p>
+<p><strong>Available Algorithms:</strong>
+- <strong>`’adaptive’`</strong>: Automatically selects best method based on gap size and data characteristics
+- <strong>`’spline’`</strong>: Cubic spline interpolation with configurable smoothing
+- <strong>`’polynomial’`</strong>: Polynomial interpolation for trend-following behavior
+- <strong>`’knn’`</strong>: K-Nearest Neighbors using temporal features (hour, day, seasonality)
+- <strong>`’ml’`</strong>: Random Forest-based with lagged features and cross-variable relationships</p>
+<p><strong>Example:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p># Configure advanced gap filling
+validator = DataValidator()
+validator.set_gap_filling_method(‘adaptive’)</p>
+<p># Perform validation with advanced gap filling
+clean_df = validator.validate_data(df, enable_enhanced=True)</p>
+</div></blockquote>
+</section>
+<section id="anomaly-detection">
+<h1>Anomaly Detection<a class="headerlink" href="#anomaly-detection" title="Link to this heading"></a></h1>
+<p>The module implements multiple anomaly detection methods:</p>
+<p><strong>Statistical Outlier Detection</strong>
+- <strong>IQR (Interquartile Range)</strong>: Detects outliers using configurable IQR multiplier
+- <strong>Z-Score</strong>: Identifies values beyond configurable threshold
+- <strong>Modified Z-Score</strong>: Uses median absolute deviation for robust detection
+- <strong>Isolation Forest</strong>: ML-based anomaly detection with configurable contamination rate
+- <strong>Local Outlier Factor (LOF)</strong>: Density-based outlier detection for local anomalies</p>
+<p><strong>Advanced Anomaly Detection</strong>
+- <strong>Rate of Change Violations</strong>: Detects unrealistic temporal changes with adaptive thresholds
+- <strong>Correlation Anomaly Detection</strong>: Identifies breaks in expected correlation patterns
+- <strong>Power Balance Validation</strong>: Validates energy conservation principles
+- <strong>Clustering-Based Anomalies</strong>: Uses DBSCAN to identify abnormal operational patterns</p>
+<p><strong>Example:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p># Configure anomaly detection
+validator = DataValidator()
+validator.set_outlier_detection_methods([‘iqr’, ‘isolation_forest’])
+validator.set_outlier_contamination(0.1)</p>
+<p># Perform validation with anomaly detection
+clean_df = validator.validate_data(df, enable_enhanced=True)</p>
+</div></blockquote>
+</section>
+<section id="power-system-specific-validation">
+<h1>Power System Specific Validation<a class="headerlink" href="#power-system-specific-validation" title="Link to this heading"></a></h1>
+<p>The module includes specialized validation for power system variables:</p>
+<p><strong>Variable Grouping</strong>
+The system intelligently groups related power system variables:</p>
+<ul class="simple">
+<li><p><strong>Generators</strong>: <code class="docutils literal notranslate"><span class="pre">gen_mvar_*</span></code> (reactive power of Q control generators)</p></li>
+<li><p><strong>Substations</strong>: <code class="docutils literal notranslate"><span class="pre">ss_mw_*</span></code>, <code class="docutils literal notranslate"><span class="pre">ss_mvar_*</span></code> (active/reactive power consumption)</p></li>
+<li><p><strong>Wind Farms</strong>: <code class="docutils literal notranslate"><span class="pre">wind_mw_*</span></code> (active power generation of wind parcs)</p></li>
+<li><p><strong>Shunt Elements</strong>: <code class="docutils literal notranslate"><span class="pre">shunt_mvar_*</span></code>, <code class="docutils literal notranslate"><span class="pre">shunt_tap_*</span></code> (reactive power, tap positions)</p></li>
+<li><p><strong>Voltages</strong>: <code class="docutils literal notranslate"><span class="pre">gen_v_*</span></code> (voltage setpoints of Constant V generators)</p></li>
+</ul>
+<p><strong>Power Balance Validation</strong>
+Validates energy conservation principles with configurable tolerance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Configure power balance validation</span>
+<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">()</span>
+<span class="n">validator</span><span class="o">.</span><span class="n">set_power_balance_tolerance</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>  <span class="c1"># 5% tolerance</span>
+
+<span class="c1"># Perform validation with power balance checking</span>
+<span class="n">clean_df</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">enable_enhanced</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h1>
+<p>All validation parameters are centrally managed in <code class="docutils literal notranslate"><span class="pre">system_configuration.py</span></code>:</p>
+<p><strong>Basic Validation Settings</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DATA_VALIDATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;type_checks&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;real_numbers&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ss_mw_&#39;</span><span class="p">,</span> <span class="s1">&#39;ss_mvar_&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_mw_&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;integers&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;shunt_tap_&#39;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;limit_checks&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;power_limits&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;wind&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_mw&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;max_mw&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
+            <span class="s1">&#39;substation&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_mw&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;max_mw&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;gap_filling&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;max_gap_steps&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s1">&#39;advanced_max_gap_steps&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="s1">&#39;remove_large_gaps_threshold&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="s1">&#39;enable_advanced_gap_filling&#39;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Enhanced Validation Settings</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ENHANCED_DATA_VALIDATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;advanced_gap_filling&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;enable_advanced_gap_filling&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;default_method&#39;</span><span class="p">:</span> <span class="s1">&#39;adaptive&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;context_size_ratio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+        <span class="s1">&#39;min_context_points&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;outlier_detection&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;default_methods&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;iqr&#39;</span><span class="p">,</span> <span class="s1">&#39;isolation_forest&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;contamination&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s1">&#39;zscore_threshold&#39;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>
+        <span class="s1">&#39;iqr_multiplier&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;power_balance_validation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;tolerance&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+        <span class="s1">&#39;epsilon&#39;</span><span class="p">:</span> <span class="mf">1e-6</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="usage-examples">
+<h1>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading"></a></h1>
+<section id="basic-validation">
+<h2>Basic Validation<a class="headerlink" href="#basic-validation" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataValidator</span>
+
+<span class="c1"># Create validator and perform basic validation</span>
+<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">()</span>
+<span class="n">clean_df</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_data</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># Get validation summary</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">get_validation_summary</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation completed: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;total_records&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> records processed&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="enhanced-validation">
+<h2>Enhanced Validation<a class="headerlink" href="#enhanced-validation" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Perform enhanced validation with all features</span>
+<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">()</span>
+
+<span class="c1"># Configure enhanced features</span>
+<span class="n">validator</span><span class="o">.</span><span class="n">set_gap_filling_method</span><span class="p">(</span><span class="s1">&#39;adaptive&#39;</span><span class="p">)</span>
+<span class="n">validator</span><span class="o">.</span><span class="n">set_outlier_detection_methods</span><span class="p">([</span><span class="s1">&#39;iqr&#39;</span><span class="p">,</span> <span class="s1">&#39;isolation_forest&#39;</span><span class="p">,</span> <span class="s1">&#39;lof&#39;</span><span class="p">])</span>
+<span class="n">validator</span><span class="o">.</span><span class="n">set_power_balance_tolerance</span><span class="p">(</span><span class="mf">0.02</span><span class="p">)</span>
+
+<span class="c1"># Perform validation</span>
+<span class="n">clean_df</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">enable_enhanced</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get detailed summary</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">get_enhanced_validation_summary</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Statistical outliers: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;statistical_outliers_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rate violations: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;rate_violations_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Power balance violations: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;power_balance_violations_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-configuration">
+<h2>Custom Configuration<a class="headerlink" href="#custom-configuration" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create validator with custom configuration</span>
+<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">()</span>
+
+<span class="c1"># Custom gap filling settings</span>
+<span class="n">validator</span><span class="o">.</span><span class="n">set_gap_filling_config</span><span class="p">({</span>
+    <span class="s1">&#39;max_gap_steps&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">&#39;advanced_max_gap_steps&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+    <span class="s1">&#39;remove_large_gaps_threshold&#39;</span><span class="p">:</span> <span class="mi">30</span>
+<span class="p">})</span>
+
+<span class="c1"># Custom outlier detection</span>
+<span class="n">validator</span><span class="o">.</span><span class="n">set_outlier_detection_config</span><span class="p">({</span>
+    <span class="s1">&#39;contamination&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s1">&#39;zscore_threshold&#39;</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+    <span class="s1">&#39;iqr_multiplier&#39;</span><span class="p">:</span> <span class="mf">2.0</span>
+<span class="p">})</span>
+
+<span class="c1"># Perform validation</span>
+<span class="n">clean_df</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">enable_enhanced</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="integration-with-analysis-pipeline">
+<h1>Integration with Analysis Pipeline<a class="headerlink" href="#integration-with-analysis-pipeline" title="Link to this heading"></a></h1>
+<p>The validator seamlessly integrates with the existing analysis workflow:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataValidator</span><span class="p">,</span> <span class="n">execute</span><span class="p">,</span> <span class="n">extract_representative_ops</span>
+
+<span class="c1"># Step 1: Validate data</span>
+<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">()</span>
+<span class="n">clean_df</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">enable_enhanced</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Step 2: Perform analysis</span>
+<span class="n">success</span><span class="p">,</span> <span class="n">analysis_df</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span>
+    <span class="n">month</span><span class="o">=</span><span class="s1">&#39;2024-01&#39;</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;raw_data&#39;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span><span class="p">,</span>
+    <span class="n">input_df</span><span class="o">=</span><span class="n">clean_df</span>  <span class="c1"># Use validated data</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 3: Extract representative points</span>
+<span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+    <span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops</span><span class="p">(</span>
+        <span class="n">analysis_df</span><span class="p">,</span> <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="performance-considerations">
+<h1>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading"></a></h1>
+<p><strong>Optimization Features:</strong>
+- <strong>Parallel Processing</strong>: Uses joblib for parallel validation tasks
+- <strong>Memory Efficiency</strong>: Processes data in chunks for large datasets
+- <strong>Adaptive Algorithms</strong>: Automatically adjusts to data characteristics
+- <strong>Early Termination</strong>: Stops validation when critical errors are detected</p>
+<p><strong>Scalability:</strong>
+- <strong>Large Datasets</strong>: Handles datasets with thousands of time points
+- <strong>Many Variables</strong>: Efficiently processes hundreds of power system variables
+- <strong>Memory Management</strong>: Optimized for memory-constrained environments
+- <strong>Progress Tracking</strong>: Provides detailed progress information for long-running validations</p>
+</section>
+<section id="error-handling">
+<h1>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading"></a></h1>
+<p><strong>Comprehensive Error Handling:</strong>
+- <strong>Data Type Issues</strong>: Automatic conversion and validation of data types
+- <strong>Missing Data</strong>: Intelligent handling of missing values and gaps
+- <strong>Limit Violations</strong>: Configurable handling of out-of-range values
+- <strong>File Operations</strong>: Graceful handling of file I/O errors
+- <strong>Memory Issues</strong>: Handles out-of-memory conditions gracefully</p>
+<p><strong>Validation Results:</strong>
+The validator provides detailed information about all validation issues:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get detailed validation results</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">get_enhanced_validation_summary</span><span class="p">()</span>
+
+<span class="c1"># Access specific error types</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation Issues:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Type errors: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;type_errors&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Limit violations: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;limit_violations&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Statistical outliers: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;statistical_outliers_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Rate violations: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;rate_violations_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Correlation anomalies: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;correlation_anomalies_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Power balance violations: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;power_balance_violations_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access detailed error messages</span>
+<span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;statistical_outliers&#39;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Outlier: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The module is designed to be robust and informative, providing comprehensive validation capabilities while maintaining high performance and user-friendly error reporting.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="power_system_visualizer.html" class="btn btn-neutral float-left" title="Power System Visualizer Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="operating_point_extractor.html" class="btn btn-neutral float-right" title="Operating Point Extractor Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Sustainable Power Systems Lab (SPSL).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

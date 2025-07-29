@@ -908,10 +908,19 @@ pip install -e ".[docs]"
 
 # Build documentation
 cd docs
+
+# Build HTML documentation
 make html
 
+# Build PDF documentation
+make pdf
+
+# Or build both HTML and PDF at once
+./build_docs.sh
+
 # View documentation
-open build/html/index.html
+open _build/html/index.html  # HTML version
+open _build/latex/TSOCDataAnalysis.pdf  # PDF version
 ```
 
 ### Project Structure

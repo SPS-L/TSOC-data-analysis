@@ -268,6 +268,7 @@ Error Handling
 - **Logging**: Comprehensive logging for debugging
 
 **Example Error Handling:**
+
 .. code-block:: bash
 
    # Missing data directory
@@ -296,6 +297,7 @@ Performance Considerations
 - **Memory Management**: Optimized for memory-constrained environments
 
 **Performance Tips:**
+
 .. code-block:: bash
 
    # Use month filtering for large datasets
@@ -313,6 +315,7 @@ Integration with Python API
 The CLI can be used in combination with the Python API:
 
 **CLI for Batch Processing:**
+
 .. code-block:: bash
 
    # Process multiple months
@@ -321,6 +324,7 @@ The CLI can be used in combination with the Python API:
    done
 
 **Python API for Custom Analysis:**
+
 .. code-block:: python
 
    from tsoc_data_analysis import execute, extract_representative_ops
@@ -334,6 +338,7 @@ The CLI can be used in combination with the Python API:
        )
 
 **Combined Workflow:**
+
 .. code-block:: python
 
    # Load data using CLI

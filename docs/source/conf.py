@@ -108,10 +108,52 @@ latex_elements = {
     'pointsize': '11pt',
 
     # Additional stuff for the LaTeX preamble.
-    'preamble': '',
+    'preamble': r'''
+        \usepackage{amsmath}
+        \usepackage{amssymb}
+        \usepackage{graphicx}
+        \usepackage{hyperref}
+        \usepackage{booktabs}
+        \usepackage{longtable}
+        \usepackage{array}
+        \usepackage{multirow}
+        \usepackage{wrapfig}
+        \usepackage{float}
+        \usepackage{colortbl}
+        \usepackage{pdflscape}
+        \usepackage{tabu}
+        \usepackage{threeparttable}
+        \usepackage{threeparttablex}
+        \usepackage{makecell}
+        \usepackage{xcolor}
+        \usepackage{newunicodechar}
+        \usepackage[utf8]{inputenc}
+        \usepackage[T1]{fontenc}
+        \newunicodechar{≤}{\ensuremath{\leq}}
+        \newunicodechar{≥}{\ensuremath{\geq}}
+        \newunicodechar{±}{\ensuremath{\pm}}
+        \newunicodechar{°}{\ensuremath{^\circ}}
+        \newunicodechar{μ}{\ensuremath{\mu}}
+        \newunicodechar{α}{\ensuremath{\alpha}}
+        \newunicodechar{β}{\ensuremath{\beta}}
+        \newunicodechar{γ}{\ensuremath{\gamma}}
+        \newunicodechar{δ}{\ensuremath{\delta}}
+        \newunicodechar{ε}{\ensuremath{\varepsilon}}
+        \newunicodechar{θ}{\ensuremath{\theta}}
+        \newunicodechar{λ}{\ensuremath{\lambda}}
+        \newunicodechar{π}{\ensuremath{\pi}}
+        \newunicodechar{σ}{\ensuremath{\sigma}}
+        \newunicodechar{φ}{\ensuremath{\phi}}
+        \newunicodechar{ω}{\ensuremath{\omega}}
+    ''',
 
     # Latex figure (float) alignment
     'figure_align': 'htbp',
+    
+    # Additional options for better PDF output
+    'extraclassoptions': 'openany,oneside',
+    'babel': '\\usepackage[english]{babel}',
+    'figure_caption': '\\usepackage[font=small,labelfont=bf]{caption}',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

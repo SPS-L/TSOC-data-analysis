@@ -1,0 +1,510 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Excel Data Processor Module &mdash; TSOC Data Analysis 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Power Analysis CLI Module" href="power_analysis_cli.html" />
+    <link rel="prev" title="Operating Point Extractor Module" href="operating_point_extractor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            TSOC Data Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="system_configuration.html">System Configuration Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_system_analytics.html">Power System Analytics Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_system_visualizer.html">Power System Visualizer Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html">Power Data Validator Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#module-overview">Module Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#validation-workflow">Validation Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#core-classes">Core Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#advanced-gap-filling">Advanced Gap Filling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#anomaly-detection">Anomaly Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#power-system-specific-validation">Power System Specific Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#usage-examples">Usage Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#integration-with-analysis-pipeline">Integration with Analysis Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#performance-considerations">Performance Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_data_validator.html#error-handling">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operating_point_extractor.html">Operating Point Extractor Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Excel Data Processor Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.excel_data_processor.load_excel_file"><code class="docutils literal notranslate"><span class="pre">load_excel_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.excel_data_processor.clean_column_names"><code class="docutils literal notranslate"><span class="pre">clean_column_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tsoc_data_analysis.excel_data_processor.convert_index_to_datetime"><code class="docutils literal notranslate"><span class="pre">convert_index_to_datetime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-overview">Module Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#core-functions">Core Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#load-single-excel-file">load_single_excel_file()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#load-all-excel-files">load_all_excel_files()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#excel-file-structure">Excel File Structure</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#substation-data">Substation Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generator-data">Generator Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wind-farm-data">Wind Farm Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#shunt-elements">Shunt Elements</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#data-processing-steps">Data Processing Steps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-integration">Configuration Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basic-file-loading">Basic File Loading</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#complete-data-loading">Complete Data Loading</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#integration-with-analysis">Integration with Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-considerations">Performance Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integration-with-other-modules">Integration with Other Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="power_analysis_cli.html">Power Analysis CLI Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#package-overview">Package Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_reference.html#quick-import-guide">Quick Import Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">TSOC Data Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api_reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Excel Data Processor Module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/excel_data_processor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tsoc_data_analysis.excel_data_processor">
+<span id="excel-data-processor-module"></span><h1>Excel Data Processor Module<a class="headerlink" href="#module-tsoc_data_analysis.excel_data_processor" title="Link to this heading"></a></h1>
+<p>Data Loading Module for Power System Analysis</p>
+<p>Author: Sustainable Power Systems Lab (SPSL)
+Web: <a class="reference external" href="https://sps-lab.org">https://sps-lab.org</a>
+Contact: <a class="reference external" href="mailto:info&#37;&#52;&#48;sps-lab&#46;org">info<span>&#64;</span>sps-lab<span>&#46;</span>org</a></p>
+<p>This module provides utility functions for processing power system operational data from Excel files.
+It includes basic functions for loading individual Excel files, cleaning column names, and
+converting indices to datetime format.</p>
+<p>Note: This module provides basic data loading utilities. For comprehensive analysis,
+the power_analysis_cli.py script implements a complete data loading and processing pipeline
+that handles the complex Excel structure and data validation more efficiently.</p>
+<p>Functions:
+- load_excel_file(): Load a single Excel file with proper headers and indexing
+- clean_column_names(): Clean and standardize DataFrame column names
+- convert_index_to_datetime(): Convert DataFrame index to datetime format</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tsoc_data_analysis.excel_data_processor.load_excel_file">
+<span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.excel_data_processor.</span></span><span class="sig-name descname"><span class="pre">load_excel_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'raw_data/'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/excel_data_processor.html#load_excel_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.excel_data_processor.load_excel_file" title="Link to this definition"></a></dt>
+<dd><p>Load a single Excel file using the second row as header and first column as index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the Excel file to load</p></li>
+<li><p><strong>data_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Directory containing the Excel files</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Loaded data with second row as headers and first column as index</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)">pandas.DataFrame</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.13)"><strong>FileNotFoundError</strong></a> – If the specified file is not found</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the file cannot be read or processed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsoc_data_analysis.excel_data_processor.clean_column_names">
+<span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.excel_data_processor.</span></span><span class="sig-name descname"><span class="pre">clean_column_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/excel_data_processor.html#clean_column_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.excel_data_processor.clean_column_names" title="Link to this definition"></a></dt>
+<dd><p>Clean column names by stripping whitespace and removing special characters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><em>pandas.DataFrame</em></a>) – DataFrame whose column names need to be cleaned</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with cleaned column names</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tsoc_data_analysis.excel_data_processor.convert_index_to_datetime">
+<span class="sig-prename descclassname"><span class="pre">tsoc_data_analysis.excel_data_processor.</span></span><span class="sig-name descname"><span class="pre">convert_index_to_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tsoc_data_analysis/excel_data_processor.html#convert_index_to_datetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tsoc_data_analysis.excel_data_processor.convert_index_to_datetime" title="Link to this definition"></a></dt>
+<dd><p>Convert the index of a DataFrame to datetime objects and ensure consistency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)"><em>pandas.DataFrame</em></a>) – DataFrame whose index needs to be converted</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with datetime index</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.1)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="module-overview">
+<h2>Module Overview<a class="headerlink" href="#module-overview" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">excel_data_processor</span></code> module provides functions for loading and preprocessing Excel files containing power system operational data. It handles the complex structure of Excel files with timestamps, variable names, and data organized in specific formats.</p>
+<p>The module is designed to work with Excel files that follow a standardized structure for power system data, including substation data, generator data, wind farm data, and shunt element data.</p>
+</section>
+<section id="core-functions">
+<h2>Core Functions<a class="headerlink" href="#core-functions" title="Link to this heading"></a></h2>
+<section id="load-single-excel-file">
+<h3>load_single_excel_file()<a class="headerlink" href="#load-single-excel-file" title="Link to this heading"></a></h3>
+<p>Load a single Excel file with power system data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">load_single_excel_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a single Excel file with power system data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_path: Path to the Excel file</span>
+<span class="sd">        file_type: Type of data file (e.g., &#39;substation_mw&#39;, &#39;wind_power&#39;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame with loaded data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p>from tsoc_data_analysis.excel_data_processor import load_single_excel_file</p>
+<p># Load substation active power data
+substation_df = load_single_excel_file(</p>
+<blockquote>
+<div><p>‘raw_data/substation_active_power.xlsx’,
+‘substation_mw’</p>
+</div></blockquote>
+<p>)
+print(f”Loaded {len(substation_df)} records from substation data”)</p>
+</div></blockquote>
+</section>
+<section id="load-all-excel-files">
+<h3>load_all_excel_files()<a class="headerlink" href="#load-all-excel-files" title="Link to this heading"></a></h3>
+<p>Load all Excel files from a directory and merge them into a single DataFrame.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">load_all_excel_files</span><span class="p">(</span><span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load all Excel files from directory and merge into single DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dir: Directory containing Excel files</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Merged DataFrame with all data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p>from tsoc_data_analysis.excel_data_processor import load_all_excel_files</p>
+<p># Load all data from directory
+merged_df = load_all_excel_files(‘raw_data’)
+print(f”Loaded {len(merged_df)} records with {len(merged_df.columns)} columns”)</p>
+</div></blockquote>
+</section>
+</section>
+<section id="excel-file-structure">
+<h2>Excel File Structure<a class="headerlink" href="#excel-file-structure" title="Link to this heading"></a></h2>
+<p>The module expects Excel files to follow a specific structure:</p>
+<p><strong>File Organization:</strong>
+- <strong>Timestamps</strong>: Located in column C (0-indexed column 2)
+- <strong>Data Start Row</strong>: Row 6 (0-indexed row 5)
+- <strong>Variable Names</strong>: Located in specific rows depending on file type
+- <strong>Data Columns</strong>: Start from column G (0-indexed column 6) with 2-column spacing</p>
+<p><strong>File Types and Structures:</strong></p>
+<section id="substation-data">
+<h3>Substation Data<a class="headerlink" href="#substation-data" title="Link to this heading"></a></h3>
+<p><strong>Active Power (MW)</strong>: <cite>substation_active_power.xlsx</cite>
+- <strong>Variable Names</strong>: Row 2 (0-indexed row 1)
+- <strong>Column Prefix</strong>: <cite>ss_mw_</cite>
+- <strong>Data Type</strong>: Active power consumption (MW)</p>
+<p><strong>Reactive Power (MVAR)</strong>: <cite>substation_reactive_power.xlsx</cite>
+- <strong>Variable Names</strong>: Row 2 (0-indexed row 1)
+- <strong>Column Prefix</strong>: <cite>ss_mvar_</cite>
+- <strong>Data Type</strong>: Reactive power consumption (MVAR)</p>
+</section>
+<section id="generator-data">
+<h3>Generator Data<a class="headerlink" href="#generator-data" title="Link to this heading"></a></h3>
+<p><strong>Voltage Setpoints (KV)</strong>: <cite>generator_voltage_setpoints.xlsx</cite>
+- <strong>Variable Names</strong>: Row 3 (0-indexed row 2)
+- <strong>Column Prefix</strong>: <cite>gen_v_</cite>
+- <strong>Data Type</strong>: Voltage setpoints (KV)</p>
+<p><strong>Reactive Power (MVAR)</strong>: <cite>generator_reactive_power.xlsx</cite>
+- <strong>Variable Names</strong>: Row 3 (0-indexed row 2)
+- <strong>Column Prefix</strong>: <cite>gen_mvar_</cite>
+- <strong>Data Type</strong>: Reactive power (MVAR)</p>
+</section>
+<section id="wind-farm-data">
+<h3>Wind Farm Data<a class="headerlink" href="#wind-farm-data" title="Link to this heading"></a></h3>
+<p><strong>Active Power (MW)</strong>: <cite>wind_farm_active_power.xlsx</cite>
+- <strong>Variable Names</strong>: Row 3 (0-indexed row 2)
+- <strong>Column Prefix</strong>: <cite>wind_mw_</cite>
+- <strong>Data Type</strong>: Active power generation (MW)</p>
+</section>
+<section id="shunt-elements">
+<h3>Shunt Elements<a class="headerlink" href="#shunt-elements" title="Link to this heading"></a></h3>
+<p><strong>Reactive Power (MVAR)</strong>: <cite>shunt_element_reactive_power.xlsx</cite>
+- <strong>Variable Names</strong>: Row 3 (0-indexed row 2)
+- <strong>Column Prefixes</strong>: <cite>shunt_mvar_</cite> and <cite>shunt_tap_</cite>
+- <strong>Data Types</strong>: Reactive power (MVAR) and tap positions (integer)</p>
+</section>
+</section>
+<section id="data-processing-steps">
+<h2>Data Processing Steps<a class="headerlink" href="#data-processing-steps" title="Link to this heading"></a></h2>
+<p>The module performs several processing steps when loading Excel files:</p>
+<p><strong>1. File Structure Detection</strong>
+- Identifies timestamp column and data start row
+- Locates variable names based on file type
+- Determines data column range</p>
+<p><strong>2. Data Extraction</strong>
+- Extracts timestamps from the specified column
+- Reads variable names from the appropriate row
+- Extracts data values from the data range</p>
+<p><strong>3. Column Naming</strong>
+- Applies appropriate prefixes based on file type
+- Creates standardized column names
+- Handles special cases for different data types</p>
+<p><strong>4. Data Validation</strong>
+- Checks for missing or invalid timestamps
+- Validates data types and ranges
+- Handles empty or corrupted data</p>
+<p><strong>5. Merging</strong>
+- Combines data from multiple files
+- Aligns timestamps across all data sources
+- Handles missing data gracefully</p>
+</section>
+<section id="configuration-integration">
+<h2>Configuration Integration<a class="headerlink" href="#configuration-integration" title="Link to this heading"></a></h2>
+<p>The module uses configuration from <cite>system_configuration.py</cite>:</p>
+<p><strong>File Mappings:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><dl class="simple">
+<dt>FILES = {</dt><dd><p>‘substation_mw’: ‘substation_active_power.xlsx’,
+‘substation_mvar’: ‘substation_reactive_power.xlsx’,
+‘wind_power’: ‘wind_farm_active_power.xlsx’,
+‘shunt_elements’: ‘shunt_element_reactive_power.xlsx’,
+‘gen_voltage’: ‘generator_voltage_setpoints.xlsx’,
+‘gen_mvar’: ‘generator_reactive_power.xlsx’</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p><strong>Column Prefixes:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><dl class="simple">
+<dt>COLUMN_PREFIXES = {</dt><dd><p>‘substation_mw’: ‘<a href="#id1"><span class="problematic" id="id2">ss_mw_</span></a>’,
+‘substation_mvar’: ‘<a href="#id3"><span class="problematic" id="id4">ss_mvar_</span></a>’,
+‘wind_power’: ‘<a href="#id5"><span class="problematic" id="id6">wind_mw_</span></a>’,
+‘shunt_elements’: ‘<a href="#id7"><span class="problematic" id="id8">shunt_</span></a>’,
+‘gen_voltage’: ‘<a href="#id9"><span class="problematic" id="id10">gen_v_</span></a>’,
+‘gen_mvar’: ‘<a href="#id11"><span class="problematic" id="id12">gen_mvar_</span></a>’</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p><strong>Excel Structure Constants:</strong>
+.. code-block:: python</p>
+<blockquote>
+<div><p>TIMESTAMP_COLUMN = 2      # Column C (0-indexed)
+DATA_START_ROW = 5        # Row 6 (0-indexed)
+SUBSTATION_NAME_ROW = 1   # Row 2 (0-indexed)
+GENERATOR_NAME_ROW = 2    # Row 3 (0-indexed)
+DATA_COLUMN_START = 6     # Column G (0-indexed)
+DATA_COLUMN_STEP = 2      # Skip every other column</p>
+</div></blockquote>
+</section>
+<section id="usage-examples">
+<h2>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading"></a></h2>
+<section id="basic-file-loading">
+<h3>Basic File Loading<a class="headerlink" href="#basic-file-loading" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis.excel_data_processor</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_single_excel_file</span>
+
+<span class="c1"># Load individual file types</span>
+<span class="n">substation_mw</span> <span class="o">=</span> <span class="n">load_single_excel_file</span><span class="p">(</span>
+    <span class="s1">&#39;raw_data/substation_active_power.xlsx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;substation_mw&#39;</span>
+<span class="p">)</span>
+<span class="n">wind_power</span> <span class="o">=</span> <span class="n">load_single_excel_file</span><span class="p">(</span>
+    <span class="s1">&#39;raw_data/wind_farm_active_power.xlsx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;wind_power&#39;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Substation data: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">substation_mw</span><span class="p">)</span><span class="si">}</span><span class="s2"> records&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wind data: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wind_power</span><span class="p">)</span><span class="si">}</span><span class="s2"> records&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="complete-data-loading">
+<h3>Complete Data Loading<a class="headerlink" href="#complete-data-loading" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis.excel_data_processor</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_all_excel_files</span>
+
+<span class="c1"># Load all data at once</span>
+<span class="n">merged_df</span> <span class="o">=</span> <span class="n">load_all_excel_files</span><span class="p">(</span><span class="s1">&#39;raw_data&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Complete dataset: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">merged_df</span><span class="p">)</span><span class="si">}</span><span class="s2"> records&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variables: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">merged_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time range: </span><span class="si">{</span><span class="n">merged_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">merged_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="integration-with-analysis">
+<h3>Integration with Analysis<a class="headerlink" href="#integration-with-analysis" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis.excel_data_processor</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_all_excel_files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_total_load</span><span class="p">,</span> <span class="n">calculate_net_load</span>
+
+<span class="c1"># Load data</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_all_excel_files</span><span class="p">(</span><span class="s1">&#39;raw_data&#39;</span><span class="p">)</span>
+
+<span class="c1"># Perform analysis</span>
+<span class="n">total_load</span> <span class="o">=</span> <span class="n">calculate_total_load</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">net_load</span> <span class="o">=</span> <span class="n">calculate_net_load</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">total_load</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average total load: </span><span class="si">{</span><span class="n">total_load</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MW&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average net load: </span><span class="si">{</span><span class="n">net_load</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MW&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading"></a></h2>
+<p><strong>File Not Found:</strong>
+- Graceful handling of missing files
+- Informative error messages
+- Continues processing with available files</p>
+<p><strong>Data Structure Issues:</strong>
+- Validates Excel file structure
+- Handles variations in data organization
+- Provides detailed error reporting</p>
+<p><strong>Data Quality Issues:</strong>
+- Handles missing or corrupted data
+- Validates data types and ranges
+- Continues processing with valid data</p>
+<p><strong>Memory Management:</strong>
+- Efficient memory usage for large files
+- Handles out-of-memory conditions
+- Provides progress information for large datasets</p>
+</section>
+<section id="performance-considerations">
+<h2>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading"></a></h2>
+<p><strong>Optimization Features:</strong>
+- <strong>Selective Loading</strong>: Loads only required columns
+- <strong>Memory Efficiency</strong>: Processes data in chunks for large files
+- <strong>Parallel Processing</strong>: Can process multiple files in parallel
+- <strong>Caching</strong>: Caches processed data for repeated access</p>
+<p><strong>Scalability:</strong>
+- <strong>Large Files</strong>: Handles Excel files with thousands of rows
+- <strong>Many Variables</strong>: Efficiently processes hundreds of columns
+- <strong>Multiple Files</strong>: Scales to process dozens of Excel files
+- <strong>Memory Management</strong>: Optimized for memory-constrained environments</p>
+</section>
+<section id="integration-with-other-modules">
+<h2>Integration with Other Modules<a class="headerlink" href="#integration-with-other-modules" title="Link to this heading"></a></h2>
+<p>This module integrates seamlessly with other package modules:</p>
+<ul class="simple">
+<li><p><strong>Data Validation</strong>: Output can be validated using <cite>power_data_validator</cite></p></li>
+<li><p><strong>Analysis</strong>: Loaded data can be analyzed using <cite>power_system_analytics</cite></p></li>
+<li><p><strong>Representative Points</strong>: Data can be used for clustering in <cite>operating_point_extractor</cite></p></li>
+<li><p><strong>Visualization</strong>: Results can be plotted using <cite>power_system_visualizer</cite></p></li>
+<li><p><strong>Configuration</strong>: Uses centralized configuration from <cite>system_configuration</cite></p></li>
+</ul>
+<p>The module is designed to be robust and efficient, providing reliable data loading capabilities while maintaining high performance and user-friendly error handling.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="operating_point_extractor.html" class="btn btn-neutral float-left" title="Operating Point Extractor Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="power_analysis_cli.html" class="btn btn-neutral float-right" title="Power Analysis CLI Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Sustainable Power Systems Lab (SPSL).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -106,6 +106,7 @@ Load all_power*.csv files from a directory.
        """
 
 **Example:**
+
 .. code-block:: python
 
    from tsoc_data_analysis import loadallpowerdf
@@ -120,6 +121,7 @@ Configuration Integration
 All parameters are imported from ``system_configuration.REPRESENTATIVE_OPS``:
 
 **Default Settings:**
+
 .. code-block:: python
 
    REPRESENTATIVE_OPS = {
@@ -142,6 +144,7 @@ All parameters are imported from ``system_configuration.REPRESENTATIVE_OPS``:
    }
 
 **Customization:**
+
 Users can override configuration values by passing parameters directly to functions:
 
 .. code-block:: python

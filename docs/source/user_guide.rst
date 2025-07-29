@@ -49,50 +49,54 @@ Input Data Format
 The package expects Excel files with the following structure:
 
 **Substation Data**
-- **Active Power (MW)**: `substation_active_power.xlsx`
-  - Column naming: `ss_mw_[substation_name]`
-- **Reactive Power (MVAR)**: `substation_reactive_power.xlsx`
-  - Column naming: `ss_mvar_[substation_name]`
-- **Structure**: Timestamps in column C (row 6+), substation names in row 2, data in row 6+
+
+* **Active Power (MW)**: ``substation_active_power.xlsx``
+  * Column naming: ``ss_mw_[substation_name]``
+* **Reactive Power (MVAR)**: ``substation_reactive_power.xlsx``
+  * Column naming: ``ss_mvar_[substation_name]``
+* **Structure**: Timestamps in column C (row 6+), substation names in row 2, data in row 6+
 
 **Generator Data**
-- **Voltage Setpoints (KV)**: `generator_voltage_setpoints.xlsx`
-  - Column naming: `gen_v_[generator_name]`
-- **Reactive Power (MVAR)**: `generator_reactive_power.xlsx`
-  - Column naming: `gen_mvar_[generator_name]`
-- **Structure**: Timestamps in column C (row 6+), generator names in row 3, data in row 6+
+
+* **Voltage Setpoints (KV)**: ``generator_voltage_setpoints.xlsx``
+  * Column naming: ``gen_v_[generator_name]``
+* **Reactive Power (MVAR)**: ``generator_reactive_power.xlsx``
+  * Column naming: ``gen_mvar_[generator_name]``
+* **Structure**: Timestamps in column C (row 6+), generator names in row 3, data in row 6+
 
 **Wind Farm Data**
-- **Active Power (MW)**: `wind_farm_active_power.xlsx`
-  - Column naming: `wind_mw_[wind_farm_name]`
-  - **Structure**: Timestamps in column C (row 6+), wind farm names in row 3, data in row 6+
+
+* **Active Power (MW)**: ``wind_farm_active_power.xlsx``
+  * Column naming: ``wind_mw_[wind_farm_name]``
+  * **Structure**: Timestamps in column C (row 6+), wind farm names in row 3, data in row 6+
 
 **Shunt Elements**
-- **Reactive Power (MVAR)**: `shunt_element_reactive_power.xlsx`
-  - Column naming: `shunt_mvar_[shunt_name]` and `shunt_tap_[shunt_name]`
-  - **Structure**: Timestamps in column C (row 6+), shunt element names in row 3, data in row 6+
+
+* **Reactive Power (MVAR)**: ``shunt_element_reactive_power.xlsx``
+  * Column naming: ``shunt_mvar_[shunt_name]`` and ``shunt_tap_[shunt_name]``
+  * **Structure**: Timestamps in column C (row 6+), shunt element names in row 3, data in row 6+
 
 Data Quality Requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **Time Series Continuity**: Data should be continuous with regular time intervals
-- **Unit Consistency**: All power values in MW/MVAR, voltages in KV
-- **Sign Conventions**: 
-  - Positive load values indicate consumption
-  - Positive generation values indicate production
-  - Generator reactive power is subtracted (negative contribution)
-- **Missing Data**: Gaps up to 3 time steps are interpolated linearly
+* **Time Series Continuity**: Data should be continuous with regular time intervals
+* **Unit Consistency**: All power values in MW/MVAR, voltages in KV
+* **Sign Conventions**: 
+  * Positive load values indicate consumption
+  * Positive generation values indicate production
+  * Generator reactive power is subtracted (negative contribution)
+* **Missing Data**: Gaps up to 3 time steps are interpolated linearly
 
 Basic Workflow
 -------------
 
-1. **Data Preparation**: Organize Excel files in the correct format
-2. **Data Loading**: Use the package to load and merge data
-3. **Data Validation**: Perform quality checks and gap filling
-4. **Analysis**: Calculate loads, categorize generators, analyze wind power
-5. **Representative Points**: Extract representative operating points using clustering
-6. **Visualization**: Create plots and analysis dashboards
-7. **Results**: Save analysis results and reports
+#. **Data Preparation**: Organize Excel files in the correct format
+#. **Data Loading**: Use the package to load and merge data
+#. **Data Validation**: Perform quality checks and gap filling
+#. **Analysis**: Calculate loads, categorize generators, analyze wind power
+#. **Representative Points**: Extract representative operating points using clustering
+#. **Visualization**: Create plots and analysis dashboards
+#. **Results**: Save analysis results and reports
 
 Command Line Interface
 ---------------------

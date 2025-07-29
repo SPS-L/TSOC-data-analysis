@@ -33,16 +33,17 @@ Features:
 
 Data File Structure:
 The tool expects Excel files with the following structure:
-- Substation active power data (MW) - timestamps in column C (row 6+), 
+
+* Substation active power data (MW) - timestamps in column C (row 6+), 
   substation names in row 2 (columns G, I, K, M, etc.), data in row 6+ (columns G, I, K, M, etc.)
-- Substation reactive power data (MVAR) - same structure as active power data
-- Generator voltage setpoints data (KV) - timestamps in column C (row 6+),
+* Substation reactive power data (MVAR) - same structure as active power data
+* Generator voltage setpoints data (KV) - timestamps in column C (row 6+),
   generator names in row 3 (columns G, I, K, M, etc.), data in row 6+ (columns G, I, K, M, etc.)
-- Wind farm active power data (MW) - timestamps in column C (row 6+),
+* Wind farm active power data (MW) - timestamps in column C (row 6+),
   wind farm names in row 3 (columns G, I, K, M, O, etc.), data in row 6+ (columns G, I, K, M, O, etc.)
-- Shunt element reactive power data (MVAR) - timestamps in column C (row 6+),
+* Shunt element reactive power data (MVAR) - timestamps in column C (row 6+),
   shunt element names in row 3 (columns G, I, K, M, etc.), data in row 6+ (columns G, I, K, M, etc.)
-- Generator reactive power data (MVAR) - timestamps in column C (row 6+),
+* Generator reactive power data (MVAR) - timestamps in column C (row 6+),
   generator names in row 3 (columns G, I, K, M, etc.), data in row 6+ (columns G, I, K, M, etc.)
 
 Usage:
@@ -58,6 +59,7 @@ Arguments:
     MONTH                  Month to filter data for (format: "YYYY-MM") or None for all data
 
 Command Line Examples:
+
     # Run full analysis with all outputs for January 2024
     python power_analysis_cli.py 2024-01 --output-dir results --data-dir "raw_data" --save-plots --save-csv --verbose
     
@@ -74,6 +76,7 @@ Command Line Examples:
     python power_analysis_cli.py 2024-06 --summary-only
 
 Python Script Examples:
+
     # Basic analysis for all data
     from power_analysis_cli import execute
     success, df = execute()
@@ -1507,6 +1510,7 @@ def execute(month=None, data_dir=DATA_DIR, output_dir=DEFAULT_OUTPUT_DIR,
         ValueError: If month format is invalid or data directory doesn't exist
         
     Examples:
+
         # Basic analysis for all data
         success, df = execute()
         if success:
