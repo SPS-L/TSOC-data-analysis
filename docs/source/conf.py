@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('../../src'))
 # -- Project information -----------------------------------------------------
 
 project = 'TSOC Data Analysis'
-copyright = '2024, Sustainable Power Systems Lab (SPSL)'
+copyright = '2025, Sustainable Power Systems Lab (SPSL)'
 author = 'Sustainable Power Systems Lab (SPSL)'
 contact = 'info@sps-lab.org'
 
