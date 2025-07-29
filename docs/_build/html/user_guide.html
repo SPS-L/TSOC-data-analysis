@@ -1,0 +1,328 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; TSOC Data Analysis 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Configuration Guide" href="configuration.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TSOC Data Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#key-features">Key Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#data-requirements">Data Requirements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#input-data-format">Input Data Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-quality-requirements">Data Quality Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#basic-workflow">Basic Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#python-api-usage">Python API Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#output-files">Output Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TSOC Data Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/user_guide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<p>The TSOC Data Analysis package is designed to be user-friendly while providing powerful analysis capabilities. This guide will walk you through the essential workflows and best practices.</p>
+<p>The package consists of several interconnected modules:</p>
+<p><strong>Core Analysis Modules</strong></p>
+<ul class="simple">
+<li><p><strong>Power System Analytics</strong>: Load calculations, generator categorization, reactive power analysis</p></li>
+<li><p><strong>Operating Point Extractor</strong>: Representative operating points extraction using K-means clustering</p></li>
+</ul>
+<p><strong>Data Processing Modules</strong></p>
+<ul class="simple">
+<li><p><strong>Excel Data Processor</strong>: Excel file loading and data preprocessing</p></li>
+<li><p><strong>Power Data Validator</strong>: Comprehensive data validation and quality assurance</p></li>
+</ul>
+<p><strong>Configuration and Utilities</strong></p>
+<ul class="simple">
+<li><p><strong>System Configuration</strong>: Central configuration hub and shared utilities</p></li>
+<li><p><strong>Power System Visualizer</strong>: Visualization and plotting functions</p></li>
+</ul>
+</section>
+<section id="key-features">
+<h1>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><strong>Month-based data filtering</strong> for efficient processing of large datasets</p></li>
+<li><p><strong>Load calculations</strong> (Total Load, Net Load) with comprehensive statistics</p></li>
+<li><p><strong>Wind power analysis</strong> with generation statistics and profiles</p></li>
+<li><p><strong>Generator categorization</strong> (Voltage Control vs PQ Control)</p></li>
+<li><p><strong>Reactive power analysis</strong> with comprehensive calculations</p></li>
+<li><p><strong>Data validation</strong> with type checking, limit validation, and gap filling</p></li>
+<li><p><strong>Representative operating points extraction</strong> using K-means clustering with performance optimizations</p></li>
+<li><p><strong>Comprehensive logging</strong> and error handling</p></li>
+</ul>
+</section>
+<section id="data-requirements">
+<h1>Data Requirements<a class="headerlink" href="#data-requirements" title="Link to this heading"></a></h1>
+<section id="input-data-format">
+<h2>Input Data Format<a class="headerlink" href="#input-data-format" title="Link to this heading"></a></h2>
+<p>The package expects Excel files with the following structure:</p>
+<p><strong>Substation Data</strong></p>
+<ul class="simple">
+<li><p><strong>Active Power (MW)</strong>: <code class="docutils literal notranslate"><span class="pre">substation_active_power.xlsx</span></code></p>
+<ul>
+<li><p>Column naming: <code class="docutils literal notranslate"><span class="pre">ss_mw_[substation_name]</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Reactive Power (MVAR)</strong>: <code class="docutils literal notranslate"><span class="pre">substation_reactive_power.xlsx</span></code></p>
+<ul>
+<li><p>Column naming: <code class="docutils literal notranslate"><span class="pre">ss_mvar_[substation_name]</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Structure</strong>: Timestamps in column C (row 6+), substation names in row 2, data in row 6+</p></li>
+</ul>
+<p><strong>Generator Data</strong></p>
+<ul class="simple">
+<li><p><strong>Voltage Setpoints (KV)</strong>: <code class="docutils literal notranslate"><span class="pre">generator_voltage_setpoints.xlsx</span></code></p>
+<ul>
+<li><p>Column naming: <code class="docutils literal notranslate"><span class="pre">gen_v_[generator_name]</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Reactive Power (MVAR)</strong>: <code class="docutils literal notranslate"><span class="pre">generator_reactive_power.xlsx</span></code></p>
+<ul>
+<li><p>Column naming: <code class="docutils literal notranslate"><span class="pre">gen_mvar_[generator_name]</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Structure</strong>: Timestamps in column C (row 6+), generator names in row 3, data in row 6+</p></li>
+</ul>
+<p><strong>Wind Farm Data</strong></p>
+<ul class="simple">
+<li><p><strong>Active Power (MW)</strong>: <code class="docutils literal notranslate"><span class="pre">wind_farm_active_power.xlsx</span></code></p>
+<ul>
+<li><p>Column naming: <code class="docutils literal notranslate"><span class="pre">wind_mw_[wind_farm_name]</span></code></p></li>
+<li><p><strong>Structure</strong>: Timestamps in column C (row 6+), wind farm names in row 3, data in row 6+</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Shunt Elements</strong></p>
+<ul class="simple">
+<li><p><strong>Reactive Power (MVAR)</strong>: <code class="docutils literal notranslate"><span class="pre">shunt_element_reactive_power.xlsx</span></code></p>
+<ul>
+<li><p>Column naming: <code class="docutils literal notranslate"><span class="pre">shunt_mvar_[shunt_name]</span></code> and <code class="docutils literal notranslate"><span class="pre">shunt_tap_[shunt_name]</span></code></p></li>
+<li><p><strong>Structure</strong>: Timestamps in column C (row 6+), shunt element names in row 3, data in row 6+</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="data-quality-requirements">
+<h2>Data Quality Requirements<a class="headerlink" href="#data-quality-requirements" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Time Series Continuity</strong>: Data should be continuous with regular time intervals</p></li>
+<li><p><strong>Unit Consistency</strong>: All power values in MW/MVAR, voltages in KV</p></li>
+<li><p><strong>Sign Conventions</strong>:</p>
+<ul>
+<li><p>Positive load values indicate consumption</p></li>
+<li><p>Positive generation values indicate production</p></li>
+<li><p>Generator reactive power is subtracted (negative contribution)</p></li>
+</ul>
+</li>
+<li><p><strong>Missing Data</strong>: Gaps up to 3 time steps are interpolated linearly</p></li>
+</ul>
+</section>
+</section>
+<section id="basic-workflow">
+<h1>Basic Workflow<a class="headerlink" href="#basic-workflow" title="Link to this heading"></a></h1>
+<ol class="arabic simple">
+<li><p><strong>Data Preparation</strong>: Organize Excel files in the correct format</p></li>
+<li><p><strong>Data Loading</strong>: Use the package to load and merge data</p></li>
+<li><p><strong>Data Validation</strong>: Perform quality checks and gap filling</p></li>
+<li><p><strong>Analysis</strong>: Calculate loads, categorize generators, analyze wind power</p></li>
+<li><p><strong>Representative Points</strong>: Extract representative operating points using clustering</p></li>
+<li><p><strong>Visualization</strong>: Create plots and analysis dashboards</p></li>
+<li><p><strong>Results</strong>: Save analysis results and reports</p></li>
+</ol>
+</section>
+<section id="python-api-usage">
+<h1>Python API Usage<a class="headerlink" href="#python-api-usage" title="Link to this heading"></a></h1>
+<p>For programmatic access and custom workflows:</p>
+<p><strong>Basic Analysis:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute</span>
+
+<span class="c1"># Execute full analysis pipeline</span>
+<span class="n">success</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span>
+    <span class="n">month</span><span class="o">=</span><span class="s1">&#39;2024-01&#39;</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;raw_data&#39;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span><span class="p">,</span>
+    <span class="n">save_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">save_csv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analysis completed successfully&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data shape: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Analysis failed&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Custom Analysis Workflow:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">loadallpowerdf</span><span class="p">,</span>
+    <span class="n">calculate_total_load</span><span class="p">,</span>
+    <span class="n">calculate_net_load</span><span class="p">,</span>
+    <span class="n">categorize_generators</span><span class="p">,</span>
+    <span class="n">extract_representative_ops</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 1: Load data</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">loadallpowerdf</span><span class="p">(</span><span class="s1">&#39;2024-01&#39;</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;raw_data&#39;</span><span class="p">)</span>
+
+<span class="c1"># Step 2: Calculate loads</span>
+<span class="n">total_load</span> <span class="o">=</span> <span class="n">calculate_total_load</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">net_load</span> <span class="o">=</span> <span class="n">calculate_net_load</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># Step 3: Categorize generators</span>
+<span class="n">voltage_control</span><span class="p">,</span> <span class="n">pq_control</span> <span class="o">=</span> <span class="n">categorize_generators</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># Step 4: Extract representative points</span>
+<span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span>
+    <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analysis Results:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total load range: </span><span class="si">{</span><span class="n">total_load</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">total_load</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MW&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Voltage control generators: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">voltage_control</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative clusters: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Data Validation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataValidator</span>
+
+<span class="c1"># Create validator instance</span>
+<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># Perform validation</span>
+<span class="n">validation_results</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_data</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation Results:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Valid records: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;valid_records&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Invalid records: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;invalid_records&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Missing values: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;missing_values&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="output-files">
+<h1>Output Files<a class="headerlink" href="#output-files" title="Link to this heading"></a></h1>
+<p>The package generates various output files depending on the options selected:</p>
+<p><strong>Analysis Results:</strong></p>
+<ul class="simple">
+<li><p><cite>analysis_summary.txt</cite> - Summary statistics and key metrics</p></li>
+<li><p><cite>load_statistics.csv</cite> - Detailed load analysis results</p></li>
+<li><p><cite>generator_analysis.csv</cite> - Generator categorization and statistics</p></li>
+<li><p><cite>wind_power_analysis.csv</cite> - Wind farm analysis results</p></li>
+</ul>
+<p><strong>Representative Points:</strong></p>
+<ul class="simple">
+<li><p><cite>representative_operating_points.csv</cite> - Extracted representative points</p></li>
+<li><p><cite>clustering_summary.txt</cite> - Clustering analysis summary</p></li>
+<li><p><cite>clustering_info.json</cite> - Detailed clustering diagnostics</p></li>
+</ul>
+<p><strong>Visualization:</strong></p>
+<ul class="simple">
+<li><p><cite>total_load_timeseries.png</cite> - Total load time series plot</p></li>
+<li><p><cite>net_load_timeseries.png</cite> - Net load time series plot</p></li>
+<li><p><cite>daily_load_profiles.png</cite> - Daily load profile analysis</p></li>
+<li><p><cite>comprehensive_analysis.png</cite> - Multi-panel analysis dashboard</p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Sustainable Power Systems Lab (SPSL).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
