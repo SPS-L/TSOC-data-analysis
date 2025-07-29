@@ -12,7 +12,7 @@ operational data, including type checks, limit validation, and gap filling.
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Tuple, Any, Optional
-from system_configuration import DATA_VALIDATION, VALIDATION_MESSAGES, ENHANCED_DATA_VALIDATION, ENHANCED_VALIDATION_MESSAGES
+from .system_configuration import DATA_VALIDATION, VALIDATION_MESSAGES, ENHANCED_DATA_VALIDATION, ENHANCED_VALIDATION_MESSAGES
 from sklearn.ensemble import IsolationForest, RandomForestRegressor
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.preprocessing import StandardScaler

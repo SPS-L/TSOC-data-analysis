@@ -21,7 +21,7 @@ Functions:
 
 import pandas as pd
 import os
-from system_configuration import DATA_DIR
+from .system_configuration import DATA_DIR
 
 # Task 1.2: Function to load a single Excel file
 def load_excel_file(filename, data_dir=DATA_DIR):

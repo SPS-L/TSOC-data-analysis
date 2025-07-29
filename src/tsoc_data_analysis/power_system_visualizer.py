@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
-from system_configuration import PLOT_STYLE, PLOT_PALETTE, FIGURE_SIZES, FONT_SIZES
+from .system_configuration import PLOT_STYLE, PLOT_PALETTE, FIGURE_SIZES, FONT_SIZES
 
 # Set style for better-looking plots
 plt.style.use(PLOT_STYLE)

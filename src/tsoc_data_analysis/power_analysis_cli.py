@@ -122,10 +122,10 @@ from pathlib import Path
 
 # Import our custom modules
 
-from power_system_analytics import calculate_total_load, calculate_net_load, get_load_statistics, categorize_generators, calculate_total_wind, calculate_total_reactive_power
-from power_system_visualizer import plot_load_timeseries, plot_monthly_profile, plot_total_load_daily_profile, plot_net_load_daily_profile, create_comprehensive_plots
-from power_data_validator import DataValidator
-from system_configuration import (
+from .power_system_analytics import calculate_total_load, calculate_net_load, get_load_statistics, categorize_generators, calculate_total_wind, calculate_total_reactive_power
+from .power_system_visualizer import plot_load_timeseries, plot_monthly_profile, plot_total_load_daily_profile, plot_net_load_daily_profile, create_comprehensive_plots
+from .power_data_validator import DataValidator
+from .system_configuration import (
     FILES, COLUMN_PREFIXES, DEFAULT_OUTPUT_DIR, DEFAULT_VERBOSE,
     DATA_DIR, PLOT_STYLE, PLOT_PALETTE,
     FIGURE_SIZES, FONT_SIZES, MIN_YEAR, MAX_YEAR, MIN_MONTH, MAX_MONTH,

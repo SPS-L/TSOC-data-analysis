@@ -94,7 +94,7 @@ from sklearn.metrics import (
     calinski_harabasz_score,
     davies_bouldin_score,
 )
-from system_configuration import clean_column_name, REPRESENTATIVE_OPS, convert_numpy_types
+from .system_configuration import clean_column_name, REPRESENTATIVE_OPS, convert_numpy_types
 
 __all__ = ["extract_representative_ops", "loadallpowerdf"]
 

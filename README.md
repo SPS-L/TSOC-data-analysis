@@ -1,10 +1,44 @@
-# Power System Data Analysis Tool
+# TSOC Data Analysis
 
 **Author:** Sustainable Power Systems Lab (SPSL), [https://sps-lab.org](https://sps-lab.org), contact: info@sps-lab.org
 
 A comprehensive Python tool for analyzing the TSOC power system operational data from Excel files. The tool provides a powerful command-line interface (CLI) and modular Python API for load analysis, generator categorization, wind power analysis, reactive power calculations, and representative operating point extraction.
 
 **Pure Python Implementation**: This tool is implemented entirely in Python. It can be used from the command line, imported as Python modules, or integrated into automated analysis pipelines.
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![Documentation](https://img.shields.io/badge/docs-sphinx-blue.svg)](https://tsoc-data-analysis.readthedocs.io/)
+
+## Installation
+
+### Requirements
+- Python 3.7 or higher
+- pip (Python package installer)
+
+### Quick Install
+
+```bash
+# Install from source
+git clone https://github.com/sps-lab/tsoc-data-analysis.git
+cd tsoc-data-analysis
+pip install -e .
+
+# Or install with development dependencies
+pip install -e ".[dev]"
+```
+
+### Dependencies
+The package requires the following Python packages:
+- pandas>=1.3.0
+- numpy>=1.20.0
+- matplotlib>=3.3.0
+- seaborn>=0.11.0
+- openpyxl>=3.0.0
+- scikit-learn>=1.0.0
+- scipy>=1.7.0
+- psutil>=5.8.0
+- joblib>=1.1.0
 
 ## Features
 
@@ -145,11 +179,8 @@ REPRESENTATIVE_OPS['output_files'] = {
 
 ### Basic Analysis
 
-```bash
-# Extract representative points with default parameters
 ```python
-from power_analysis_cli import execute
-from operating_point_extractor import extract_representative_ops
+from tsoc_data_analysis import execute, extract_representative_ops
 
 # Load and analyze data
 success, df = execute(month='2024-01', data_dir='raw_data', output_dir='results', 
@@ -167,7 +198,7 @@ If the load and analyze data has been executed before, we can load the clean ext
 
 ```python
 # Load all_power*.csv files from directory
-from operating_point_extractor import loadallpowerdf
+from tsoc_data_analysis import loadallpowerdf, extract_representative_ops
 
 # Load data from results directory
 df = loadallpowerdf('results')
@@ -179,27 +210,25 @@ rep_df, diagnostics = extract_representative_ops(
 )
 ```
 
-### Command line execution of data loading and analysis
-
-
+### Command Line Usage
 
 Run power system analysis with various options:
 
 ```bash
 # Run full analysis with all outputs for January 2024
-python power_analysis_cli.py 2024-01 --output-dir results --save-plots --save-csv
+tsoc-analyze 2024-01 --output-dir results --save-plots --save-csv
 
 # Run analysis with specific data directory for March 2024
-python power_analysis_cli.py 2024-03 --data-dir "2024-2025 data" --verbose
+tsoc-analyze 2024-03 --data-dir "2024-2025 data" --verbose
 
 # Run analysis and save only summary report for December 2024
-python power_analysis_cli.py 2024-12 --output-dir results --summary-only
+tsoc-analyze 2024-12 --output-dir results --summary-only
 
 # Run analysis for all data (no month filter)
-python power_analysis_cli.py --output-dir results --save-plots --save-csv
+tsoc-analyze --output-dir results --save-plots --save-csv
 
 # Quick analysis for a specific month with summary only
-python power_analysis_cli.py 2024-06 --summary-only
+tsoc-analyze 2024-06 --summary-only
 ```
 
 #### Command Line Options
@@ -640,7 +669,7 @@ pip install matplotlib seaborn
 ### Representative Operating Points with Data Loading
 ```python
 # Complete workflow: Load data and extract representative points
-from operating_point_extractor import loadallpowerdf, extract_representative_ops
+from tsoc_data_analysis import loadallpowerdf, extract_representative_ops
 
 # Load all_power data from results directory
 load_dir = 'results'
@@ -661,8 +690,7 @@ print(f"Clustering quality: {diagnostics['silhouette']:.3f}")
 ### Advanced Data Loading Workflow
 ```python
 # Multi-step analysis with data loading
-from operating_point_extractor import loadallpowerdf, extract_representative_ops
-from power_system_analytics import calculate_total_load, calculate_net_load
+from tsoc_data_analysis import loadallpowerdf, extract_representative_ops, calculate_total_load, calculate_net_load
 
 # Step 1: Load data
 df = loadallpowerdf('results')
@@ -844,24 +872,65 @@ def extract_representative_ops(
     json_safe_info = convert_numpy_types(info)
 ```
 
-### Requirements
-- Python 3.7+
-- pandas
-- numpy
-- matplotlib
-- seaborn
-- openpyxl
-- scikit-learn
-- scipy
-- psutil
-- joblib (for parallel processing)
+## Development
 
-### Installation
+### Running Tests
 ```bash
-pip install pandas numpy matplotlib seaborn openpyxl scikit-learn scipy psutil joblib
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=tsoc_data_analysis
+
+# Run specific test file
+pytest tests/test_system_configuration.py
 ```
 
-Or install from requirements.txt:
+### Code Quality
 ```bash
-pip install -r requirements.txt
+# Format code
+black src/tsoc_data_analysis/
+
+# Lint code
+flake8 src/tsoc_data_analysis/
+
+# Type checking
+mypy src/tsoc_data_analysis/
+```
+
+### Building Documentation
+```bash
+# Install documentation dependencies
+pip install -e ".[docs]"
+
+# Build documentation
+cd docs
+make html
+
+# View documentation
+open build/html/index.html
+```
+
+### Project Structure
+```
+project_root/
+├── docs/                # Documentation source (Sphinx)
+│   ├── build/           # (autogenerated) Built HTML/PDF docs
+│   └── source/          # Source files for documentation
+├── src/                 # Source code lives here
+│   └── tsoc_data_analysis/    # The actual Python package
+│       ├── __init__.py  # Makes this directory a package
+│       ├── system_configuration.py
+│       ├── power_system_analytics.py
+│       ├── power_system_visualizer.py
+│       ├── power_data_validator.py
+│       ├── operating_point_extractor.py
+│       ├── excel_data_processor.py
+│       └── power_analysis_cli.py
+├── tests/               # Unit and integration tests
+│   └── test_system_configuration.py
+├── README.md            # Short project introduction and usage
+├── LICENSE              # Licensing information (Apache 2.0)
+├── pyproject.toml       # Build system and metadata (PEP 518/PEP 621)
+└── requirements.txt     # Python dependencies
 ```
