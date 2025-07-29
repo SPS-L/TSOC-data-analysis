@@ -183,12 +183,13 @@ REPRESENTATIVE_OPS['output_files'] = {
 from tsoc_data_analysis import execute, extract_representative_ops
 
 # Load and analyze data
-success, df = execute(month='2024-01', data_dir='raw_data', output_dir='results', 
-           save_csv=False, save_plots=False, summary_only=False, verbose=True)
+success, df = execute(month='2024-01', data_dir='raw_data', output_dir='results', save_csv=True, save_plots=True, verbose=True)
 if success:
     # Extract representative points using config parameters
+    # Note: If df already contains 'net_load' and 'total_load' columns, 
+    # they will be used directly without recalculation
     rep_df, diagnostics = extract_representative_ops(
-        df, max_power=850, MAPGL=200, output_dir='results'
+        df, max_power=450, MAPGL=200, output_dir='results'
     )
 ```
 
@@ -205,6 +206,8 @@ df = loadallpowerdf('results')
 print(f"Loaded {len(df)} snapshots with {len(df.columns)} columns")
 
 # Use in representative operating points extraction
+# The function will automatically use existing 'net_load' and 'total_load' columns
+# if they are present in the loaded data, avoiding redundant calculations
 rep_df, diagnostics = extract_representative_ops(
     loadallpowerdf('results'), max_power=850, MAPGL=200, output_dir='results'
 )

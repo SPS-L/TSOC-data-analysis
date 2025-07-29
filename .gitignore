@@ -105,9 +105,9 @@ Thumbs.db
 *.txt
 
 # Results and output directories
-results_*/
-output_*/
-logs_*/
+results*/
+output*/
+logs*/
 
 # Snapshots directory (contains large data files)
 Snapshots/

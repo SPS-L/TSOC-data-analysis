@@ -742,6 +742,12 @@ def extract_representative_ops(
     7. MAPGL belt analysis for critical low-load operating points
     8. Results saved with clean column names and comprehensive diagnostics
 
+    NET LOAD HANDLING:
+    ==================
+    - If 'net_load' column exists in input data, it will be used directly
+    - If 'net_load' is missing, it will be calculated from power system data
+    - This avoids redundant calculations when data already contains computed values
+
     Parameters
     ----------
     all_power : pandas.DataFrame
@@ -749,6 +755,8 @@ def extract_representative_ops(
         - ss_mw_*: Substation active power (MW)
         - ss_mvar_*: Substation reactive power (MVAR) 
         - wind_mw_*: Wind farm active power (MW)
+        - net_load: Net load (optional, will be calculated if not present)
+        - total_load: Total load (optional, will be calculated if net_load not present)
     max_power : float
         Maximum dispatchable generation for the horizon under study [MW].
     MAPGL : float
@@ -852,16 +860,21 @@ def extract_representative_ops(
     if inf_count > 0:
         raise ValueError(f"Input data contains {inf_count} infinite values")
     
-    # Import analysis functions for net load calculation
-    from power_system_analytics import calculate_total_load, calculate_net_load
-
-    # Create working copy and calculate net_load
+    # Create working copy
     working = all_power.copy()
     
-    # Calculate net load for filtering
-    total_load = calculate_total_load(working)
-    net_load = calculate_net_load(working, total_load)
-    working['net_load'] = net_load
+    # Check if net_load and total_load columns already exist
+    if 'net_load' not in working.columns:
+        # Import analysis functions for net load calculation only if needed
+        from .power_system_analytics import calculate_total_load, calculate_net_load
+        
+        # Calculate net load for filtering
+        total_load = calculate_total_load(working)
+        net_load = calculate_net_load(working, total_load)
+        working['net_load'] = net_load
+        print("Calculated net_load from power system data")
+    else:
+        print("Using existing net_load column from input data")
 
     # 1 ───────────────── Data integrity checks
     working = working[working["net_load"] <= max_power]

@@ -22,8 +22,16 @@ author = 'Sustainable Power Systems Lab (SPSL)'
 contact = 'info@sps-lab.org'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
-version = '1.0.0'
+# Automatically read version from __init__.py
+import re
+
+
+# Import the package to get version
+import tsoc_data_analysis
+
+# Extract version from __init__.py
+release = tsoc_data_analysis.__version__
+version = release
 
 # -- General configuration ---------------------------------------------------
 

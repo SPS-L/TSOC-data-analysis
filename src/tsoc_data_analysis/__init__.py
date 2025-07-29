@@ -42,6 +42,8 @@ from .operating_point_extractor import (
     loadallpowerdf
 )
 
+from .power_analysis_cli import execute
+
 from .power_data_validator import DataValidator
 
 from .system_configuration import (
@@ -72,6 +74,7 @@ __all__ = [
     'calculate_total_reactive_power',
     'extract_representative_ops',
     'loadallpowerdf',
+    'execute',
     'DataValidator',
     
     # Configuration

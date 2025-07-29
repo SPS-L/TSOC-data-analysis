@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tsoc-data-analysis"
-version = "1.0.0"
+dynamic = ["version"]
 description = "A comprehensive Python tool for analyzing TSOC power system operational data from Excel files"
 readme = "README.md"
 license = {text = "Apache-2.0"}
@@ -70,6 +70,9 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "tsoc_data_analysis" = ["*.txt", "*.json", "*.yaml", "*.yml"]
+
+[tool.setuptools.dynamic]
+version = {attr = "tsoc_data_analysis.__version__"}
 
 [tool.black]
 line-length = 88
