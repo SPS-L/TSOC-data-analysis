@@ -86,7 +86,7 @@ from typing import Tuple, Dict, Optional
 import pandas as pd
 import numpy as np
 import os
-import json
+
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import (
@@ -969,37 +969,6 @@ def extract_representative_ops(
             max_power, MAPGL, k_max, random_state, feat_cols, model, scaler
         )
         
-        # Also save detailed info as JSON for programmatic access
-        json_filename = os.path.join(output_dir, output_files['clustering_info'])
-        
-        # Convert the info dictionary to JSON-safe format
-        json_safe_info = convert_numpy_types(info)
-        
-        try:
-            with open(json_filename, "w", encoding='utf-8') as f:
-                json.dump(json_safe_info, f, indent=4)
-        except (TypeError, ValueError) as e:
-            print(f"Warning: Could not save JSON file due to serialization error: {e}")
-            print("Saving simplified JSON without problematic data types...")
-            
-            # Fallback: save only basic metrics
-            basic_info = {
-                'k': int(info.get('k', 0)),
-                'silhouette': float(info.get('silhouette', 0.0)),
-                'ch': float(info.get('ch', 0.0)),
-                'db': float(info.get('db', 0.0)),
-                'cluster_sizes': [int(x) for x in info.get('cluster_sizes', [])],
-                'n_medoid': int(info.get('n_medoid', 0)),
-                'n_belt': int(info.get('n_belt', 0)),
-                'n_total': int(info.get('n_total', 0)),
-                'original_size': int(info.get('original_size', 0)),
-                'filtered_size': int(info.get('filtered_size', 0)),
-                'feature_columns': list(info.get('feature_columns', [])),
-            }
-            
-            with open(json_filename, "w", encoding='utf-8') as f:
-                json.dump(basic_info, f, indent=4)
-        
         # Create visualizations
         _create_visualizations(
             output_dir, working, rep_df, info, model, scaler, feat_cols, max_power, MAPGL
@@ -1008,6 +977,5 @@ def extract_representative_ops(
         print(f"Results saved to:")
         print(f"  Representative points: {filename_rep}")
         print(f"  Clustering summary: {summary_filename}")
-        print(f"  Detailed info (JSON): {json_filename}")
 
     return rep_df, info 

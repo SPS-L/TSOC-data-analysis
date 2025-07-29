@@ -6,36 +6,6 @@ This guide provides solutions to common issues and problems that may arise when 
 Common Error Messages
 ---------------------
 
-JSON Serialization Errors
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**Error:** `TypeError: Object of type numpy.int64 is not JSON serializable`
-
-**Cause:** NumPy data types cannot be directly serialized to JSON.
-
-**Solution:**
-
-.. code-block:: python
-
-   from tsoc_data_analysis.system_configuration import convert_numpy_types
-   
-   # Convert NumPy types before JSON serialization
-   data = {'value': np.int64(42), 'array': np.array([1, 2, 3])}
-   json_safe_data = convert_numpy_types(data)
-   
-   # Now safe to serialize
-   import json
-   json.dumps(json_safe_data)
-
-**Alternative Solution:**
-
-.. code-block:: python
-
-   # Use pandas to_json() method which handles NumPy types
-   import pandas as pd
-   
-   df = pd.DataFrame(data)
-   df.to_json('output.json')
 
 File Not Found Errors
 ~~~~~~~~~~~~~~~~~~~~

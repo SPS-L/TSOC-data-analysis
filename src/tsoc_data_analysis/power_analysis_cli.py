@@ -112,7 +112,7 @@ Python Script Examples:
 import argparse
 import sys
 import os
-import json
+
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -857,12 +857,10 @@ class PowerAnalysisCLI:
             # Generate detailed validation summary report first
             self.generate_validation_summary_report()
             
-            # Create month-specific filenames if month is specified
+            # Create month-specific filename if month is specified
             if self.month:
-                json_file = f'analysis_summary_{self.month}.json'
                 txt_file = f'analysis_summary_{self.month}.txt'
             else:
-                json_file = 'analysis_summary.json'
                 txt_file = 'analysis_summary.txt'
             
             # Find timestamps for min/max values
@@ -924,13 +922,6 @@ class PowerAnalysisCLI:
                 },
                 'data_validation': self.validation_summary if self.validation_summary else {}
             }
-            
-            # Convert report to JSON serializable format
-            report_serializable = self._convert_to_json_serializable(report)
-            
-            # Save as JSON
-            with open(self.output_dir / json_file, 'w', encoding='utf-8') as f:
-                json.dump(report_serializable, f, indent=2)
             
             # Save as text report
             with open(self.output_dir / txt_file, 'w', encoding='utf-8') as f:

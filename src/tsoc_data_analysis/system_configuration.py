@@ -361,8 +361,7 @@ REPRESENTATIVE_OPS = {
     # Output file naming
     'output_files': {
         'representative_points': 'representative_operating_points.csv',
-        'clustering_summary': 'clustering_summary.txt',
-        'clustering_info': 'clustering_info.json'
+        'clustering_summary': 'clustering_summary.txt'
     },
     
     # Clustering validation and diagnostics

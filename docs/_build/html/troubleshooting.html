@@ -19,6 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="License" href="license.html" />
     <link rel="prev" title="Examples" href="examples.html" /> 
 </head>
 
@@ -49,7 +50,6 @@
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Troubleshooting</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#common-error-messages">Common Error Messages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#json-serialization-errors">JSON Serialization Errors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#file-not-found-errors">File Not Found Errors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#data-quality-issues">Data Quality Issues</a></li>
 </ul>
@@ -82,6 +82,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#getting-help">Getting Help</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
         </div>
@@ -113,31 +114,6 @@
 <p>This guide provides solutions to common issues and problems that may arise when using the TSOC Data Analysis package.</p>
 <section id="common-error-messages">
 <h2>Common Error Messages<a class="headerlink" href="#common-error-messages" title="Link to this heading"></a></h2>
-<section id="json-serialization-errors">
-<h3>JSON Serialization Errors<a class="headerlink" href="#json-serialization-errors" title="Link to this heading"></a></h3>
-<p><strong>Error:</strong> <cite>TypeError: Object of type numpy.int64 is not JSON serializable</cite></p>
-<p><strong>Cause:</strong> NumPy data types cannot be directly serialized to JSON.</p>
-<p><strong>Solution:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis.system_configuration</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_numpy_types</span>
-
-<span class="c1"># Convert NumPy types before JSON serialization</span>
-<span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="s1">&#39;array&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])}</span>
-<span class="n">json_safe_data</span> <span class="o">=</span> <span class="n">convert_numpy_types</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-<span class="c1"># Now safe to serialize</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_safe_data</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>Alternative Solution:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use pandas to_json() method which handles NumPy types</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s1">&#39;output.json&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
 <section id="file-not-found-errors">
 <h3>File Not Found Errors<a class="headerlink" href="#file-not-found-errors" title="Link to this heading"></a></h3>
 <p><strong>Error:</strong> <cite>FileNotFoundError: [Errno 2] No such file or directory: ‘raw_data/substation_active_power.xlsx’</cite></p>
@@ -635,6 +611,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

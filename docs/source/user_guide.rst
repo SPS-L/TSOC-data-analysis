@@ -200,7 +200,6 @@ The package generates various output files depending on the options selected:
 
 - `representative_operating_points.csv` - Extracted representative points
 - `clustering_summary.txt` - Clustering analysis summary
-- `clustering_info.json` - Detailed clustering diagnostics
 
 **Visualization:**
 
