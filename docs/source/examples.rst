@@ -4,7 +4,7 @@ Examples
 This section provides comprehensive examples of using the TSOC Data Analysis package for various power system analysis scenarios.
 
 Example Categories
------------------
+------------------
 
 The examples are organized into the following categories:
 
@@ -15,10 +15,10 @@ The examples are organized into the following categories:
 5. **Advanced Workflow Examples** - Complete analysis pipelines and custom workflows
 
 Basic Analysis Examples
-----------------------
+-----------------------
 
 Simple Load Analysis
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Calculate total and net load from power system data.
 
@@ -67,7 +67,7 @@ Simple Load Analysis
      Standard Deviation: 180.34 MW
 
 Generator Categorization
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Categorize generators as voltage control or PQ control based on their reactive power characteristics.
 
@@ -107,10 +107,10 @@ Generator Categorization
      - gen_mvar_GEN5
 
 Representative Points Examples
-----------------------------
+------------------------------
 
 Basic Clustering Analysis
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Extract representative operating points using K-means clustering.
 
@@ -153,7 +153,7 @@ Basic Clustering Analysis
    Representative points saved to: results/representative_operating_points.csv
 
 Advanced Clustering with Custom Parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Perform clustering with custom parameters for specific analysis requirements.
 
@@ -199,10 +199,10 @@ Advanced Clustering with Custom Parameters
      Quality rating: Good
 
 Data Validation Examples
------------------------
+------------------------
 
 Basic Data Validation
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Perform comprehensive data validation to ensure data quality.
 
@@ -244,7 +244,7 @@ Basic Data Validation
      - Column wind_mw_FARM1: Negative value (-5.2) found
 
 Enhanced Validation with Anomaly Detection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Perform advanced validation with anomaly detection and gap filling.
 
@@ -289,10 +289,10 @@ Enhanced Validation with Anomaly Detection
      - gen_mvar_GEN1: Correlation anomaly at index 189
 
 Visualization Examples
----------------------
+----------------------
 
 Time Series Plotting
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Create time series plots for power system variables.
 
@@ -321,7 +321,7 @@ Time Series Plotting
 **Expected Output:** Time series plots saved as PNG files in the results directory.
 
 Comprehensive Analysis Dashboard
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Create a comprehensive analysis dashboard with multiple plots.
 
@@ -349,10 +349,10 @@ Comprehensive Analysis Dashboard
 **Expected Output:** Multiple analysis plots and summary files in the results directory.
 
 Advanced Workflow Examples
--------------------------
+--------------------------
 
 Complete Analysis Pipeline
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Perform a complete analysis pipeline from data loading to results generation.
 
@@ -406,7 +406,7 @@ Complete Analysis Pipeline
      Clustering quality: 0.623
 
 Multi-Month Analysis
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Perform analysis across multiple months and compare results.
 
@@ -467,7 +467,7 @@ Multi-Month Analysis
      2024-03: 5 clusters, quality: 0.647
 
 Custom Analysis Workflow
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Objective:** Create a custom analysis workflow for specific requirements.
 

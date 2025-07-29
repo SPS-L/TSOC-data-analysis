@@ -1,5 +1,5 @@
 Installation
-===========
+============
 
 Requirements
 ------------
@@ -8,7 +8,7 @@ Requirements
 * pip (Python package installer)
 
 Dependencies
------------
+------------
 
 The following Python packages are required:
 
@@ -23,14 +23,14 @@ The following Python packages are required:
 * joblib>=1.1.0
 
 Installation Methods
--------------------
+--------------------
 
 .. code-block:: bash
 
    pip install git+https://github.com/SPS-L/TSOC-data-analysis.git
 
 Verification
------------
+------------
 
 After installation, you can verify that the package is working correctly:
 

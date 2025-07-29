@@ -2,7 +2,7 @@ User Guide
 ==========
 
 Getting Started
---------------
+---------------
 
 The TSOC Data Analysis package is designed to be user-friendly while providing powerful analysis capabilities. This guide will walk you through the essential workflows and best practices.
 
@@ -39,7 +39,7 @@ Data Requirements
 -----------------
 
 Input Data Format
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 The package expects Excel files with the following structure:
 
@@ -82,7 +82,7 @@ The package expects Excel files with the following structure:
   * **Structure**: Timestamps in column C (row 6+), shunt element names in row 3, data in row 6+
 
 Data Quality Requirements
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * **Time Series Continuity**: Data should be continuous with regular time intervals
 * **Unit Consistency**: All power values in MW/MVAR, voltages in KV

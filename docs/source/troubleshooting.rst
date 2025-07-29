@@ -1,13 +1,13 @@
 Troubleshooting
-==============
+===============
 
 This guide provides solutions to common issues and problems that may arise when using the TSOC Data Analysis package.
 
 Common Error Messages
---------------------
+---------------------
 
 JSON Serialization Errors
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Error:** `TypeError: Object of type numpy.int64 is not JSON serializable`
 
@@ -115,10 +115,10 @@ Data Quality Issues
       print(f"Found {len(matching_cols)} columns with prefix '{expected_prefix}'")
 
 Performance Issues
------------------
+------------------
 
 Slow Clustering for Large Datasets
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Problem:** Clustering takes too long for large datasets.
 
@@ -220,10 +220,10 @@ Memory Issues
           pass
 
 Configuration Problems
----------------------
+----------------------
 
 Invalid Configuration Settings
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Problem:** Configuration errors or invalid parameter values.
 
@@ -268,7 +268,7 @@ Invalid Configuration Settings
           print("Error: max_gap_steps must be at least 1")
 
 Missing Dependencies
--------------------
+--------------------
 
 **Problem:** Import errors or missing packages.
 
@@ -305,7 +305,7 @@ Missing Dependencies
       pip install -e ".[dev]"
 
 Visualization Issues
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 **Problem:** Plotting errors or missing plots.
 
@@ -344,7 +344,7 @@ Visualization Issues
           print("Directory is not writable")
 
 Parallel Processing Issues
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Problem:** Parallel processing errors or performance issues.
 
@@ -379,10 +379,10 @@ Parallel Processing Issues
           )
 
 Data Format Issues
------------------
+------------------
 
 Excel File Structure Problems
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Problem:** Excel files have incorrect structure or format.
 
@@ -428,7 +428,7 @@ Excel File Structure Problems
                   print(f"Timestamps found in column {col}")
 
 Data Type Issues
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 **Problem:** Data type conversion errors or incorrect data types.
 
@@ -465,10 +465,10 @@ Data Type Issues
                   print(f"Non-numeric values in {col}: {df[col][non_numeric].unique()}")
 
 Debugging Techniques
--------------------
+--------------------
 
 Enable Verbose Mode
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 **Solution:** Use verbose mode for detailed output.
 
@@ -486,7 +486,7 @@ Enable Verbose Mode
    )
 
 Log Analysis
-~~~~~~~~~~~
+~~~~~~~~~~~~
 
 **Solution:** Check log files for detailed error information.
 
@@ -508,7 +508,7 @@ Log Analysis
    success, df = execute(month='2024-01', data_dir='raw_data')
 
 Step-by-Step Debugging
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 **Solution:** Debug each step individually.
 
@@ -543,7 +543,7 @@ Step-by-Step Debugging
        print(f"Clustering error: {e}")
 
 Getting Help
------------
+------------
 
 **Additional Resources:**
 
