@@ -167,15 +167,15 @@ def loadallpowerdf(directory: str) -> pd.DataFrame:
     file_path = sorted(matching_files)[0]
     
     try:
-        # Try to read with automatic index parsing (for timestamps)
-        df = pd.read_csv(file_path, index_col=0, parse_dates=True)
-    except (ValueError, TypeError):
+        # Try to read with automatic index parsing (for timestamps), skip comment lines
+        df = pd.read_csv(file_path, index_col=0, parse_dates=True, comment='#')
+    except (ValueError, TypeError, IndexError):
         # Fallback: read without index parsing if it fails
         try:
-            df = pd.read_csv(file_path, index_col=0)
-        except (ValueError, TypeError):
-            # Final fallback: read without index
-            df = pd.read_csv(file_path)
+            df = pd.read_csv(file_path, index_col=0, comment='#')
+        except (ValueError, TypeError, IndexError):
+            # Final fallback: read without index, skip comment lines
+            df = pd.read_csv(file_path, comment='#')
     
     print(f"Loaded all_power data from: {file_path}")
     print(f"  Shape: {df.shape[0]} rows × {df.shape[1]} columns")
@@ -339,15 +339,34 @@ def _create_visualizations(
         if len(feat_cols) > 0:
             feature_vars = working[feat_cols].var().sort_values(ascending=False)
             top_features = feature_vars.head(10)
-            feature_names = [col.replace('ss_mw_', '').replace('ss_mvar_', '').replace('wind_mw_', '') 
-                           for col in top_features.index]
             
-            bars = ax4.barh(range(len(top_features)), top_features.values, alpha=0.7)
-            ax4.set_yticks(range(len(top_features)))
-            ax4.set_yticklabels(feature_names, fontsize=8)
-            ax4.set_xlabel('Variance')
+            # Check if we have meaningful variance values
+            if len(top_features) > 0 and top_features.max() > 0:
+                feature_names = [col.replace('ss_mw_', '').replace('ss_mvar_', '').replace('wind_mw_', '') 
+                               for col in top_features.index]
+                
+                bars = ax4.barh(range(len(top_features)), top_features.values, alpha=0.7)
+                ax4.set_yticks(range(len(top_features)))
+                ax4.set_yticklabels(feature_names, fontsize=8)
+                ax4.set_xlabel('Variance')
+                ax4.set_title('Top 10 Features by Variance', fontweight='bold')
+                ax4.invert_yaxis()
+            else:
+                # All variances are zero or very small
+                ax4.text(0.5, 0.5, 'All features have\nzero or near-zero variance', 
+                        ha='center', va='center', transform=ax4.transAxes, fontsize=10,
+                        bbox=dict(boxstyle="round,pad=0.3", facecolor='lightgray', alpha=0.7))
+                ax4.set_title('Top 10 Features by Variance', fontweight='bold')
+                ax4.set_xlim(0, 1)
+                ax4.set_ylim(0, 1)
+        else:
+            # No feature columns available
+            ax4.text(0.5, 0.5, 'No feature columns\navailable for analysis', 
+                    ha='center', va='center', transform=ax4.transAxes, fontsize=10,
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor='lightcoral', alpha=0.7))
             ax4.set_title('Top 10 Features by Variance', fontweight='bold')
-            ax4.invert_yaxis()
+            ax4.set_xlim(0, 1)
+            ax4.set_ylim(0, 1)
         
         # 5. Compression Analysis
         ax5 = plt.subplot(3, 3, 5)
@@ -389,20 +408,50 @@ def _create_visualizations(
             ax6.set_title('MAPGL Belt Analysis', fontweight='bold')
             ax6.legend()
         
-        # 7. Cluster Centers Heatmap (if not too many features)
+        # 7. Top Features Cluster Analysis
         ax7 = plt.subplot(3, 3, 7)
-        if len(feat_cols) <= 20:
-            cluster_centers_orig = scaler.inverse_transform(model.cluster_centers_)
-            feature_names_short = [col.replace('ss_mw_', '').replace('ss_mvar_', '').replace('wind_mw_', '') 
-                                 for col in feat_cols]
-            
-            im = ax7.imshow(cluster_centers_orig.T, cmap='RdYlBu_r', aspect='auto')
-            ax7.set_xticks(range(model.n_clusters))
-            ax7.set_xticklabels([f'C{i+1}' for i in range(model.n_clusters)])
-            ax7.set_yticks(range(len(feature_names_short)))
-            ax7.set_yticklabels(feature_names_short, fontsize=8)
-            ax7.set_title('Cluster Centers Heatmap', fontweight='bold')
-            plt.colorbar(im, ax=ax7, label='Feature Value')
+        
+        if len(feat_cols) == 0:
+            # No feature columns available
+            ax7.text(0.5, 0.5, 'No feature columns\navailable for analysis', 
+                    ha='center', va='center', transform=ax7.transAxes, fontsize=10,
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor='lightcoral', alpha=0.7))
+            ax7.set_title('Top Features Cluster Analysis', fontweight='bold')
+            ax7.set_xlim(0, 1)
+            ax7.set_ylim(0, 1)
+        else:
+            try:
+                # Get the most variable features for cluster analysis
+                feature_vars = working[feat_cols].var().sort_values(ascending=False)
+                n_top_features = min(10, len(feat_cols))  # Show top 10 or fewer
+                top_feature_cols = feature_vars.head(n_top_features).index.tolist()
+                
+                # Get cluster centers for top features only
+                top_feature_indices = [feat_cols.index(col) for col in top_feature_cols]
+                cluster_centers_orig = scaler.inverse_transform(model.cluster_centers_)
+                top_cluster_centers = cluster_centers_orig[:, top_feature_indices]
+                
+                # Create simplified feature names
+                feature_names_short = [col.replace('ss_mw_', '').replace('ss_mvar_', '').replace('wind_mw_', '') 
+                                     for col in top_feature_cols]
+                
+                # Create heatmap for top features
+                im = ax7.imshow(top_cluster_centers.T, cmap='RdYlBu_r', aspect='auto')
+                ax7.set_xticks(range(model.n_clusters))
+                ax7.set_xticklabels([f'C{i+1}' for i in range(model.n_clusters)])
+                ax7.set_yticks(range(len(feature_names_short)))
+                ax7.set_yticklabels(feature_names_short, fontsize=8)
+                ax7.set_title(f'Top {n_top_features} Features by Variance\n({len(feat_cols)} total features)', fontweight='bold')
+                plt.colorbar(im, ax=ax7, label='Feature Value', shrink=0.8)
+                
+            except Exception as e:
+                # Fallback: show cluster statistics summary
+                ax7.text(0.5, 0.5, f'Cluster Analysis:\n{model.n_clusters} clusters\n{len(feat_cols)} features\n\nSilhouette: {info.get("silhouette", 0):.3f}', 
+                        ha='center', va='center', transform=ax7.transAxes, fontsize=10,
+                        bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue', alpha=0.7))
+                ax7.set_title('Cluster Summary', fontweight='bold')
+                ax7.set_xlim(0, 1)
+                ax7.set_ylim(0, 1)
         
         # 8. Quality Assessment Summary
         ax8 = plt.subplot(3, 3, 8)
@@ -415,36 +464,32 @@ def _create_visualizations(
         if silhouette_val > 0.7 and compression_ratio > 20:
             overall_quality = "EXCELLENT"
             quality_color = "green"
-            quality_emoji = "🟢"
         elif silhouette_val > 0.5 and compression_ratio > 10:
             overall_quality = "GOOD"
             quality_color = "orange"
-            quality_emoji = "🟡"
         elif silhouette_val > 0.25:
             overall_quality = "ACCEPTABLE"
             quality_color = "red"
-            quality_emoji = "🟠"
         else:
             overall_quality = "POOR"
             quality_color = "darkred"
-            quality_emoji = "🔴"
         
         summary_text = f"""
-{quality_emoji} OVERALL QUALITY: {overall_quality}
+OVERALL QUALITY: {overall_quality}
 
-📊 CLUSTERING METRICS:
+CLUSTERING METRICS:
 • Silhouette Score: {silhouette_val:.3f}
 • Calinski-Harabasz: {info['ch']:.1f}
 • Davies-Bouldin: {info['db']:.3f}
 • Optimal Clusters: {info['k']}
 
-📈 DATA REDUCTION:
+DATA REDUCTION:
 • Original: {info['original_size']:,} snapshots
 • Representative: {info['n_total']} snapshots
 • Compression: {compression_ratio:.1f}:1
 • Retention: {(info['n_total']/info['original_size'])*100:.1f}%
 
-⚡ REPRESENTATIVE POINTS:
+REPRESENTATIVE POINTS:
 • Medoids: {info['n_medoid']}
 • MAPGL Belt: {info['n_belt']}
 • Total: {info['n_total']}
@@ -460,22 +505,22 @@ def _create_visualizations(
         
         recommendations = []
         if silhouette_val < 0.25:
-            recommendations.append("⚠️ Consider increasing dataset size")
-            recommendations.append("⚠️ Review feature selection")
-            recommendations.append("⚠️ Check data quality")
+            recommendations.append("WARNING: Consider increasing dataset size")
+            recommendations.append("WARNING: Review feature selection")
+            recommendations.append("WARNING: Check data quality")
         elif silhouette_val < 0.5:
-            recommendations.append("⚠️ Validate results carefully")
-            recommendations.append("⚠️ Consider parameter adjustment")
+            recommendations.append("CAUTION: Validate results carefully")
+            recommendations.append("CAUTION: Consider parameter adjustment")
         
         if compression_ratio < 5:
-            recommendations.append("ℹ️ Low data reduction - high diversity")
+            recommendations.append("INFO: Low data reduction - high diversity")
         
         if info['n_belt'] == 0:
-            recommendations.append("ℹ️ No MAPGL belt snapshots found")
+            recommendations.append("INFO: No MAPGL belt snapshots found")
         
         if not recommendations:
-            recommendations.append("✅ Results look good for analysis")
-            recommendations.append("✅ Proceed with power system studies")
+            recommendations.append("SUCCESS: Results look good for analysis")
+            recommendations.append("SUCCESS: Proceed with power system studies")
         
         rec_text = "RECOMMENDATIONS:\n\n" + "\n".join(recommendations)
         ax9.text(0.05, 0.95, rec_text, transform=ax9.transAxes, fontsize=9,
