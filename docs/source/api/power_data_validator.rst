@@ -7,14 +7,14 @@ Power Data Validator Module
    :show-inheritance:
 
 Module Overview
---------------
+===============
 
 The ``power_data_validator`` module provides comprehensive data quality assurance for power system operational data. It implements a sophisticated three-step validation workflow that includes advanced gap filling techniques and anomaly detection capabilities.
 
 The module implements a complete power systems data validation pipeline with intelligent gap processing and enhanced anomaly detection.
 
 Validation Workflow
------------------
+===================
 
 The enhanced data validation system provides a comprehensive three-step validation workflow:
 
@@ -38,10 +38,10 @@ The enhanced data validation system provides a comprehensive three-step validati
 - **Adaptive algorithms**: automatically choose optimal method per gap
 
 Core Classes
------------
+============
 
 DataValidator
-~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 Main validation class that orchestrates the complete validation workflow.
 
@@ -58,7 +58,7 @@ Main validation class that orchestrates the complete validation workflow.
 **Key Methods:**
 
 validate_data()
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^
 
 Main validation method that performs the complete validation workflow.
 
@@ -89,7 +89,7 @@ Main validation method that performs the complete validation workflow.
    print(f"Validation completed. Cleaned {len(clean_df)} records.")
 
 get_validation_summary()
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Get a comprehensive summary of validation results.
 
@@ -113,7 +113,7 @@ Get a comprehensive summary of validation results.
    print(f"Gaps filled: {summary['gaps_filled']}")
 
 Advanced Gap Filling
--------------------
+====================
 
 The module provides sophisticated gap filling capabilities with multiple algorithms:
 
@@ -141,7 +141,7 @@ The module provides sophisticated gap filling capabilities with multiple algorit
    clean_df = validator.validate_data(df, enable_enhanced=True)
 
 Anomaly Detection
-----------------
+=================
 
 The module implements multiple anomaly detection methods:
 
@@ -170,18 +170,18 @@ The module implements multiple anomaly detection methods:
    clean_df = validator.validate_data(df, enable_enhanced=True)
 
 Power System Specific Validation
-------------------------------
+================================
 
 The module includes specialized validation for power system variables:
 
 **Variable Grouping**
 The system intelligently groups related power system variables:
 
-- **Generators**: `gen_mvar_*` (reactive power of Q control generators)
-- **Substations**: `ss_mw_*`, `ss_mvar_*` (active/reactive power consumption)
-- **Wind Farms**: `wind_mw_*` (active power generation of wind parcs)
-- **Shunt Elements**: `shunt_mvar_*`, `shunt_tap_*` (reactive power, tap positions)
-- **Voltages**: `gen_v_*` (voltage setpoints of Constant V generators)
+- **Generators**: ``gen_mvar_*`` (reactive power of Q control generators)
+- **Substations**: ``ss_mw_*``, ``ss_mvar_*`` (active/reactive power consumption)
+- **Wind Farms**: ``wind_mw_*`` (active power generation of wind parcs)
+- **Shunt Elements**: ``shunt_mvar_*``, ``shunt_tap_*`` (reactive power, tap positions)
+- **Voltages**: ``gen_v_*`` (voltage setpoints of Constant V generators)
 
 **Power Balance Validation**
 Validates energy conservation principles with configurable tolerance:
@@ -196,11 +196,12 @@ Validates energy conservation principles with configurable tolerance:
    clean_df = validator.validate_data(df, enable_enhanced=True)
 
 Configuration
-------------
+=============
 
-All validation parameters are centrally managed in `system_configuration.py`:
+All validation parameters are centrally managed in ``system_configuration.py``:
 
 **Basic Validation Settings**
+
 .. code-block:: python
 
    DATA_VALIDATION = {
@@ -223,6 +224,7 @@ All validation parameters are centrally managed in `system_configuration.py`:
    }
 
 **Enhanced Validation Settings**
+
 .. code-block:: python
 
    ENHANCED_DATA_VALIDATION = {
@@ -245,7 +247,7 @@ All validation parameters are centrally managed in `system_configuration.py`:
    }
 
 Usage Examples
--------------
+==============
 
 Basic Validation
 ~~~~~~~~~~~~~~~
@@ -263,7 +265,7 @@ Basic Validation
    print(f"Validation completed: {summary['total_records']} records processed")
 
 Enhanced Validation
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -285,7 +287,7 @@ Enhanced Validation
    print(f"Power balance violations: {summary['power_balance_violations_count']}")
 
 Custom Configuration
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -310,7 +312,7 @@ Custom Configuration
    clean_df = validator.validate_data(df, enable_enhanced=True)
 
 Integration with Analysis Pipeline
---------------------------------
+==================================
 
 The validator seamlessly integrates with the existing analysis workflow:
 
@@ -337,7 +339,7 @@ The validator seamlessly integrates with the existing analysis workflow:
        )
 
 Performance Considerations
--------------------------
+==========================
 
 **Optimization Features:**
 - **Parallel Processing**: Uses joblib for parallel validation tasks
@@ -352,7 +354,7 @@ Performance Considerations
 - **Progress Tracking**: Provides detailed progress information for long-running validations
 
 Error Handling
--------------
+==============
 
 **Comprehensive Error Handling:**
 - **Data Type Issues**: Automatic conversion and validation of data types
