@@ -17,7 +17,6 @@ A comprehensive Python tool for analyzing the TSOC power system operational data
    :caption: Contents:
 
    installation
-   quickstart
    user_guide
    api_reference
    configuration
