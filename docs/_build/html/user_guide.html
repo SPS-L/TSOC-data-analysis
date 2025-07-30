@@ -237,7 +237,7 @@
 <span class="p">)</span>
 
 <span class="c1"># Step 1: Load data</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">loadallpowerdf</span><span class="p">(</span><span class="s1">&#39;2024-01&#39;</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;raw_data&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">loadallpowerdf</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">)</span>
 
 <span class="c1"># Step 2: Calculate loads</span>
 <span class="n">total_load</span> <span class="o">=</span> <span class="n">calculate_total_load</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
@@ -257,22 +257,25 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analysis Results:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total load range: </span><span class="si">{</span><span class="n">total_load</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">total_load</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MW&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Voltage control generators: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">voltage_control</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative clusters: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Data Validation:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataValidator</span>
 
 <span class="c1"># Create validator instance</span>
-<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">()</span>
 
 <span class="c1"># Perform validation</span>
-<span class="n">validation_results</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_data</span><span class="p">()</span>
+<span class="n">validated_df</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">validation_summary</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">get_validation_summary</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation Results:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Valid records: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;valid_records&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Invalid records: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;invalid_records&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Missing values: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;missing_values&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total records processed: </span><span class="si">{</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;total_records_processed&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Records with errors: </span><span class="si">{</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;records_with_errors&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Type errors: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;type_errors&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Limit errors: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;limit_errors&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Gaps filled: </span><span class="si">{</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;gaps_filled&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

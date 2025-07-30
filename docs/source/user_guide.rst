@@ -145,7 +145,7 @@ For programmatic access and custom workflows:
    )
    
    # Step 1: Load data
-   df = loadallpowerdf('2024-01', data_dir='raw_data')
+   df = loadallpowerdf('results')
    
    # Step 2: Calculate loads
    total_load = calculate_total_load(df)
@@ -165,7 +165,7 @@ For programmatic access and custom workflows:
    print(f"Analysis Results:")
    print(f"  Total load range: {total_load.min():.1f} - {total_load.max():.1f} MW")
    print(f"  Voltage control generators: {len(voltage_control)}")
-   print(f"  Representative clusters: {len(rep_df)}")
+   print(f"  Representative points: {len(rep_df)}")
 
 **Data Validation:**
 
@@ -174,15 +174,18 @@ For programmatic access and custom workflows:
    from tsoc_data_analysis import DataValidator
    
    # Create validator instance
-   validator = DataValidator(df)
+   validator = DataValidator()
    
    # Perform validation
-   validation_results = validator.validate_data()
+   validated_df = validator.validate_dataframe(df)
+   validation_summary = validator.get_validation_summary()
    
    print(f"Validation Results:")
-   print(f"  Valid records: {validation_results['valid_records']}")
-   print(f"  Invalid records: {validation_results['invalid_records']}")
-   print(f"  Missing values: {validation_results['missing_values']}")
+   print(f"  Total records processed: {validation_summary['total_records_processed']}")
+   print(f"  Records with errors: {validation_summary['records_with_errors']}")
+   print(f"  Type errors: {len(validation_summary['type_errors'])}")
+   print(f"  Limit errors: {len(validation_summary['limit_errors'])}")
+   print(f"  Gaps filled: {validation_summary['gaps_filled']}")
 
 Output Files
 ------------  

@@ -49,7 +49,9 @@ if success:
 ## Requirements
 
 - Python 3.7+
-- pandas, numpy, matplotlib, seaborn, openpyxl, scikit-learn, scipy
+- pandas>=1.3.0, numpy>=1.20.0, matplotlib>=3.3.0, seaborn>=0.11.0
+- openpyxl>=3.0.0, scikit-learn>=1.0.0, scipy>=1.7.0
+- psutil>=5.8.0, joblib>=1.1.0
 
 ## Documentation Sections
 
