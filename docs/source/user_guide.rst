@@ -11,7 +11,7 @@ The package consists of several interconnected modules:
 **Core Analysis Modules**
 
 - **Power System Analytics**: Load calculations, generator categorization, reactive power analysis
-- **Operating Point Extractor**: Representative operating points extraction using K-means clustering
+- **Operating Point Extractor**: Representative operating points extraction using K-means clustering and advanced clustering algorithms
 
 **Data Processing Modules**
 
@@ -32,7 +32,7 @@ Key Features
 - **Generator categorization** (Voltage Control vs PQ Control)
 - **Reactive power analysis** with comprehensive calculations
 - **Data validation** with type checking, limit validation, and gap filling
-- **Representative operating points extraction** using K-means clustering with performance optimizations
+- **Representative operating points extraction** using K-means clustering and enhanced algorithms with automatic quality optimization
 - **Comprehensive logging** and error handling
 
 Data Requirements
@@ -105,6 +105,73 @@ Basic Workflow
 #. **Visualization**: Create plots and analysis dashboards
 #. **Results**: Save analysis results and reports
 
+Clustering Methods
+------------------
+
+The package provides two main approaches for extracting representative operating points:
+
+Standard Clustering
+~~~~~~~~~~~~~~~~~~~
+
+The standard approach uses K-means clustering with automatic cluster number selection:
+
+.. code-block:: python
+
+   from tsoc_data_analysis import extract_representative_ops
+   
+   rep_df, diagnostics = extract_representative_ops(
+       df,
+       max_power=850,
+       MAPGL=200,
+       output_dir='results'
+   )
+
+**Features:**
+- Fast K-means clustering
+- Automatic cluster number selection (k=2 to k_max)
+- MAPGL belt inclusion for critical low-load points
+- Quality metrics (silhouette score, Calinski-Harabasz, Davies-Bouldin)
+
+Enhanced Clustering
+~~~~~~~~~~~~~~~~~~~
+
+The enhanced approach provides advanced clustering with multiple optimization techniques:
+
+.. code-block:: python
+
+   from tsoc_data_analysis import extract_representative_ops_enhanced
+   
+   rep_df, diagnostics = extract_representative_ops_enhanced(
+       df,
+       max_power=850,
+       MAPGL=200,
+       output_dir='results_enhanced',
+       use_enhanced_preprocessing=True,
+       try_alternative_algorithms=True,
+       use_dimensionality_reduction=True
+   )
+
+**Advanced Features:**
+
+- **Data Preprocessing**: Outlier removal, zero-variance feature elimination, correlation analysis
+- **Feature Engineering**: Power factors, load diversity, wind penetration, temporal patterns
+- **Alternative Algorithms**: DBSCAN, Agglomerative Clustering, Gaussian Mixture Models
+- **Dimensionality Reduction**: Principal Component Analysis (PCA) before clustering
+- **Automatic Method Selection**: Tests multiple approaches and selects the best performing one
+
+**When to Use Enhanced Clustering:**
+
+- Standard clustering gives poor quality scores (< 0.4)
+- Dataset has complex operational patterns
+- High-dimensional data with many features
+- Need maximum clustering quality for critical analysis
+
+**Performance Considerations:**
+
+- Enhanced clustering is 3-5x slower than standard
+- Recommended for final analysis rather than exploratory work
+- Provides detailed comparison reports for method evaluation
+
 Python API Usage
 ----------------
 
@@ -167,6 +234,28 @@ For programmatic access and custom workflows:
    print(f"  Voltage control generators: {len(voltage_control)}")
    print(f"  Representative points: {len(rep_df)}")
 
+**Enhanced Clustering:**
+
+.. code-block:: python
+
+   from tsoc_data_analysis import extract_representative_ops_enhanced
+   
+   # Enhanced clustering with advanced algorithms
+   rep_df, diagnostics = extract_representative_ops_enhanced(
+       df,
+       max_power=850,
+       MAPGL=200,
+       output_dir='results_enhanced',
+       use_enhanced_preprocessing=True,
+       try_alternative_algorithms=True,
+       use_dimensionality_reduction=True
+   )
+   
+   print(f"Enhanced Clustering Results:")
+   print(f"  Best method: {diagnostics['best_method']}")
+   print(f"  Quality improvement: {diagnostics['best_silhouette']:.3f}")
+   print(f"  Representative points: {len(rep_df)}")
+
 **Data Validation:**
 
 .. code-block:: python
@@ -203,6 +292,7 @@ The package generates various output files depending on the options selected:
 
 - `representative_operating_points.csv` - Extracted representative points
 - `clustering_summary.txt` - Clustering analysis summary
+- `enhanced_clustering_summary.txt` - Enhanced clustering comparison and details (when using enhanced method)
 
 **Visualization:**
 

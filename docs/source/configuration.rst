@@ -199,6 +199,85 @@ Representative Operations Configuration
    # For different MAPGL belt definition
    REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier'] = 1.15
 
+Enhanced Clustering Configuration
+----------------------------------
+
+The enhanced clustering function `extract_representative_ops_enhanced` provides additional configuration options for advanced clustering techniques:
+
+**Enhanced Parameters:**
+
+.. code-block:: python
+
+   # Enhanced clustering function parameters (not in REPRESENTATIVE_OPS)
+   extract_representative_ops_enhanced(
+       df,
+       max_power=850,
+       MAPGL=200,
+       output_dir='results',
+       
+       # Enhanced preprocessing options
+       use_enhanced_preprocessing=True,      # Enable advanced data preprocessing
+       outlier_threshold=2.5,                # Standard deviations for outlier detection
+       correlation_threshold=0.95,           # High correlation removal threshold
+       
+       # Alternative algorithms
+       try_alternative_algorithms=True,      # Test DBSCAN, Agglomerative, GMM
+       dbscan_eps=0.1,                      # DBSCAN neighborhood size
+       dbscan_min_samples=3,                # DBSCAN minimum samples
+       
+       # Dimensionality reduction
+       use_dimensionality_reduction=True,    # Enable PCA preprocessing
+       pca_variance_threshold=0.95,         # PCA variance to retain
+       
+       # Feature engineering
+       engineer_features=True,               # Create additional features
+       include_temporal_features=True,       # Add hour/day/month features
+       include_cyclical_features=True,       # Add sine/cosine temporal features
+   )
+
+**Feature Engineering Options:**
+
+The enhanced clustering automatically creates additional features when `engineer_features=True`:
+
+- **Power Factors**: Reactive to active power ratios for generators
+- **Load Diversity**: Standard deviation across substations  
+- **Wind Penetration**: Wind generation as percentage of total load
+- **Temporal Features**: Hour of day, day of week, month (when enabled)
+- **Cyclical Features**: Sine/cosine transformations of temporal features
+
+**Algorithm Selection Strategy:**
+
+The enhanced method tests multiple algorithms in this order:
+
+1. **Standard K-means** (baseline)
+2. **DBSCAN** (density-based clustering)
+3. **Agglomerative Clustering** (hierarchical)
+4. **Gaussian Mixture Models** (probabilistic)
+5. **PCA + K-means** (dimensionality reduction first)
+
+The algorithm with the highest silhouette score is automatically selected.
+
+**Performance vs Quality Trade-off:**
+
+.. code-block:: python
+
+   # Quick enhanced clustering (moderate improvement)
+   rep_df, diagnostics = extract_representative_ops_enhanced(
+       df, max_power=850, MAPGL=200,
+       use_enhanced_preprocessing=True,
+       try_alternative_algorithms=False,    # Skip alternative algorithms
+       use_dimensionality_reduction=True
+   )
+   
+   # Full enhanced clustering (maximum improvement, slower)
+   rep_df, diagnostics = extract_representative_ops_enhanced(
+       df, max_power=850, MAPGL=200,
+       use_enhanced_preprocessing=True,
+       try_alternative_algorithms=True,     # Test all algorithms
+       use_dimensionality_reduction=True,
+       engineer_features=True               # Full feature engineering
+   )
+
 Visualization Configuration
 --------------------------- 
 

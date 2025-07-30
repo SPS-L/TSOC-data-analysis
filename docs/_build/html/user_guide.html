@@ -54,6 +54,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-workflow">Basic Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clustering-methods">Clustering Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#standard-clustering">Standard Clustering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enhanced-clustering">Enhanced Clustering</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#python-api-usage">Python API Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#output-files">Output Files</a></li>
 </ul>
@@ -97,7 +102,7 @@
 <p><strong>Core Analysis Modules</strong></p>
 <ul class="simple">
 <li><p><strong>Power System Analytics</strong>: Load calculations, generator categorization, reactive power analysis</p></li>
-<li><p><strong>Operating Point Extractor</strong>: Representative operating points extraction using K-means clustering</p></li>
+<li><p><strong>Operating Point Extractor</strong>: Representative operating points extraction using K-means clustering and advanced clustering algorithms</p></li>
 </ul>
 <p><strong>Data Processing Modules</strong></p>
 <ul class="simple">
@@ -119,7 +124,7 @@
 <li><p><strong>Generator categorization</strong> (Voltage Control vs PQ Control)</p></li>
 <li><p><strong>Reactive power analysis</strong> with comprehensive calculations</p></li>
 <li><p><strong>Data validation</strong> with type checking, limit validation, and gap filling</p></li>
-<li><p><strong>Representative operating points extraction</strong> using K-means clustering with performance optimizations</p></li>
+<li><p><strong>Representative operating points extraction</strong> using K-means clustering and enhanced algorithms with automatic quality optimization</p></li>
 <li><p><strong>Comprehensive logging</strong> and error handling</p></li>
 </ul>
 </section>
@@ -203,6 +208,67 @@
 <li><p><strong>Results</strong>: Save analysis results and reports</p></li>
 </ol>
 </section>
+<section id="clustering-methods">
+<h2>Clustering Methods<a class="headerlink" href="#clustering-methods" title="Link to this heading"></a></h2>
+<p>The package provides two main approaches for extracting representative operating points:</p>
+<section id="standard-clustering">
+<h3>Standard Clustering<a class="headerlink" href="#standard-clustering" title="Link to this heading"></a></h3>
+<p>The standard approach uses K-means clustering with automatic cluster number selection:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops</span>
+
+<span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span>
+    <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Features:</strong>
+- Fast K-means clustering
+- Automatic cluster number selection (k=2 to k_max)
+- MAPGL belt inclusion for critical low-load points
+- Quality metrics (silhouette score, Calinski-Harabasz, Davies-Bouldin)</p>
+</section>
+<section id="enhanced-clustering">
+<h3>Enhanced Clustering<a class="headerlink" href="#enhanced-clustering" title="Link to this heading"></a></h3>
+<p>The enhanced approach provides advanced clustering with multiple optimization techniques:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops_enhanced</span>
+
+<span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops_enhanced</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span>
+    <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results_enhanced&#39;</span><span class="p">,</span>
+    <span class="n">use_enhanced_preprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">try_alternative_algorithms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_dimensionality_reduction</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Advanced Features:</strong></p>
+<ul class="simple">
+<li><p><strong>Data Preprocessing</strong>: Outlier removal, zero-variance feature elimination, correlation analysis</p></li>
+<li><p><strong>Feature Engineering</strong>: Power factors, load diversity, wind penetration, temporal patterns</p></li>
+<li><p><strong>Alternative Algorithms</strong>: DBSCAN, Agglomerative Clustering, Gaussian Mixture Models</p></li>
+<li><p><strong>Dimensionality Reduction</strong>: Principal Component Analysis (PCA) before clustering</p></li>
+<li><p><strong>Automatic Method Selection</strong>: Tests multiple approaches and selects the best performing one</p></li>
+</ul>
+<p><strong>When to Use Enhanced Clustering:</strong></p>
+<ul class="simple">
+<li><p>Standard clustering gives poor quality scores (&lt; 0.4)</p></li>
+<li><p>Dataset has complex operational patterns</p></li>
+<li><p>High-dimensional data with many features</p></li>
+<li><p>Need maximum clustering quality for critical analysis</p></li>
+</ul>
+<p><strong>Performance Considerations:</strong></p>
+<ul class="simple">
+<li><p>Enhanced clustering is 3-5x slower than standard</p></li>
+<li><p>Recommended for final analysis rather than exploratory work</p></li>
+<li><p>Provides detailed comparison reports for method evaluation</p></li>
+</ul>
+</section>
+</section>
 <section id="python-api-usage">
 <h2>Python API Usage<a class="headerlink" href="#python-api-usage" title="Link to this heading"></a></h2>
 <p>For programmatic access and custom workflows:</p>
@@ -259,6 +325,26 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p><strong>Enhanced Clustering:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops_enhanced</span>
+
+<span class="c1"># Enhanced clustering with advanced algorithms</span>
+<span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops_enhanced</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span>
+    <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results_enhanced&#39;</span><span class="p">,</span>
+    <span class="n">use_enhanced_preprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">try_alternative_algorithms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_dimensionality_reduction</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Enhanced Clustering Results:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Best method: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;best_method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Quality improvement: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;best_silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p><strong>Data Validation:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataValidator</span>
 
@@ -292,6 +378,7 @@
 <ul class="simple">
 <li><p><cite>representative_operating_points.csv</cite> - Extracted representative points</p></li>
 <li><p><cite>clustering_summary.txt</cite> - Clustering analysis summary</p></li>
+<li><p><cite>enhanced_clustering_summary.txt</cite> - Enhanced clustering comparison and details (when using enhanced method)</p></li>
 </ul>
 <p><strong>Visualization:</strong></p>
 <ul class="simple">

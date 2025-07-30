@@ -57,6 +57,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#representative-points-examples">Representative Points Examples</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#basic-clustering-analysis">Basic Clustering Analysis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#advanced-clustering-with-custom-parameters">Advanced Clustering with Custom Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enhanced-clustering-with-advanced-algorithms">Enhanced Clustering with Advanced Algorithms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selective-enhanced-clustering">Selective Enhanced Clustering</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#data-validation-examples">Data Validation Examples</a><ul>
@@ -73,6 +75,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#complete-analysis-pipeline">Complete Analysis Pipeline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#multi-month-analysis">Multi-Month Analysis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#custom-analysis-workflow">Custom Analysis Workflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clustering-methods-comparison">Clustering Methods Comparison</a></li>
 </ul>
 </li>
 </ul>
@@ -291,6 +294,101 @@ Representative points saved to: results/representative_operating_points.csv
   Selected clusters: 8
   Quality score: 0.712
   Quality rating: Good
+</pre></div>
+</div>
+</section>
+<section id="enhanced-clustering-with-advanced-algorithms">
+<h3>Enhanced Clustering with Advanced Algorithms<a class="headerlink" href="#enhanced-clustering-with-advanced-algorithms" title="Link to this heading"></a></h3>
+<p><strong>Objective:</strong> Use advanced clustering techniques to improve clustering quality through data preprocessing, feature engineering, and alternative algorithms.</p>
+<p><strong>Example Code:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops_enhanced</span>
+
+<span class="c1"># Enhanced clustering with all features enabled</span>
+<span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops_enhanced</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span>
+    <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results_enhanced&#39;</span><span class="p">,</span>
+    <span class="n">use_enhanced_preprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">try_alternative_algorithms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_dimensionality_reduction</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Enhanced Clustering Results:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Best method: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;best_method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Best silhouette score: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;best_silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Display method comparison</span>
+<span class="k">if</span> <span class="s1">&#39;method_comparison&#39;</span> <span class="ow">in</span> <span class="n">diagnostics</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Method Comparison:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">method_name</span><span class="p">,</span> <span class="n">method_result</span> <span class="ow">in</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;method_comparison&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method_result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;silhouette&#39;</span> <span class="ow">in</span> <span class="n">method_result</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;🏆&quot;</span> <span class="k">if</span> <span class="n">method_name</span> <span class="o">==</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;best_method&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;  &quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">method_name</span><span class="si">:</span><span class="s2">&lt;25</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">method_result</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Feature engineering summary</span>
+<span class="k">if</span> <span class="s1">&#39;feature_engineering_summary&#39;</span> <span class="ow">in</span> <span class="n">diagnostics</span><span class="p">:</span>
+    <span class="n">fe_summary</span> <span class="o">=</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;feature_engineering_summary&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Feature Engineering:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Original features: </span><span class="si">{</span><span class="n">fe_summary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;original_features&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Final features: </span><span class="si">{</span><span class="n">fe_summary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;final_features&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;engineered_features&#39;</span> <span class="ow">in</span> <span class="n">fe_summary</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Engineered features: </span><span class="si">{</span><span class="n">fe_summary</span><span class="p">[</span><span class="s1">&#39;engineered_features&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Enhanced Clustering Results:
+  Best method: PCA_0.95
+  Best silhouette score: 0.456
+  Representative points: 6
+
+Method Comparison:
+   K-means                   : 0.329
+   DBSCAN                    : 0.234
+   Agglomerative            : 0.387
+🏆 PCA_0.95                  : 0.456
+   PCA_0.90                 : 0.445
+
+Feature Engineering:
+  Original features: 45
+  Final features: 38
+  Engineered features: [&#39;power_factor&#39;, &#39;load_diversity&#39;, &#39;wind_penetration&#39;]
+</pre></div>
+</div>
+</section>
+<section id="selective-enhanced-clustering">
+<h3>Selective Enhanced Clustering<a class="headerlink" href="#selective-enhanced-clustering" title="Link to this heading"></a></h3>
+<p><strong>Objective:</strong> Use specific enhanced clustering features based on your analysis needs.</p>
+<p><strong>Example Code:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops_enhanced</span>
+
+<span class="c1"># Enhanced clustering with selective features</span>
+<span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops_enhanced</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span>
+    <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results_selective&#39;</span><span class="p">,</span>
+    <span class="n">use_enhanced_preprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>    <span class="c1"># Enable data preprocessing</span>
+    <span class="n">try_alternative_algorithms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>   <span class="c1"># Skip alternative algorithms</span>
+    <span class="n">use_dimensionality_reduction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable PCA</span>
+    <span class="n">pca_variance_threshold</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>        <span class="c1"># Custom PCA threshold</span>
+    <span class="n">outlier_threshold</span><span class="o">=</span><span class="mf">2.5</span>               <span class="c1"># Custom outlier detection</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selective Enhanced Results:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Method used: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;best_method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Quality score: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;best_silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Data preprocessing applied: </span><span class="si">{</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;preprocessing_applied&#39;</span><span class="p">,</span><span class="w"> </span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Dimensionality reduction: </span><span class="si">{</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dimensionality_reduction_applied&#39;</span><span class="p">,</span><span class="w"> </span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Selective Enhanced Results:
+  Method used: PCA_0.95
+  Quality score: 0.412
+  Data preprocessing applied: True
+  Dimensionality reduction: True
 </pre></div>
 </div>
 </section>
@@ -598,6 +696,109 @@ Multi-Month Comparison:
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Load range: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;total_load_stats&#39;</span><span class="p">][</span><span class="s1">&#39;min&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;total_load_stats&#39;</span><span class="p">][</span><span class="s1">&#39;max&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MW&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Generators: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;generators&#39;</span><span class="p">][</span><span class="s1">&#39;voltage_control&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> voltage control, </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;generators&#39;</span><span class="p">][</span><span class="s1">&#39;pq_control&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> PQ control&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative points: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;clustering&#39;</span><span class="p">][</span><span class="s1">&#39;n_points&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (quality: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;clustering&#39;</span><span class="p">][</span><span class="s1">&#39;quality&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="clustering-methods-comparison">
+<h3>Clustering Methods Comparison<a class="headerlink" href="#clustering-methods-comparison" title="Link to this heading"></a></h3>
+<p><strong>Objective:</strong> Compare standard and enhanced clustering methods to determine the best approach for your data.</p>
+<p><strong>Example Code:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">loadallpowerdf</span><span class="p">,</span>
+    <span class="n">extract_representative_ops</span><span class="p">,</span>
+    <span class="n">extract_representative_ops_enhanced</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="c1"># Load data</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">loadallpowerdf</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">)</span>
+
+<span class="c1"># Parameters for comparison</span>
+<span class="n">max_power</span> <span class="o">=</span> <span class="mi">850</span>
+<span class="n">MAPGL</span> <span class="o">=</span> <span class="mi">200</span>
+
+<span class="c1"># Run standard clustering</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🎯 STANDARD CLUSTERING&quot;</span><span class="p">)</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">std_rep_df</span><span class="p">,</span> <span class="n">std_diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">max_power</span><span class="o">=</span><span class="n">max_power</span><span class="p">,</span>
+    <span class="n">MAPGL</span><span class="o">=</span><span class="n">MAPGL</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results_comparison/standard&#39;</span>
+<span class="p">)</span>
+<span class="n">std_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Standard completed in </span><span class="si">{</span><span class="n">std_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Clusters: </span><span class="si">{</span><span class="n">std_diagnostics</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Silhouette: </span><span class="si">{</span><span class="n">std_diagnostics</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Representative points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">std_rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Run enhanced clustering</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">🚀 ENHANCED CLUSTERING&quot;</span><span class="p">)</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">enh_rep_df</span><span class="p">,</span> <span class="n">enh_diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops_enhanced</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">max_power</span><span class="o">=</span><span class="n">max_power</span><span class="p">,</span>
+    <span class="n">MAPGL</span><span class="o">=</span><span class="n">MAPGL</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results_comparison/enhanced&#39;</span><span class="p">,</span>
+    <span class="n">use_enhanced_preprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">try_alternative_algorithms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_dimensionality_reduction</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">enh_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Enhanced completed in </span><span class="si">{</span><span class="n">enh_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Best method: </span><span class="si">{</span><span class="n">enh_diagnostics</span><span class="p">[</span><span class="s1">&#39;best_method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Best silhouette: </span><span class="si">{</span><span class="n">enh_diagnostics</span><span class="p">[</span><span class="s1">&#39;best_silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Representative points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">enh_rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Quality comparison</span>
+<span class="n">std_quality</span> <span class="o">=</span> <span class="n">std_diagnostics</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span>
+<span class="n">enh_quality</span> <span class="o">=</span> <span class="n">enh_diagnostics</span><span class="p">[</span><span class="s1">&#39;best_silhouette&#39;</span><span class="p">]</span>
+<span class="n">improvement</span> <span class="o">=</span> <span class="p">((</span><span class="n">enh_quality</span> <span class="o">-</span> <span class="n">std_quality</span><span class="p">)</span> <span class="o">/</span> <span class="n">std_quality</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span> <span class="k">if</span> <span class="n">std_quality</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">📊 COMPARISON RESULTS:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Standard Quality:     </span><span class="si">{</span><span class="n">std_quality</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Enhanced Quality:     </span><span class="si">{</span><span class="n">enh_quality</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">improvement</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   📈 Improvement:       +</span><span class="si">{</span><span class="n">improvement</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% 🎉&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   📉 Change:            </span><span class="si">{</span><span class="n">improvement</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="c1"># Recommendation</span>
+<span class="k">if</span> <span class="n">enh_quality</span> <span class="o">&gt;</span> <span class="n">std_quality</span> <span class="o">+</span> <span class="mf">0.05</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   ✅ RECOMMENDATION: Use Enhanced Method&quot;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">enh_quality</span> <span class="o">&gt;</span> <span class="n">std_quality</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   ✅ RECOMMENDATION: Consider Enhanced Method&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   ⚠️ RECOMMENDATION: Use Standard Method&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>🎯 STANDARD CLUSTERING
+✅ Standard completed in 2.34 seconds
+   Clusters: 3
+   Silhouette: 0.329
+   Representative points: 5
+
+🚀 ENHANCED CLUSTERING
+🔍 Analyzing clustering potential...
+🛠️ Improving data for clustering...
+⚙️ Engineering clustering features...
+🎯 Standard K-means Clustering
+🔄 Alternative Clustering Algorithms
+📉 Dimensionality Reduction Clustering
+  🎉 PCA method improved quality: 0.456
+✅ Enhanced completed in 8.67 seconds
+   Best method: PCA_0.95
+   Best silhouette: 0.456
+   Representative points: 6
+
+📊 COMPARISON RESULTS:
+   Standard Quality:     0.329
+   Enhanced Quality:     0.456
+   📈 Improvement:       +38.6% 🎉
+   ✅ RECOMMENDATION: Use Enhanced Method
 </pre></div>
 </div>
 </section>

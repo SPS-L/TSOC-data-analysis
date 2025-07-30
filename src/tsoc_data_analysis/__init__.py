@@ -39,6 +39,7 @@ from .power_system_analytics import (
 
 from .operating_point_extractor import (
     extract_representative_ops,
+    extract_representative_ops_enhanced,
     loadallpowerdf
 )
 
@@ -73,6 +74,7 @@ __all__ = [
     'calculate_total_wind',
     'calculate_total_reactive_power',
     'extract_representative_ops',
+    'extract_representative_ops_enhanced',
     'loadallpowerdf',
     'execute',
     'DataValidator',

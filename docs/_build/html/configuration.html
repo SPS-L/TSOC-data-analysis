@@ -52,6 +52,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#data-file-configuration">Data File Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-validation-configuration">Data Validation Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#representative-operations-configuration">Representative Operations Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#enhanced-clustering-configuration">Enhanced Clustering Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visualization-configuration">Visualization Configuration</a></li>
 </ul>
 </li>
@@ -259,6 +260,77 @@
 
 <span class="c1"># For different MAPGL belt definition</span>
 <span class="n">REPRESENTATIVE_OPS</span><span class="p">[</span><span class="s1">&#39;defaults&#39;</span><span class="p">][</span><span class="s1">&#39;mapgl_belt_multiplier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.15</span>
+</pre></div>
+</div>
+</section>
+<section id="enhanced-clustering-configuration">
+<h2>Enhanced Clustering Configuration<a class="headerlink" href="#enhanced-clustering-configuration" title="Link to this heading"></a></h2>
+<p>The enhanced clustering function <cite>extract_representative_ops_enhanced</cite> provides additional configuration options for advanced clustering techniques:</p>
+<p><strong>Enhanced Parameters:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Enhanced clustering function parameters (not in REPRESENTATIVE_OPS)</span>
+<span class="n">extract_representative_ops_enhanced</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span>
+    <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span><span class="p">,</span>
+
+    <span class="c1"># Enhanced preprocessing options</span>
+    <span class="n">use_enhanced_preprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>      <span class="c1"># Enable advanced data preprocessing</span>
+    <span class="n">outlier_threshold</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>                <span class="c1"># Standard deviations for outlier detection</span>
+    <span class="n">correlation_threshold</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>           <span class="c1"># High correlation removal threshold</span>
+
+    <span class="c1"># Alternative algorithms</span>
+    <span class="n">try_alternative_algorithms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>      <span class="c1"># Test DBSCAN, Agglomerative, GMM</span>
+    <span class="n">dbscan_eps</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>                      <span class="c1"># DBSCAN neighborhood size</span>
+    <span class="n">dbscan_min_samples</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>                <span class="c1"># DBSCAN minimum samples</span>
+
+    <span class="c1"># Dimensionality reduction</span>
+    <span class="n">use_dimensionality_reduction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>    <span class="c1"># Enable PCA preprocessing</span>
+    <span class="n">pca_variance_threshold</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>         <span class="c1"># PCA variance to retain</span>
+
+    <span class="c1"># Feature engineering</span>
+    <span class="n">engineer_features</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>               <span class="c1"># Create additional features</span>
+    <span class="n">include_temporal_features</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>       <span class="c1"># Add hour/day/month features</span>
+    <span class="n">include_cyclical_features</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>       <span class="c1"># Add sine/cosine temporal features</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Feature Engineering Options:</strong></p>
+<p>The enhanced clustering automatically creates additional features when <cite>engineer_features=True</cite>:</p>
+<ul class="simple">
+<li><p><strong>Power Factors</strong>: Reactive to active power ratios for generators</p></li>
+<li><p><strong>Load Diversity</strong>: Standard deviation across substations</p></li>
+<li><p><strong>Wind Penetration</strong>: Wind generation as percentage of total load</p></li>
+<li><p><strong>Temporal Features</strong>: Hour of day, day of week, month (when enabled)</p></li>
+<li><p><strong>Cyclical Features</strong>: Sine/cosine transformations of temporal features</p></li>
+</ul>
+<p><strong>Algorithm Selection Strategy:</strong></p>
+<p>The enhanced method tests multiple algorithms in this order:</p>
+<ol class="arabic simple">
+<li><p><strong>Standard K-means</strong> (baseline)</p></li>
+<li><p><strong>DBSCAN</strong> (density-based clustering)</p></li>
+<li><p><strong>Agglomerative Clustering</strong> (hierarchical)</p></li>
+<li><p><strong>Gaussian Mixture Models</strong> (probabilistic)</p></li>
+<li><p><strong>PCA + K-means</strong> (dimensionality reduction first)</p></li>
+</ol>
+<p>The algorithm with the highest silhouette score is automatically selected.</p>
+<p><strong>Performance vs Quality Trade-off:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick enhanced clustering (moderate improvement)</span>
+<span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops_enhanced</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">use_enhanced_preprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">try_alternative_algorithms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>    <span class="c1"># Skip alternative algorithms</span>
+    <span class="n">use_dimensionality_reduction</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Full enhanced clustering (maximum improvement, slower)</span>
+<span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops_enhanced</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">use_enhanced_preprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">try_alternative_algorithms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>     <span class="c1"># Test all algorithms</span>
+    <span class="n">use_dimensionality_reduction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">engineer_features</span><span class="o">=</span><span class="kc">True</span>               <span class="c1"># Full feature engineering</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>

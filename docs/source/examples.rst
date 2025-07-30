@@ -210,6 +210,111 @@ Advanced Clustering with Custom Parameters
      Quality score: 0.712
      Quality rating: Good
 
+Enhanced Clustering with Advanced Algorithms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Objective:** Use advanced clustering techniques to improve clustering quality through data preprocessing, feature engineering, and alternative algorithms.
+
+**Example Code:**
+
+.. code-block:: python
+
+   from tsoc_data_analysis import extract_representative_ops_enhanced
+   
+   # Enhanced clustering with all features enabled
+   rep_df, diagnostics = extract_representative_ops_enhanced(
+       df,
+       max_power=850,
+       MAPGL=200,
+       output_dir='results_enhanced',
+       use_enhanced_preprocessing=True,
+       try_alternative_algorithms=True,
+       use_dimensionality_reduction=True
+   )
+   
+   print(f"Enhanced Clustering Results:")
+   print(f"  Best method: {diagnostics['best_method']}")
+   print(f"  Best silhouette score: {diagnostics['best_silhouette']:.3f}")
+   print(f"  Representative points: {len(rep_df)}")
+   
+   # Display method comparison
+   if 'method_comparison' in diagnostics:
+       print(f"\nMethod Comparison:")
+       for method_name, method_result in diagnostics['method_comparison'].items():
+           if isinstance(method_result, dict) and 'silhouette' in method_result:
+               status = "🏆" if method_name == diagnostics['best_method'] else "  "
+               print(f"   {status} {method_name:<25}: {method_result['silhouette']:.3f}")
+   
+   # Feature engineering summary
+   if 'feature_engineering_summary' in diagnostics:
+       fe_summary = diagnostics['feature_engineering_summary']
+       print(f"\nFeature Engineering:")
+       print(f"  Original features: {fe_summary.get('original_features', 'N/A')}")
+       print(f"  Final features: {fe_summary.get('final_features', 'N/A')}")
+       if 'engineered_features' in fe_summary:
+           print(f"  Engineered features: {fe_summary['engineered_features']}")
+
+**Expected Output:**
+
+.. code-block:: text
+
+   Enhanced Clustering Results:
+     Best method: PCA_0.95
+     Best silhouette score: 0.456
+     Representative points: 6
+   
+   Method Comparison:
+      K-means                   : 0.329
+      DBSCAN                    : 0.234
+      Agglomerative            : 0.387
+   🏆 PCA_0.95                  : 0.456
+      PCA_0.90                 : 0.445
+   
+   Feature Engineering:
+     Original features: 45
+     Final features: 38
+     Engineered features: ['power_factor', 'load_diversity', 'wind_penetration']
+
+Selective Enhanced Clustering
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Objective:** Use specific enhanced clustering features based on your analysis needs.
+
+**Example Code:**
+
+.. code-block:: python
+
+   from tsoc_data_analysis import extract_representative_ops_enhanced
+   
+   # Enhanced clustering with selective features
+   rep_df, diagnostics = extract_representative_ops_enhanced(
+       df,
+       max_power=850,
+       MAPGL=200,
+       output_dir='results_selective',
+       use_enhanced_preprocessing=True,    # Enable data preprocessing
+       try_alternative_algorithms=False,   # Skip alternative algorithms
+       use_dimensionality_reduction=True,  # Enable PCA
+       pca_variance_threshold=0.95,        # Custom PCA threshold
+       outlier_threshold=2.5               # Custom outlier detection
+   )
+   
+   print(f"Selective Enhanced Results:")
+   print(f"  Method used: {diagnostics['best_method']}")
+   print(f"  Quality score: {diagnostics['best_silhouette']:.3f}")
+   print(f"  Data preprocessing applied: {diagnostics.get('preprocessing_applied', False)}")
+   print(f"  Dimensionality reduction: {diagnostics.get('dimensionality_reduction_applied', False)}")
+
+**Expected Output:**
+
+.. code-block:: text
+
+   Selective Enhanced Results:
+     Method used: PCA_0.95
+     Quality score: 0.412
+     Data preprocessing applied: True
+     Dimensionality reduction: True
+
 Data Validation Examples
 ------------------------
 
@@ -546,4 +651,112 @@ Custom Analysis Workflow
    print(f"  Records: {report['total_records']}")
    print(f"  Load range: {report['total_load_stats']['min']:.1f} - {report['total_load_stats']['max']:.1f} MW")
    print(f"  Generators: {report['generators']['voltage_control']} voltage control, {report['generators']['pq_control']} PQ control")
-   print(f"  Representative points: {report['clustering']['n_points']} (quality: {report['clustering']['quality']:.3f})") 
+   print(f"  Representative points: {report['clustering']['n_points']} (quality: {report['clustering']['quality']:.3f})")
+
+Clustering Methods Comparison
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Objective:** Compare standard and enhanced clustering methods to determine the best approach for your data.
+
+**Example Code:**
+
+.. code-block:: python
+
+   from tsoc_data_analysis import (
+       loadallpowerdf,
+       extract_representative_ops,
+       extract_representative_ops_enhanced
+   )
+   import time
+   
+   # Load data
+   df = loadallpowerdf('results')
+   
+   # Parameters for comparison
+   max_power = 850
+   MAPGL = 200
+   
+   # Run standard clustering
+   print("🎯 STANDARD CLUSTERING")
+   start_time = time.time()
+   std_rep_df, std_diagnostics = extract_representative_ops(
+       df, 
+       max_power=max_power, 
+       MAPGL=MAPGL, 
+       output_dir='results_comparison/standard'
+   )
+   std_time = time.time() - start_time
+   
+   print(f"✅ Standard completed in {std_time:.2f} seconds")
+   print(f"   Clusters: {std_diagnostics['k']}")
+   print(f"   Silhouette: {std_diagnostics['silhouette']:.3f}")
+   print(f"   Representative points: {len(std_rep_df)}")
+   
+   # Run enhanced clustering
+   print("\n🚀 ENHANCED CLUSTERING")
+   start_time = time.time()
+   enh_rep_df, enh_diagnostics = extract_representative_ops_enhanced(
+       df,
+       max_power=max_power,
+       MAPGL=MAPGL,
+       output_dir='results_comparison/enhanced',
+       use_enhanced_preprocessing=True,
+       try_alternative_algorithms=True,
+       use_dimensionality_reduction=True
+   )
+   enh_time = time.time() - start_time
+   
+   print(f"✅ Enhanced completed in {enh_time:.2f} seconds")
+   print(f"   Best method: {enh_diagnostics['best_method']}")
+   print(f"   Best silhouette: {enh_diagnostics['best_silhouette']:.3f}")
+   print(f"   Representative points: {len(enh_rep_df)}")
+   
+   # Quality comparison
+   std_quality = std_diagnostics['silhouette']
+   enh_quality = enh_diagnostics['best_silhouette']
+   improvement = ((enh_quality - std_quality) / std_quality) * 100 if std_quality > 0 else 0
+   
+   print(f"\n📊 COMPARISON RESULTS:")
+   print(f"   Standard Quality:     {std_quality:.3f}")
+   print(f"   Enhanced Quality:     {enh_quality:.3f}")
+   if improvement > 0:
+       print(f"   📈 Improvement:       +{improvement:.1f}% 🎉")
+   else:
+       print(f"   📉 Change:            {improvement:.1f}%")
+   
+   # Recommendation
+   if enh_quality > std_quality + 0.05:
+       print(f"   ✅ RECOMMENDATION: Use Enhanced Method")
+   elif enh_quality > std_quality:
+       print(f"   ✅ RECOMMENDATION: Consider Enhanced Method")
+   else:
+       print(f"   ⚠️ RECOMMENDATION: Use Standard Method")
+
+**Expected Output:**
+
+.. code-block:: text
+
+   🎯 STANDARD CLUSTERING
+   ✅ Standard completed in 2.34 seconds
+      Clusters: 3
+      Silhouette: 0.329
+      Representative points: 5
+   
+   🚀 ENHANCED CLUSTERING
+   🔍 Analyzing clustering potential...
+   🛠️ Improving data for clustering...
+   ⚙️ Engineering clustering features...
+   🎯 Standard K-means Clustering
+   🔄 Alternative Clustering Algorithms
+   📉 Dimensionality Reduction Clustering
+     🎉 PCA method improved quality: 0.456
+   ✅ Enhanced completed in 8.67 seconds
+      Best method: PCA_0.95
+      Best silhouette: 0.456
+      Representative points: 6
+   
+   📊 COMPARISON RESULTS:
+      Standard Quality:     0.329
+      Enhanced Quality:     0.456
+      📈 Improvement:       +38.6% 🎉
+      ✅ RECOMMENDATION: Use Enhanced Method 

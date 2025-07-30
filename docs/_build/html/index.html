@@ -102,6 +102,7 @@
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#key-features">Key Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#data-requirements">Data Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#basic-workflow">Basic Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#clustering-methods">Clustering Methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#python-api-usage">Python API Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#output-files">Output Files</a></li>
 </ul>
@@ -112,6 +113,7 @@
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#data-file-configuration">Data File Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#data-validation-configuration">Data Validation Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#representative-operations-configuration">Representative Operations Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#enhanced-clustering-configuration">Enhanced Clustering Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#visualization-configuration">Visualization Configuration</a></li>
 </ul>
 </li>
@@ -158,14 +160,20 @@
 </section>
 <section id="quick-start">
 <h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">extract_representative_ops</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">extract_representative_ops</span><span class="p">,</span> <span class="n">extract_representative_ops_enhanced</span>
 
 <span class="c1"># Load and analyze data</span>
 <span class="n">success</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">month</span><span class="o">=</span><span class="s1">&#39;2024-01&#39;</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;raw_data&#39;</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
-    <span class="c1"># Extract representative points</span>
+    <span class="c1"># Extract representative points (standard method)</span>
     <span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops</span><span class="p">(</span>
         <span class="n">df</span><span class="p">,</span> <span class="n">max_power</span><span class="o">=</span><span class="mi">450</span><span class="p">,</span> <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Or use enhanced clustering for better quality</span>
+    <span class="n">enh_rep_df</span><span class="p">,</span> <span class="n">enh_diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops_enhanced</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">,</span> <span class="n">max_power</span><span class="o">=</span><span class="mi">450</span><span class="p">,</span> <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results_enhanced&#39;</span><span class="p">,</span>
+        <span class="n">use_enhanced_preprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">try_alternative_algorithms</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
 </pre></div>
 </div>

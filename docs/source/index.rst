@@ -54,14 +54,20 @@ Quick Start
 
 .. code-block:: python
 
-   from tsoc_data_analysis import execute, extract_representative_ops
+   from tsoc_data_analysis import execute, extract_representative_ops, extract_representative_ops_enhanced
    
    # Load and analyze data
    success, df = execute(month='2024-01', data_dir='raw_data', output_dir='results')
    if success:
-       # Extract representative points
+       # Extract representative points (standard method)
        rep_df, diagnostics = extract_representative_ops(
            df, max_power=450, MAPGL=200, output_dir='results'
+       )
+       
+       # Or use enhanced clustering for better quality
+       enh_rep_df, enh_diagnostics = extract_representative_ops_enhanced(
+           df, max_power=450, MAPGL=200, output_dir='results_enhanced',
+           use_enhanced_preprocessing=True, try_alternative_algorithms=True
        )
 
 Indices and tables
