@@ -8,7 +8,7 @@ Common Error Messages
 
 
 File Not Found Errors
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 **Error:** `FileNotFoundError: [Errno 2] No such file or directory: 'raw_data/substation_active_power.xlsx'`
 
@@ -46,7 +46,7 @@ File Not Found Errors
       success, df = execute(month='2024-01', data_dir='/full/path/to/raw_data')
 
 Data Quality Issues
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 **Error:** `ValueError: Data contains too many missing values`
 
@@ -138,7 +138,7 @@ Slow Clustering for Large Datasets
           )
 
 Memory Issues
-~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 **Problem:** Out of memory errors when processing large datasets.
 

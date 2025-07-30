@@ -1,12 +1,12 @@
 Configuration Guide
-==================
+===================
 
 This guide provides detailed information about configuring the TSOC Data Analysis package for different power systems and use cases.
 
 The TSOC Data Analysis package uses a centralized configuration system that allows users to customize all aspects of the analysis without modifying the source code. All configuration parameters are stored in `system_configuration.py` and organized into logical sections.
 
 Configuration Areas
-------------------
+-------------------
 
 1. **Data File Mappings** - Excel file names and column prefixes
 2. **Data Validation Settings** - Limits, thresholds, and validation rules
@@ -15,7 +15,7 @@ Configuration Areas
 5. **Shared Utility Functions** - Common utilities and helpers
 
 System Configuration
--------------------
+--------------------
 
 The main configuration file `system_configuration.py` contains all configurable parameters:
 
@@ -42,7 +42,7 @@ The main configuration file `system_configuration.py` contains all configurable 
    FONT_SIZES = {...}
 
 Data File Configuration
-----------------------
+-----------------------
 
 **File Mappings:**
 
@@ -87,7 +87,7 @@ Define the column naming conventions:
    COLUMN_PREFIXES['wind_power'] = 'renewable_mw_'
 
 Data Validation Configuration
----------------------------
+-----------------------------
 
 **Basic Validation Settings:**
 
@@ -157,7 +157,7 @@ Data Validation Configuration
    DATA_VALIDATION['gap_filling']['advanced_max_gap_steps'] = 24
 
 Representative Operations Configuration
--------------------------------------
+---------------------------------------
 
 **Clustering Parameters:**
 
@@ -200,7 +200,7 @@ Representative Operations Configuration
    REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier'] = 1.15
 
 Visualization Configuration
--------------------------
+--------------------------- 
 
 **Plot Style Settings:**
 

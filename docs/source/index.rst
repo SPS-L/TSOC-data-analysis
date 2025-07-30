@@ -6,6 +6,22 @@
 Welcome to TSOC Data Analysis's documentation!
 ==============================================
 
+.. image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
+   :target: https://opensource.org/licenses/Apache-2.0
+   :alt: License
+
+.. image:: https://img.shields.io/badge/python-3.7+-blue.svg
+   :target: https://www.python.org/downloads/
+   :alt: Python
+
+.. image:: https://img.shields.io/badge/docs-sphinx-blue.svg
+   :target: https://tsoc-data-analysis.sps-lab.org/
+   :alt: Documentation
+
+.. image:: https://img.shields.io/badge/GitHub-SPS--L%2FTSOC--data--analysis-blue.svg
+   :target: https://github.com/SPS-L/TSOC-data-analysis
+   :alt: GitHub Repository
+
 **Author:** Sustainable Power Systems Lab (SPSL), `https://sps-lab.org <https://sps-lab.org>`_, contact: info@sps-lab.org
 
 A comprehensive Python tool for analyzing the TSOC power system operational data from Excel files. The tool provides a powerful command-line interface (CLI) and modular Python API for load analysis, generator categorization, wind power analysis, reactive power calculations, and representative operating point extraction.

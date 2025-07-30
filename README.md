@@ -17,10 +17,7 @@ A comprehensive Python tool for analyzing TSOC power system operational data fro
 ## Quick Installation
 
 ```bash
-# Install from source
-git clone https://github.com/sps-lab/tsoc-data-analysis.git
-cd tsoc-data-analysis
-pip install -e .
+pip install git+https://github.com/SPS-L/TSOC-data-analysis.git
 ```
 
 ## Quick Start
@@ -36,15 +33,6 @@ if success:
     rep_df, diagnostics = extract_representative_ops(
         df, max_power=450, MAPGL=200, output_dir='results'
     )
-```
-
-### Command Line
-```bash
-# Run full analysis for January 2024
-tsoc-analyze 2024-01 --output-dir results --save-plots --save-csv
-
-# Run analysis for specific data directory
-tsoc-analyze 2024-03 --data-dir "raw_data" --verbose
 ```
 
 ## Key Features
