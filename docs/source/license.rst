@@ -230,4 +230,11 @@ The license requires that you:
 
 * Include the original copyright notice and license
 * State any significant changes you made to the software
-* Include a copy of the license with the software 
+* Include a copy of the license with the software
+
+License Compatibility
+--------------------
+
+For a summary of license compatibility with all dependencies, see :doc:`license_summary`.
+
+This analysis confirms that all dependencies used in TSOC Data Analysis are fully compatible with the Apache License, Version 2.0, ensuring maximum flexibility for commercial use and distribution. 
