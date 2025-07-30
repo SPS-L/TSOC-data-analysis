@@ -127,6 +127,7 @@ The standard approach uses K-means clustering with automatic cluster number sele
    )
 
 **Features:**
+
 - Fast K-means clustering
 - Automatic cluster number selection (k=2 to k_max)
 - MAPGL belt inclusion for critical low-load points
