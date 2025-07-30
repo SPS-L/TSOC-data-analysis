@@ -24,9 +24,7 @@ Welcome to TSOC Data Analysis's documentation!
 
 **Author:** Sustainable Power Systems Lab (SPSL), `https://sps-lab.org <https://sps-lab.org>`_, contact: info@sps-lab.org
 
-A comprehensive Python tool for analyzing the TSOC power system operational data from Excel files. The tool provides a powerful command-line interface (CLI) and modular Python API for load analysis, generator categorization, wind power analysis, reactive power calculations, and representative operating point extraction.
-
-**Pure Python Implementation**: This tool is implemented entirely in Python. It can be used from the command line, imported as Python modules, or integrated into automated analysis pipelines.
+A Python tool for analyzing the TSOC power system operational data from Excel files. The tool provides a modular Python API for load analysis, generator categorization, wind power analysis, reactive power calculations, and representative operating point extraction.
 
 .. toctree::
    :maxdepth: 2
@@ -63,19 +61,8 @@ Quick Start
    if success:
        # Extract representative points
        rep_df, diagnostics = extract_representative_ops(
-           df, max_power=850, MAPGL=200, output_dir='results'
+           df, max_power=450, MAPGL=200, output_dir='results'
        )
-
-Command Line Usage
-------------------
-
-.. code-block:: bash
-
-   # Run full analysis with all outputs for January 2024
-   tsoc-analyze 2024-01 --output-dir results --save-plots --save-csv
-   
-   # Run analysis with specific data directory for March 2024
-   tsoc-analyze 2024-03 --data-dir "raw_data" --verbose
 
 Indices and tables
 ==================

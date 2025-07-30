@@ -87,8 +87,7 @@
 <a class="reference external image-reference" href="https://github.com/SPS-L/TSOC-data-analysis"><img alt="GitHub Repository" src="https://img.shields.io/badge/GitHub-SPS--L%2FTSOC--data--analysis-blue.svg" />
 </a>
 <p><strong>Author:</strong> Sustainable Power Systems Lab (SPSL), <a class="reference external" href="https://sps-lab.org">https://sps-lab.org</a>, contact: <a class="reference external" href="mailto:info&#37;&#52;&#48;sps-lab&#46;org">info<span>&#64;</span>sps-lab<span>&#46;</span>org</a></p>
-<p>A comprehensive Python tool for analyzing the TSOC power system operational data from Excel files. The tool provides a powerful command-line interface (CLI) and modular Python API for load analysis, generator categorization, wind power analysis, reactive power calculations, and representative operating point extraction.</p>
-<p><strong>Pure Python Implementation</strong>: This tool is implemented entirely in Python. It can be used from the command line, imported as Python modules, or integrated into automated analysis pipelines.</p>
+<p>A Python tool for analyzing the TSOC power system operational data from Excel files. The tool provides a modular Python API for load analysis, generator categorization, wind power analysis, reactive power calculations, and representative operating point extraction.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -174,18 +173,8 @@
 <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
     <span class="c1"># Extract representative points</span>
     <span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops</span><span class="p">(</span>
-        <span class="n">df</span><span class="p">,</span> <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span>
+        <span class="n">df</span><span class="p">,</span> <span class="n">max_power</span><span class="o">=</span><span class="mi">450</span><span class="p">,</span> <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span>
     <span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="command-line-usage">
-<h2>Command Line Usage<a class="headerlink" href="#command-line-usage" title="Link to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run full analysis with all outputs for January 2024</span>
-tsoc-analyze<span class="w"> </span><span class="m">2024</span>-01<span class="w"> </span>--output-dir<span class="w"> </span>results<span class="w"> </span>--save-plots<span class="w"> </span>--save-csv
-
-<span class="c1"># Run analysis with specific data directory for March 2024</span>
-tsoc-analyze<span class="w"> </span><span class="m">2024</span>-03<span class="w"> </span>--data-dir<span class="w"> </span><span class="s2">&quot;raw_data&quot;</span><span class="w"> </span>--verbose
 </pre></div>
 </div>
 </section>
