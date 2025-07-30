@@ -37,8 +37,8 @@ A comprehensive Python tool for analyzing the TSOC power system operational data
    configuration
    examples
    troubleshooting
-   license_summary
    license
+   license_dependency
 
 Features
 --------
