@@ -38,8 +38,8 @@ Simple Load Analysis
        get_load_statistics
    )
    
-   # Load data for January 2024
-   df = loadallpowerdf('2024-01', data_dir='raw_data')
+   # Load data from results directory
+   df = loadallpowerdf('results')
    
    # Calculate total load
    total_load = calculate_total_load(df)
@@ -133,12 +133,12 @@ Basic Clustering Analysis
    )
    
    print(f"Clustering Results:")
-   print(f"  Number of clusters: {diagnostics['n_clusters']}")
+   print(f"  Number of clusters: {diagnostics['k']}")
    print(f"  Silhouette score: {diagnostics['silhouette']:.3f}")
-   print(f"  Calinski-Harabasz score: {diagnostics['calinski_harabasz']:.2f}")
-   print(f"  Davies-Bouldin score: {diagnostics['davies_bouldin']:.3f}")
+   print(f"  Calinski-Harabasz score: {diagnostics['ch']:.2f}")
+   print(f"  Davies-Bouldin score: {diagnostics['db']:.3f}")
    
-   print(f"\nRepresentative points saved to: {diagnostics['output_files']['representative_points']}")
+   print(f"\nRepresentative points saved to: results/representative_operating_points.csv")
 
 **Expected Output:**
 
@@ -161,33 +161,45 @@ Advanced Clustering with Custom Parameters
 
 .. code-block:: python
 
-   from tsoc_data_analysis import extract_representative_ops
-   
-   # Custom clustering parameters
-   custom_params = {
-       'k_max': 15,                    # Test up to 15 clusters
-       'random_state': 123,            # Different seed for reproducibility
-       'mapgl_belt_multiplier': 1.15,  # Wider MAPGL belt
-       'quality_thresholds': {
-           'min_silhouette': 0.3,      # Higher quality requirement
-           'silhouette_excellent': 0.75,
-           'silhouette_good': 0.55
-       }
-   }
+   from tsoc_data_analysis import extract_representative_ops, REPRESENTATIVE_OPS
+
+   # Temporarily modify the configuration
+   original_config = REPRESENTATIVE_OPS.copy()
+
+   # Apply your custom parameters
+   REPRESENTATIVE_OPS['defaults']['k_max'] = 15
+   REPRESENTATIVE_OPS['defaults']['random_state'] = 123
+   REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier'] = 1.15
+   REPRESENTATIVE_OPS['quality_thresholds']['min_silhouette'] = 0.3
+   REPRESENTATIVE_OPS['quality_thresholds']['silhouette_excellent'] = 0.75
+   REPRESENTATIVE_OPS['quality_thresholds']['silhouette_good'] = 0.55
    
    # Extract representative points with custom parameters
    rep_df, diagnostics = extract_representative_ops(
        df,
        max_power=850,
        MAPGL=200,
-       output_dir='results',
-       **custom_params
+       output_dir='results'
    )
    
    print(f"Custom Clustering Results:")
-   print(f"  Selected clusters: {diagnostics['n_clusters']}")
+   print(f"  Selected clusters: {diagnostics['k']}")
    print(f"  Quality score: {diagnostics['silhouette']:.3f}")
-   print(f"  Quality rating: {diagnostics['quality_rating']}")
+   
+   # Determine quality rating based on silhouette score
+   if diagnostics['silhouette'] > 0.7:
+       quality_rating = "Excellent"
+   elif diagnostics['silhouette'] > 0.5:
+       quality_rating = "Good"
+   elif diagnostics['silhouette'] > 0.25:
+       quality_rating = "Acceptable"
+   else:
+       quality_rating = "Poor"
+   
+   print(f"  Quality rating: {quality_rating}")
+   
+   # Restore original configuration (optional)
+   REPRESENTATIVE_OPS.update(original_config)
 
 **Expected Output:**
 
@@ -213,20 +225,22 @@ Basic Data Validation
    from tsoc_data_analysis import DataValidator
    
    # Create validator instance
-   validator = DataValidator(df)
+   validator = DataValidator()
    
    # Perform basic validation
-   validation_results = validator.validate_data()
+   validated_df = validator.validate_dataframe(df)
+   validation_summary = validator.get_validation_summary()
    
    print(f"Data Validation Results:")
-   print(f"  Total records: {validation_results['total_records']}")
-   print(f"  Valid records: {validation_results['valid_records']}")
-   print(f"  Invalid records: {validation_results['invalid_records']}")
-   print(f"  Missing values: {validation_results['missing_values']}")
+   print(f"  Total records processed: {validation_summary['total_records_processed']}")
+   print(f"  Records with errors: {validation_summary['records_with_errors']}")
+   print(f"  Type errors: {len(validation_summary['type_errors'])}")
+   print(f"  Limit errors: {len(validation_summary['limit_errors'])}")
+   print(f"  Gaps filled: {validation_summary['gaps_filled']}")
    
-   if validation_results['errors']:
-       print(f"\nValidation Errors:")
-       for error in validation_results['errors'][:5]:  # Show first 5 errors
+   if validation_summary['limit_errors']:
+       print(f"\nLimit Validation Errors:")
+       for error in validation_summary['limit_errors'][:5]:  # Show first 5 errors
            print(f"  - {error}")
 
 **Expected Output:**
@@ -234,12 +248,13 @@ Basic Data Validation
 .. code-block:: text
 
    Data Validation Results:
-     Total records: 744
-     Valid records: 738
-     Invalid records: 6
-     Missing values: 12
+     Total records processed: 744
+     Records with errors: 6
+     Type errors: 0
+     Limit errors: 6
+     Gaps filled: 12
    
-   Validation Errors:
+   Limit Validation Errors:
      - Column ss_mw_SUBSTATION1: Value 1500.5 exceeds maximum limit (1000.0)
      - Column wind_mw_FARM1: Negative value (-5.2) found
 
@@ -252,26 +267,28 @@ Enhanced Validation with Anomaly Detection
 
 .. code-block:: python
 
-   from tsoc_data_analysis import DataValidator
+   from tsoc_data_analysis import EnhancedDataValidator
    
-   # Create validator with enhanced settings
-   validator = DataValidator(
+   # Create enhanced validator
+   validator = EnhancedDataValidator()
+   
+   # Perform enhanced validation with anomaly detection
+   validated_df = validator.validate_dataframe_enhanced(
        df,
-       enable_advanced_gap_filling=True,
-       enable_anomaly_detection=True
+       use_comprehensive_anomaly_detection=True,
+       use_advanced_gap_filling=True
    )
    
-   # Perform enhanced validation
-   enhanced_results = validator.validate_data()
+   enhanced_summary = validator.get_enhanced_validation_summary()
    
    print(f"Enhanced Validation Results:")
-   print(f"  Anomalies detected: {enhanced_results['anomalies_detected']}")
-   print(f"  Gaps filled: {enhanced_results['gaps_filled']}")
-   print(f"  Outliers removed: {enhanced_results['outliers_removed']}")
+   print(f"  Anomalies detected: {enhanced_summary.get('anomalies_detected', 0)}")
+   print(f"  Gaps filled: {enhanced_summary.get('gaps_filled', 0)}")
+   print(f"  Outliers removed: {enhanced_summary.get('outliers_removed', 0)}")
    
-   if enhanced_results['anomaly_details']:
+   if enhanced_summary.get('anomaly_details'):
        print(f"\nAnomaly Details:")
-       for anomaly in enhanced_results['anomaly_details'][:3]:
+       for anomaly in enhanced_summary['anomaly_details'][:3]:
            print(f"  - {anomaly['column']}: {anomaly['type']} at index {anomaly['index']}")
 
 **Expected Output:**
@@ -300,25 +317,16 @@ Time Series Plotting
 
 .. code-block:: python
 
-   from tsoc_data_analysis import plot_timeseries
+   from tsoc_data_analysis.power_system_visualizer import plot_load_timeseries
+   import matplotlib.pyplot as plt
    
-   # Plot total load time series
-   plot_timeseries(
-       df,
-       columns=['total_load'],
-       title='Total Load Time Series - January 2024',
-       output_file='results/total_load_timeseries.png'
-   )
-   
-   # Plot multiple variables
-   plot_timeseries(
-       df,
-       columns=['total_load', 'net_load', 'total_wind'],
-       title='Power System Overview - January 2024',
-       output_file='results/power_overview.png'
-   )
+   # Plot total load and net load time series
+   fig, ax = plt.subplots(figsize=(12, 6))
+   plot_load_timeseries(total_load, net_load, ax=ax)
+   plt.savefig('results/load_timeseries.png', dpi=300, bbox_inches='tight')
+   plt.close()
 
-**Expected Output:** Time series plots saved as PNG files in the results directory.
+**Expected Output:** Time series plot saved as PNG file in the results directory.
 
 Comprehensive Analysis Dashboard
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -329,24 +337,21 @@ Comprehensive Analysis Dashboard
 
 .. code-block:: python
 
-   from tsoc_data_analysis import create_comprehensive_plots
+   from tsoc_data_analysis.power_system_visualizer import create_comprehensive_plots
+   import matplotlib.pyplot as plt
    
    # Create comprehensive analysis dashboard
-   create_comprehensive_plots(
-       df,
-       output_dir='results',
-       save_plots=True,
-       plot_format='png'
-   )
+   fig = create_comprehensive_plots(total_load, net_load)
+   fig.savefig('results/comprehensive_analysis.png', dpi=300, bbox_inches='tight')
+   plt.close()
    
    print("Comprehensive analysis dashboard created with:")
    print("  - Time series plots")
    print("  - Daily load profiles")
    print("  - Monthly statistics")
-   print("  - Generator analysis")
-   print("  - Wind power analysis")
+   print("  - Load statistics summary")
 
-**Expected Output:** Multiple analysis plots and summary files in the results directory.
+**Expected Output:** Comprehensive analysis plot saved as PNG file in the results directory.
 
 Advanced Workflow Examples
 --------------------------
@@ -383,13 +388,13 @@ Complete Analysis Pipeline
            output_dir='results'
        )
        
-       print(f"Representative points extracted: {len(rep_df)} clusters")
+       print(f"Representative points extracted: {len(rep_df)} points")
        
        # Step 3: Generate summary report
        print("\nAnalysis Summary:")
        print(f"  Data period: January 2024")
        print(f"  Total records: {len(df)}")
-       print(f"  Representative clusters: {len(rep_df)}")
+       print(f"  Representative points: {len(rep_df)}")
        print(f"  Clustering quality: {diagnostics['silhouette']:.3f}")
 
 **Expected Output:**
@@ -397,12 +402,12 @@ Complete Analysis Pipeline
 .. code-block:: text
 
    Basic analysis completed successfully
-   Representative points extracted: 5 clusters
+   Representative points extracted: 5 points
    
    Analysis Summary:
      Data period: January 2024
      Total records: 744
-     Representative clusters: 5
+     Representative points: 5
      Clustering quality: 0.623
 
 Multi-Month Analysis
@@ -450,7 +455,7 @@ Multi-Month Analysis
    # Compare results across months
    print(f"\nMulti-Month Comparison:")
    for month, result in results.items():
-       print(f"  {month}: {len(result['representative_points'])} clusters, "
+       print(f"  {month}: {len(result['representative_points'])} points, "
              f"quality: {result['diagnostics']['silhouette']:.3f}")
 
 **Expected Output:**
@@ -462,9 +467,9 @@ Multi-Month Analysis
    Analyzing 2024-03...
    
    Multi-Month Comparison:
-     2024-01: 5 clusters, quality: 0.623
-     2024-02: 6 clusters, quality: 0.589
-     2024-03: 5 clusters, quality: 0.647
+     2024-01: 5 points, quality: 0.623
+     2024-02: 6 points, quality: 0.589
+     2024-03: 5 points, quality: 0.647
 
 Custom Analysis Workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -486,12 +491,12 @@ Custom Analysis Workflow
    import matplotlib.pyplot as plt
    
    # Custom analysis workflow
-   def custom_analysis(month, data_dir, output_dir):
+   def custom_analysis(data_dir, output_dir):
        """Custom analysis workflow for specific requirements."""
        
        # Step 1: Load and preprocess data
-       print(f"Loading data for {month}...")
-       df = loadallpowerdf(month, data_dir=data_dir)
+       print("Loading data...")
+       df = loadallpowerdf(data_dir)
        
        # Step 2: Calculate key metrics
        print("Calculating key metrics...")
@@ -514,7 +519,6 @@ Custom Analysis Workflow
        
        # Step 5: Generate custom report
        report = {
-           'month': month,
            'total_records': len(df),
            'total_load_stats': {
                'max': total_load.max(),
@@ -526,7 +530,7 @@ Custom Analysis Workflow
                'pq_control': len(pq_control)
            },
            'clustering': {
-               'n_clusters': len(rep_df),
+               'n_points': len(rep_df),
                'quality': diagnostics['silhouette']
            }
        }
@@ -537,26 +541,9 @@ Custom Analysis Workflow
        return report
    
    # Execute custom analysis
-   report = custom_analysis('2024-01', 'raw_data', 'results')
+   report = custom_analysis('results', 'results')
    print(f"\nCustom Analysis Report:")
-   print(f"  Month: {report['month']}")
    print(f"  Records: {report['total_records']}")
    print(f"  Load range: {report['total_load_stats']['min']:.1f} - {report['total_load_stats']['max']:.1f} MW")
    print(f"  Generators: {report['generators']['voltage_control']} voltage control, {report['generators']['pq_control']} PQ control")
-   print(f"  Clusters: {report['clustering']['n_clusters']} (quality: {report['clustering']['quality']:.3f})")
-
-**Expected Output:**
-
-.. code-block:: text
-
-   Loading data for 2024-01...
-   Calculating key metrics...
-   Analyzing generators...
-   Extracting representative points...
-   
-   Custom Analysis Report:
-     Month: 2024-01
-     Records: 744
-     Load range: 450.2 - 1250.5 MW
-     Generators: 3 voltage control, 2 PQ control
-     Clusters: 5 (quality: 0.623) 
+   print(f"  Representative points: {report['clustering']['n_points']} (quality: {report['clustering']['quality']:.3f})") 

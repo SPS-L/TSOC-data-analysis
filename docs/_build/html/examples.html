@@ -138,8 +138,8 @@
     <span class="n">get_load_statistics</span>
 <span class="p">)</span>
 
-<span class="c1"># Load data for January 2024</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">loadallpowerdf</span><span class="p">(</span><span class="s1">&#39;2024-01&#39;</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;raw_data&#39;</span><span class="p">)</span>
+<span class="c1"># Load data from results directory</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">loadallpowerdf</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">)</span>
 
 <span class="c1"># Calculate total load</span>
 <span class="n">total_load</span> <span class="o">=</span> <span class="n">calculate_total_load</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
@@ -223,12 +223,12 @@ PQ Control Generators: 2
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clustering Results:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Number of clusters: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Number of clusters: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Silhouette score: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Calinski-Harabasz score: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;calinski_harabasz&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Davies-Bouldin score: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;davies_bouldin&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Calinski-Harabasz score: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;ch&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Davies-Bouldin score: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Representative points saved to: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;output_files&#39;</span><span class="p">][</span><span class="s1">&#39;representative_points&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Representative points saved to: results/representative_operating_points.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Expected Output:</strong></p>
@@ -246,33 +246,45 @@ Representative points saved to: results/representative_operating_points.csv
 <h3>Advanced Clustering with Custom Parameters<a class="headerlink" href="#advanced-clustering-with-custom-parameters" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Perform clustering with custom parameters for specific analysis requirements.</p>
 <p><strong>Example Code:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops</span><span class="p">,</span> <span class="n">REPRESENTATIVE_OPS</span>
 
-<span class="c1"># Custom clustering parameters</span>
-<span class="n">custom_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;k_max&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>                    <span class="c1"># Test up to 15 clusters</span>
-    <span class="s1">&#39;random_state&#39;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>            <span class="c1"># Different seed for reproducibility</span>
-    <span class="s1">&#39;mapgl_belt_multiplier&#39;</span><span class="p">:</span> <span class="mf">1.15</span><span class="p">,</span>  <span class="c1"># Wider MAPGL belt</span>
-    <span class="s1">&#39;quality_thresholds&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;min_silhouette&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>      <span class="c1"># Higher quality requirement</span>
-        <span class="s1">&#39;silhouette_excellent&#39;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>
-        <span class="s1">&#39;silhouette_good&#39;</span><span class="p">:</span> <span class="mf">0.55</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<span class="c1"># Temporarily modify the configuration</span>
+<span class="n">original_config</span> <span class="o">=</span> <span class="n">REPRESENTATIVE_OPS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># Apply your custom parameters</span>
+<span class="n">REPRESENTATIVE_OPS</span><span class="p">[</span><span class="s1">&#39;defaults&#39;</span><span class="p">][</span><span class="s1">&#39;k_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="n">REPRESENTATIVE_OPS</span><span class="p">[</span><span class="s1">&#39;defaults&#39;</span><span class="p">][</span><span class="s1">&#39;random_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">123</span>
+<span class="n">REPRESENTATIVE_OPS</span><span class="p">[</span><span class="s1">&#39;defaults&#39;</span><span class="p">][</span><span class="s1">&#39;mapgl_belt_multiplier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.15</span>
+<span class="n">REPRESENTATIVE_OPS</span><span class="p">[</span><span class="s1">&#39;quality_thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;min_silhouette&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">REPRESENTATIVE_OPS</span><span class="p">[</span><span class="s1">&#39;quality_thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;silhouette_excellent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.75</span>
+<span class="n">REPRESENTATIVE_OPS</span><span class="p">[</span><span class="s1">&#39;quality_thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;silhouette_good&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.55</span>
 
 <span class="c1"># Extract representative points with custom parameters</span>
 <span class="n">rep_df</span><span class="p">,</span> <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">extract_representative_ops</span><span class="p">(</span>
     <span class="n">df</span><span class="p">,</span>
     <span class="n">max_power</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span>
     <span class="n">MAPGL</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">custom_params</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Custom Clustering Results:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Selected clusters: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Selected clusters: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Quality score: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Quality rating: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;quality_rating&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Determine quality rating based on silhouette score</span>
+<span class="k">if</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.7</span><span class="p">:</span>
+    <span class="n">quality_rating</span> <span class="o">=</span> <span class="s2">&quot;Excellent&quot;</span>
+<span class="k">elif</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+    <span class="n">quality_rating</span> <span class="o">=</span> <span class="s2">&quot;Good&quot;</span>
+<span class="k">elif</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.25</span><span class="p">:</span>
+    <span class="n">quality_rating</span> <span class="o">=</span> <span class="s2">&quot;Acceptable&quot;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">quality_rating</span> <span class="o">=</span> <span class="s2">&quot;Poor&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Quality rating: </span><span class="si">{</span><span class="n">quality_rating</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Restore original configuration (optional)</span>
+<span class="n">REPRESENTATIVE_OPS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">original_config</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Expected Output:</strong></p>
@@ -293,31 +305,34 @@ Representative points saved to: results/representative_operating_points.csv
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataValidator</span>
 
 <span class="c1"># Create validator instance</span>
-<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">()</span>
 
 <span class="c1"># Perform basic validation</span>
-<span class="n">validation_results</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_data</span><span class="p">()</span>
+<span class="n">validated_df</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">validation_summary</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">get_validation_summary</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data Validation Results:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total records: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;total_records&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Valid records: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;valid_records&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Invalid records: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;invalid_records&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Missing values: </span><span class="si">{</span><span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;missing_values&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total records processed: </span><span class="si">{</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;total_records_processed&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Records with errors: </span><span class="si">{</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;records_with_errors&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Type errors: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;type_errors&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Limit errors: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;limit_errors&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Gaps filled: </span><span class="si">{</span><span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;gaps_filled&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Validation Errors:&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">validation_results</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">][:</span><span class="mi">5</span><span class="p">]:</span>  <span class="c1"># Show first 5 errors</span>
+<span class="k">if</span> <span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;limit_errors&#39;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Limit Validation Errors:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">validation_summary</span><span class="p">[</span><span class="s1">&#39;limit_errors&#39;</span><span class="p">][:</span><span class="mi">5</span><span class="p">]:</span>  <span class="c1"># Show first 5 errors</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Expected Output:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Data Validation Results:
-  Total records: 744
-  Valid records: 738
-  Invalid records: 6
-  Missing values: 12
+  Total records processed: 744
+  Records with errors: 6
+  Type errors: 0
+  Limit errors: 6
+  Gaps filled: 12
 
-Validation Errors:
+Limit Validation Errors:
   - Column ss_mw_SUBSTATION1: Value 1500.5 exceeds maximum limit (1000.0)
   - Column wind_mw_FARM1: Negative value (-5.2) found
 </pre></div>
@@ -327,26 +342,28 @@ Validation Errors:
 <h3>Enhanced Validation with Anomaly Detection<a class="headerlink" href="#enhanced-validation-with-anomaly-detection" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Perform advanced validation with anomaly detection and gap filling.</p>
 <p><strong>Example Code:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataValidator</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnhancedDataValidator</span>
 
-<span class="c1"># Create validator with enhanced settings</span>
-<span class="n">validator</span> <span class="o">=</span> <span class="n">DataValidator</span><span class="p">(</span>
+<span class="c1"># Create enhanced validator</span>
+<span class="n">validator</span> <span class="o">=</span> <span class="n">EnhancedDataValidator</span><span class="p">()</span>
+
+<span class="c1"># Perform enhanced validation with anomaly detection</span>
+<span class="n">validated_df</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_dataframe_enhanced</span><span class="p">(</span>
     <span class="n">df</span><span class="p">,</span>
-    <span class="n">enable_advanced_gap_filling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">enable_anomaly_detection</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">use_comprehensive_anomaly_detection</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_advanced_gap_filling</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
-<span class="c1"># Perform enhanced validation</span>
-<span class="n">enhanced_results</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate_data</span><span class="p">()</span>
+<span class="n">enhanced_summary</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">get_enhanced_validation_summary</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Enhanced Validation Results:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Anomalies detected: </span><span class="si">{</span><span class="n">enhanced_results</span><span class="p">[</span><span class="s1">&#39;anomalies_detected&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Gaps filled: </span><span class="si">{</span><span class="n">enhanced_results</span><span class="p">[</span><span class="s1">&#39;gaps_filled&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Outliers removed: </span><span class="si">{</span><span class="n">enhanced_results</span><span class="p">[</span><span class="s1">&#39;outliers_removed&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Anomalies detected: </span><span class="si">{</span><span class="n">enhanced_summary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;anomalies_detected&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Gaps filled: </span><span class="si">{</span><span class="n">enhanced_summary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gaps_filled&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Outliers removed: </span><span class="si">{</span><span class="n">enhanced_summary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outliers_removed&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="n">enhanced_results</span><span class="p">[</span><span class="s1">&#39;anomaly_details&#39;</span><span class="p">]:</span>
+<span class="k">if</span> <span class="n">enhanced_summary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;anomaly_details&#39;</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Anomaly Details:&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">anomaly</span> <span class="ow">in</span> <span class="n">enhanced_results</span><span class="p">[</span><span class="s1">&#39;anomaly_details&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">anomaly</span> <span class="ow">in</span> <span class="n">enhanced_summary</span><span class="p">[</span><span class="s1">&#39;anomaly_details&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">]:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">anomaly</span><span class="p">[</span><span class="s1">&#39;column&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">anomaly</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> at index </span><span class="si">{</span><span class="n">anomaly</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -370,50 +387,38 @@ Anomaly Details:
 <h3>Time Series Plotting<a class="headerlink" href="#time-series-plotting" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Create time series plots for power system variables.</p>
 <p><strong>Example Code:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_timeseries</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis.power_system_visualizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_load_timeseries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-<span class="c1"># Plot total load time series</span>
-<span class="n">plot_timeseries</span><span class="p">(</span>
-    <span class="n">df</span><span class="p">,</span>
-    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;total_load&#39;</span><span class="p">],</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Total Load Time Series - January 2024&#39;</span><span class="p">,</span>
-    <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;results/total_load_timeseries.png&#39;</span>
-<span class="p">)</span>
-
-<span class="c1"># Plot multiple variables</span>
-<span class="n">plot_timeseries</span><span class="p">(</span>
-    <span class="n">df</span><span class="p">,</span>
-    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;total_load&#39;</span><span class="p">,</span> <span class="s1">&#39;net_load&#39;</span><span class="p">,</span> <span class="s1">&#39;total_wind&#39;</span><span class="p">],</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Power System Overview - January 2024&#39;</span><span class="p">,</span>
-    <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;results/power_overview.png&#39;</span>
-<span class="p">)</span>
+<span class="c1"># Plot total load and net load time series</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plot_load_timeseries</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;results/load_timeseries.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><strong>Expected Output:</strong> Time series plots saved as PNG files in the results directory.</p>
+<p><strong>Expected Output:</strong> Time series plot saved as PNG file in the results directory.</p>
 </section>
 <section id="comprehensive-analysis-dashboard">
 <h3>Comprehensive Analysis Dashboard<a class="headerlink" href="#comprehensive-analysis-dashboard" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Create a comprehensive analysis dashboard with multiple plots.</p>
 <p><strong>Example Code:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_comprehensive_plots</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis.power_system_visualizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_comprehensive_plots</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="c1"># Create comprehensive analysis dashboard</span>
-<span class="n">create_comprehensive_plots</span><span class="p">(</span>
-    <span class="n">df</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span><span class="p">,</span>
-    <span class="n">save_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">plot_format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span>
-<span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">create_comprehensive_plots</span><span class="p">(</span><span class="n">total_load</span><span class="p">,</span> <span class="n">net_load</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;results/comprehensive_analysis.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Comprehensive analysis dashboard created with:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Time series plots&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Daily load profiles&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Monthly statistics&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Generator analysis&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Wind power analysis&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Load statistics summary&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>Expected Output:</strong> Multiple analysis plots and summary files in the results directory.</p>
+<p><strong>Expected Output:</strong> Comprehensive analysis plot saved as PNG file in the results directory.</p>
 </section>
 </section>
 <section id="advanced-workflow-examples">
@@ -445,24 +450,24 @@ Anomaly Details:
         <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;results&#39;</span>
     <span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Representative points extracted: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2"> clusters&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Representative points extracted: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2"> points&quot;</span><span class="p">)</span>
 
     <span class="c1"># Step 3: Generate summary report</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Analysis Summary:&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Data period: January 2024&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total records: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative clusters: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Clustering quality: </span><span class="si">{</span><span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Expected Output:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Basic analysis completed successfully
-Representative points extracted: 5 clusters
+Representative points extracted: 5 points
 
 Analysis Summary:
   Data period: January 2024
   Total records: 744
-  Representative clusters: 5
+  Representative points: 5
   Clustering quality: 0.623
 </pre></div>
 </div>
@@ -507,7 +512,7 @@ Analysis Summary:
 <span class="c1"># Compare results across months</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Multi-Month Comparison:&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">month</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;representative_points&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> clusters, &quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;representative_points&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> points, &quot;</span>
           <span class="sa">f</span><span class="s2">&quot;quality: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;diagnostics&#39;</span><span class="p">][</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -517,9 +522,9 @@ Analyzing 2024-02...
 Analyzing 2024-03...
 
 Multi-Month Comparison:
-  2024-01: 5 clusters, quality: 0.623
-  2024-02: 6 clusters, quality: 0.589
-  2024-03: 5 clusters, quality: 0.647
+  2024-01: 5 points, quality: 0.623
+  2024-02: 6 points, quality: 0.589
+  2024-03: 5 points, quality: 0.647
 </pre></div>
 </div>
 </section>
@@ -538,12 +543,12 @@ Multi-Month Comparison:
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="c1"># Custom analysis workflow</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">custom_analysis</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_analysis</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom analysis workflow for specific requirements.&quot;&quot;&quot;</span>
 
     <span class="c1"># Step 1: Load and preprocess data</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading data for </span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">loadallpowerdf</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading data...&quot;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">loadallpowerdf</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
 
     <span class="c1"># Step 2: Calculate key metrics</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calculating key metrics...&quot;</span><span class="p">)</span>
@@ -566,7 +571,6 @@ Multi-Month Comparison:
 
     <span class="c1"># Step 5: Generate custom report</span>
     <span class="n">report</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;month&#39;</span><span class="p">:</span> <span class="n">month</span><span class="p">,</span>
         <span class="s1">&#39;total_records&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span>
         <span class="s1">&#39;total_load_stats&#39;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">total_load</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
@@ -578,7 +582,7 @@ Multi-Month Comparison:
             <span class="s1">&#39;pq_control&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">pq_control</span><span class="p">)</span>
         <span class="p">},</span>
         <span class="s1">&#39;clustering&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;n_clusters&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">),</span>
+            <span class="s1">&#39;n_points&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">rep_df</span><span class="p">),</span>
             <span class="s1">&#39;quality&#39;</span><span class="p">:</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s1">&#39;silhouette&#39;</span><span class="p">]</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -589,27 +593,12 @@ Multi-Month Comparison:
     <span class="k">return</span> <span class="n">report</span>
 
 <span class="c1"># Execute custom analysis</span>
-<span class="n">report</span> <span class="o">=</span> <span class="n">custom_analysis</span><span class="p">(</span><span class="s1">&#39;2024-01&#39;</span><span class="p">,</span> <span class="s1">&#39;raw_data&#39;</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">custom_analysis</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Custom Analysis Report:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Month: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Records: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;total_records&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Load range: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;total_load_stats&#39;</span><span class="p">][</span><span class="s1">&#39;min&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;total_load_stats&#39;</span><span class="p">][</span><span class="s1">&#39;max&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MW&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Generators: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;generators&#39;</span><span class="p">][</span><span class="s1">&#39;voltage_control&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> voltage control, </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;generators&#39;</span><span class="p">][</span><span class="s1">&#39;pq_control&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> PQ control&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Clusters: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;clustering&#39;</span><span class="p">][</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (quality: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;clustering&#39;</span><span class="p">][</span><span class="s1">&#39;quality&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>Expected Output:</strong></p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Loading data for 2024-01...
-Calculating key metrics...
-Analyzing generators...
-Extracting representative points...
-
-Custom Analysis Report:
-  Month: 2024-01
-  Records: 744
-  Load range: 450.2 - 1250.5 MW
-  Generators: 3 voltage control, 2 PQ control
-  Clusters: 5 (quality: 0.623)
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Representative points: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;clustering&#39;</span><span class="p">][</span><span class="s1">&#39;n_points&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (quality: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;clustering&#39;</span><span class="p">][</span><span class="s1">&#39;quality&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
