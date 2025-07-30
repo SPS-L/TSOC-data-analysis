@@ -209,49 +209,6 @@ TSOC Data Analysis is licensed under the Apache License, Version 2.0.
 
    </div>
 
-Copyright Notice
-----------------
-
-Copyright 2024 Sustainable Power Systems Lab (SPSL)
-
-This project is licensed under the Apache License, Version 2.0. You may obtain a copy of the License at: http://www.apache.org/licenses/LICENSE-2.0
-
-Summary
--------
-
-The Apache License 2.0 is a permissive open source license that allows you to:
-
-* Use the software for any purpose
-* Modify and distribute the software
-* Include it in proprietary software
-* Patent protection from contributors
-
-The license requires that you:
-
-* Include the original copyright notice and license
-* State any significant changes you made to the software
-* Include a copy of the license with the software
-
-License Compatibility
----------------------
-
-For a summary of license compatibility with all dependencies, see :ref:`license-dependency-section`.
-
-This analysis confirms that all dependencies used in TSOC Data Analysis are fully compatible with the Apache License, Version 2.0, ensuring maximum flexibility for commercial use and distribution.
-
-.. _license-dependency-section:
-
-License Dependency
-==================
-
-Quick Reference for TSOC Data Analysis Licensing
-------------------------------------------------
-
-**Primary License**: Apache License, Version 2.0  
-**Copyright**: 2024 Sustainable Power Systems Lab (SPSL)  
-**Contact**: info@sps-lab.org  
-**Website**: https://sps-lab.org
-
 License Compatibility Status
 ----------------------------
 
