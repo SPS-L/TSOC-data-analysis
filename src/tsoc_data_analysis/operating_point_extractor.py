@@ -197,6 +197,84 @@ def loadallpowerdf(directory: str) -> pd.DataFrame:
     return df
 
 
+def _validate_inputs(all_power: pd.DataFrame, max_power: float, MAPGL: float, k_max: int) -> None:
+    """Shared validation for inputs."""
+    if all_power.empty:
+        raise ValueError("Input DataFrame is empty")
+    if max_power <= 0:
+        raise ValueError(f"max_power must be positive, got {max_power}")
+    if MAPGL <= 0:
+        raise ValueError(f"MAPGL must be positive, got {MAPGL}")
+    if MAPGL >= max_power:
+        raise ValueError(f"MAPGL ({MAPGL}) must be less than max_power ({max_power})")
+    if k_max < 2:
+        raise ValueError(f"k_max must be at least 2, got {k_max}")
+
+
+def _ensure_net_load_column(df: pd.DataFrame) -> Tuple[pd.DataFrame, bool]:
+    """Ensure 'net_load' exists; compute if missing. Returns (df_copy, used_existing)."""
+    working = df.copy()
+    if 'net_load' not in working.columns:
+        from .power_system_analytics import calculate_total_load, calculate_net_load
+        total_load = calculate_total_load(working)
+        net_load = calculate_net_load(working, total_load)
+        working['net_load'] = net_load
+        print("Calculated net_load from power system data")
+        return working, False
+    else:
+        print("Using existing net_load column from input data")
+        return working, True
+
+
+def _filter_by_limits_and_validate_MAPGL(working: pd.DataFrame, max_power: float, MAPGL: float) -> pd.DataFrame:
+    """Apply max power filter and validate MAPGL constraint."""
+    working_filtered = working[working["net_load"] <= max_power]
+    if (working_filtered["net_load"] < MAPGL).any():
+        bad = working_filtered[working_filtered["net_load"] < MAPGL]
+        raise ValueError(
+            f"{len(bad)} snapshots violate MAPGL ({MAPGL} MW). "
+            "Aborting; please correct input."
+        )
+    return working_filtered
+
+
+def _exclude_zero_variance_features(df: pd.DataFrame, feat_cols: list[str], error_if_all: bool = True) -> Tuple[list[str], int]:
+    """Remove zero-variance features; return (filtered_cols, excluded_count)."""
+    feature_data = df[feat_cols]
+    zero_variance_mask = feature_data.var() == 0
+    excluded = int(zero_variance_mask.sum())
+    if excluded > 0:
+        print(f"Warning: {excluded} features have zero variance and will be excluded")
+    filtered = [col for col in feat_cols if not zero_variance_mask[col]]
+    if error_if_all and len(filtered) == 0:
+        raise ValueError("No features with non-zero variance found")
+    return filtered, excluded
+
+
+def _compute_medoids(x: np.ndarray, labels: np.ndarray, centres: np.ndarray, index: pd.Index) -> list:
+    """Identify medoid indices per cluster given data matrix, labels, and centres."""
+    medoid_ids: list = []
+    n_clusters = centres.shape[0]
+    for k in range(n_clusters):
+        members = np.where(labels == k)[0]
+        if members.size == 0:
+            continue
+        centre = centres[k]
+        member_vecs = x[members]
+        dist2 = ((member_vecs - centre) ** 2).sum(axis=1)
+        medoid_pos = members[int(dist2.argmin())]
+        medoid_id = index[medoid_pos]
+        medoid_ids.append(medoid_id)
+    return medoid_ids
+
+
+def _compute_mapgl_belt_ids(df: pd.DataFrame, MAPGL: float) -> list:
+    """Compute indices within the MAPGL belt using configured multiplier."""
+    mapgl_multiplier = REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier']
+    belt_mask = (df["net_load"] > MAPGL) & (df["net_load"] < mapgl_multiplier * MAPGL)
+    return df.index[belt_mask].tolist()
+
+
 def _select_feature_columns(df: pd.DataFrame) -> list[str]:
     """Return columns starting with ss_mw_, ss_mvar_ or wind_mw_."""
     keep_prefix = tuple(REPRESENTATIVE_OPS['feature_columns']['clustering_prefixes'])
@@ -1266,21 +1344,8 @@ def extract_representative_ops_enhanced(
     print("🚀 Starting Enhanced Representative Operating Points Extraction")
     print("="*70)
     
-    # Input validation (same as standard function)
-    if all_power.empty:
-        raise ValueError("Input DataFrame is empty")
-    
-    if max_power <= 0:
-        raise ValueError(f"max_power must be positive, got {max_power}")
-    
-    if MAPGL <= 0:
-        raise ValueError(f"MAPGL must be positive, got {MAPGL}")
-    
-    if MAPGL >= max_power:
-        raise ValueError(f"MAPGL ({MAPGL}) must be less than max_power ({max_power})")
-    
-    if k_max < 2:
-        raise ValueError(f"k_max must be at least 2, got {k_max}")
+    # Input validation (shared)
+    _validate_inputs(all_power, max_power, MAPGL, k_max)
     
     # Data quality checks
     missing_data = all_power.isnull().sum().sum()
@@ -1292,28 +1357,9 @@ def extract_representative_ops_enhanced(
     if inf_count > 0:
         raise ValueError(f"Input data contains {inf_count} infinite values")
     
-    # Create working copy
-    working = all_power.copy()
-    
-    # Check if net_load column exists, calculate if needed
-    if 'net_load' not in working.columns:
-        from .power_system_analytics import calculate_total_load, calculate_net_load
-        total_load = calculate_total_load(working)
-        net_load = calculate_net_load(working, total_load)
-        working['net_load'] = net_load
-        print("Calculated net_load from power system data")
-    else:
-        print("Using existing net_load column from input data")
-
-    # Data integrity checks
-    working = working[working["net_load"] <= max_power]
-
-    if (working["net_load"] < MAPGL).any():
-        bad = working[working["net_load"] < MAPGL]
-        raise ValueError(
-            f"{len(bad)} snapshots violate MAPGL ({MAPGL} MW). "
-            "Aborting; please correct input."
-        )
+    # Prepare net_load and filter by limits
+    working, _ = _ensure_net_load_column(all_power)
+    working = _filter_by_limits_and_validate_MAPGL(working, max_power, MAPGL)
 
     # Initialize enhanced diagnostics
     enhanced_info = {
@@ -1382,12 +1428,7 @@ def extract_representative_ops_enhanced(
     
     # Check final feature data quality
     feature_data = working_final[final_feat_cols]
-    zero_variance_features = feature_data.var() == 0
-    if zero_variance_features.any():
-        print(f"Warning: {zero_variance_features.sum()} features have zero variance")
-        final_feat_cols = [col for col in final_feat_cols if not zero_variance_features[col]]
-        if len(final_feat_cols) == 0:
-            raise ValueError("No features with non-zero variance found after preprocessing")
+    final_feat_cols, zero_var_excluded = _exclude_zero_variance_features(working_final, final_feat_cols, error_if_all=True)
     
     # Prepare data for clustering
     x_raw = working_final[final_feat_cols].fillna(0).to_numpy(float)
@@ -1451,23 +1492,11 @@ def extract_representative_ops_enhanced(
             best_model = temp_model
     
     # Medoid identification
-    medoid_ids: list = []
     centres = best_model.cluster_centers_
-    for k in range(best_model.n_clusters):
-        members = np.where(best_labels == k)[0]
-        if members.size == 0:
-            continue
-        centre = centres[k]
-        member_vecs = x[members]
-        dist2 = ((member_vecs - centre) ** 2).sum(axis=1)
-        medoid_pos = members[int(dist2.argmin())]
-        medoid_id = working_final.index[medoid_pos]
-        medoid_ids.append(medoid_id)
+    medoid_ids = _compute_medoids(x, best_labels, centres, working_final.index)
 
     # MAPGL belt snapshots
-    mapgl_multiplier = REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier']
-    belt_mask = (working_final["net_load"] > MAPGL) & (working_final["net_load"] < mapgl_multiplier * MAPGL)
-    belt_ids = working_final.index[belt_mask].tolist()
+    belt_ids = _compute_mapgl_belt_ids(working_final, MAPGL)
 
     all_ids = sorted(set(medoid_ids).union(belt_ids))
     rep_df = working_final.loc[all_ids].copy()
@@ -1484,7 +1513,7 @@ def extract_representative_ops_enhanced(
         'data_quality': {
             'missing_values': missing_data,
             'infinite_values': inf_count,
-            'zero_variance_features_excluded': zero_variance_features.sum() if 'zero_variance_features' in locals() else 0
+            'zero_variance_features_excluded': zero_var_excluded
         }
     })
     
@@ -1791,21 +1820,8 @@ def extract_representative_ops(
     >>> print(f"Cluster sizes: {diag['cluster_sizes']}")
     """
     
-    # Input validation
-    if all_power.empty:
-        raise ValueError("Input DataFrame is empty")
-    
-    if max_power <= 0:
-        raise ValueError(f"max_power must be positive, got {max_power}")
-    
-    if MAPGL <= 0:
-        raise ValueError(f"MAPGL must be positive, got {MAPGL}")
-    
-    if MAPGL >= max_power:
-        raise ValueError(f"MAPGL ({MAPGL}) must be less than max_power ({max_power})")
-    
-    if k_max < 2:
-        raise ValueError(f"k_max must be at least 2, got {k_max}")
+    # Input validation (shared)
+    _validate_inputs(all_power, max_power, MAPGL, k_max)
     
     # Data quality checks
     missing_data = all_power.isnull().sum().sum()
@@ -1817,31 +1833,9 @@ def extract_representative_ops(
     if inf_count > 0:
         raise ValueError(f"Input data contains {inf_count} infinite values")
     
-    # Create working copy
-    working = all_power.copy()
-    
-    # Check if net_load and total_load columns already exist
-    if 'net_load' not in working.columns:
-        # Import analysis functions for net load calculation only if needed
-        from .power_system_analytics import calculate_total_load, calculate_net_load
-        
-        # Calculate net load for filtering
-        total_load = calculate_total_load(working)
-        net_load = calculate_net_load(working, total_load)
-        working['net_load'] = net_load
-        print("Calculated net_load from power system data")
-    else:
-        print("Using existing net_load column from input data")
-
-    # 1 ───────────────── Data integrity checks
-    working = working[working["net_load"] <= max_power]
-
-    if (working["net_load"] < MAPGL).any():
-        bad = working[working["net_load"] < MAPGL]
-        raise ValueError(
-            f"{len(bad)} snapshots violate MAPGL ({MAPGL} MW). "
-            "Aborting; please correct input."
-        )
+    # Create working copy with net_load and apply integrity checks
+    working, _ = _ensure_net_load_column(all_power)
+    working = _filter_by_limits_and_validate_MAPGL(working, max_power, MAPGL)
 
     # 2 ───────────────── Feature extraction & scaling
     feat_cols = _select_feature_columns(working)
@@ -1849,13 +1843,7 @@ def extract_representative_ops(
         raise ValueError("No suitable feature columns found (ss_mw_*, ss_mvar_*, wind_mw_*)")
     
     # Check feature data quality
-    feature_data = working[feat_cols]
-    zero_variance_features = feature_data.var() == 0
-    if zero_variance_features.any():
-        print(f"Warning: {zero_variance_features.sum()} features have zero variance and will be excluded")
-        feat_cols = [col for col in feat_cols if not zero_variance_features[col]]
-        if len(feat_cols) == 0:
-            raise ValueError("No features with non-zero variance found")
+    feat_cols, zero_var_excluded = _exclude_zero_variance_features(working, feat_cols, error_if_all=True)
     
     x_raw = working[feat_cols].to_numpy(float)
     scaler = StandardScaler()
@@ -1867,23 +1855,10 @@ def extract_representative_ops(
     centres = model.cluster_centers_
 
     # 4 ───────────────── Medoid identification
-    medoid_ids: list = []
-    for k in range(model.n_clusters):
-        members = np.where(labels == k)[0]
-        if members.size == 0:
-            continue
-        centre = centres[k]
-        member_vecs = x[members]
-        dist2 = ((member_vecs - centre) ** 2).sum(axis=1)
-        # Get the position in the members array, then map to DataFrame index
-        medoid_pos = members[int(dist2.argmin())]
-        medoid_id = working.index[medoid_pos]  # Map array position to DataFrame index
-        medoid_ids.append(medoid_id)
+    medoid_ids = _compute_medoids(x, labels, centres, working.index)
 
     # 5 ───────────────── Append MAPGL belt snapshots
-    mapgl_multiplier = REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier']
-    belt_mask = (working["net_load"] > MAPGL) & (working["net_load"] < mapgl_multiplier * MAPGL)
-    belt_ids = working.index[belt_mask].tolist()
+    belt_ids = _compute_mapgl_belt_ids(working, MAPGL)
 
     all_ids = sorted(set(medoid_ids).union(belt_ids))
     rep_df = working.loc[all_ids].copy()
@@ -1901,7 +1876,7 @@ def extract_representative_ops(
         "data_quality": {
             "missing_values": missing_data,
             "infinite_values": inf_count,
-            "zero_variance_features_excluded": zero_variance_features.sum() if 'zero_variance_features' in locals() else 0
+            "zero_variance_features_excluded": zero_var_excluded
         }
     }
 
