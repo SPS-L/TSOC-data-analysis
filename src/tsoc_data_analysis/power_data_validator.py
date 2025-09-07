@@ -57,6 +57,52 @@ class DataValidator:
         else:
             print(f"[{level}] {message}")
     
+    def _handle_dst_duplicate_hours(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Handle duplicated timestamps caused by DST fall-back (hour repeats).
+        
+        Rule: If the same hour exists twice, keep only the second pair of
+        half-hour inputs (i.e., keep the last occurrence of duplicated
+        timestamps and drop the first).
+        
+        Args:
+            df: Input DataFrame, expected to have a DatetimeIndex
+        
+        Returns:
+            DataFrame with first occurrences of duplicated timestamps removed
+        """
+        try:
+            # Ensure datetime index; if not, do nothing
+            if not isinstance(df.index, pd.DatetimeIndex):
+                return df
+            
+            # Work on a sorted copy to ensure chronological order
+            df_sorted = df.sort_index()
+            
+            # Identify duplicated timestamps (e.g., 02:00 and 02:30 repeated at DST fall-back)
+            dup_any_mask = df_sorted.index.duplicated(keep=False)
+            if not dup_any_mask.any():
+                return df_sorted
+            
+            # Count duplicates for logging
+            total_dup_labels = int(dup_any_mask.sum())
+            to_drop_mask = df_sorted.index.duplicated(keep='last')
+            to_drop_count = int(to_drop_mask.sum())
+            
+            self.log(
+                f"Detected {total_dup_labels} duplicated timestamp rows (likely DST fall-back). "
+                f"Dropping first occurrences: {to_drop_count}, keeping second half-hour pair(s).",
+                'INFO'
+            )
+            
+            # Keep last occurrence of each duplicated timestamp (second pair)
+            df_deduped = df_sorted[~to_drop_mask]
+            return df_deduped
+        except Exception as e:
+            # Fail-safe: on any error, return original df
+            self.log(f"DST duplicate handling failed: {str(e)}", 'WARNING')
+            return df
+    
     def validate_data_types(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Validate data types for all columns in the DataFrame.
@@ -1030,8 +1076,11 @@ class DataValidator:
         # Update record counts
         self.validation_summary['total_records_processed'] = len(df) * len(df.columns)
         
+        # Step 0: Handle duplicated timestamps from DST fall-back (keep second pair)
+        df_validated = self._handle_dst_duplicate_hours(df)
+        
         # Step 1: Validate data types
-        df_validated = self.validate_data_types(df)
+        df_validated = self.validate_data_types(df_validated)
         
         # Step 2: Validate limits
         df_validated = self.validate_limits(df_validated)
