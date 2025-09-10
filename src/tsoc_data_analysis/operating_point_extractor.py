@@ -1527,6 +1527,9 @@ def extract_representative_ops_enhanced(
         
         rep_df_clean = rep_df.copy()
         rep_df_clean.columns = [clean_column_name(col) for col in rep_df_clean.columns]
+        # Sort by net_load in descending order for easier inspection
+        if 'net_load' in rep_df_clean.columns:
+            rep_df_clean = rep_df_clean.sort_values(by='net_load', ascending=False)
         rep_df_clean.to_csv(filename_rep, index=True)
         
         # Create enhanced clustering summary
@@ -1891,6 +1894,9 @@ def extract_representative_ops(
         # Create a copy with cleaned column names for better readability
         rep_df_clean = rep_df.copy()
         rep_df_clean.columns = [clean_column_name(col) for col in rep_df_clean.columns]
+        # Sort by net_load in descending order for easier inspection
+        if 'net_load' in rep_df_clean.columns:
+            rep_df_clean = rep_df_clean.sort_values(by='net_load', ascending=False)
         
         rep_df_clean.to_csv(filename_rep, index=True)
         
