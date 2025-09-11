@@ -17,7 +17,7 @@ A comprehensive Python tool for analyzing TSOC power system operational data fro
 ## Quick Installation
 
 ```bash
-pip install git+https://github.com/SPS-L/TSOC-data-analysis.git
+pip install tsoc-data-analysis
 ```
 
 ## Quick Start
