@@ -48,8 +48,14 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'sphinx_autodoc_typehints',
 ]
+
+# Optionally enable sphinx-autodoc-typehints if available
+try:
+    import sphinx_autodoc_typehints  # noqa: F401
+    extensions.append('sphinx_autodoc_typehints')
+except Exception:
+    pass
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -69,7 +75,11 @@ master_doc = 'index'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+try:
+    import sphinx_rtd_theme  # noqa: F401
+    html_theme = 'sphinx_rtd_theme'
+except Exception:
+    html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -82,7 +92,8 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+_static_dir = os.path.join(os.path.dirname(__file__), '_static')
+html_static_path = ['_static'] if os.path.isdir(_static_dir) else []
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
