@@ -1,42 +1,118 @@
+
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="en" data-content_root="./">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples &mdash; TSOC Data Analysis 1.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
-    <title>Examples &#8212; TSOC Data Analysis 1.3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=1f29e9d3"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=1f29e9d3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Troubleshooting" href="troubleshooting.html" />
-    <link rel="prev" title="Configuration Guide" href="configuration.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
+    <link rel="prev" title="Configuration Guide" href="configuration.html" /> 
+</head>
 
-  
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
           
+          
+          <a href="index.html" class="icon icon-home">
+            TSOC Data Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example-categories">Example Categories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-analysis-examples">Basic Analysis Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simple-load-analysis">Simple Load Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generator-categorization">Generator Categorization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#representative-points-examples">Representative Points Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-clustering-analysis">Basic Clustering Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-clustering-with-custom-parameters">Advanced Clustering with Custom Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enhanced-clustering-with-advanced-algorithms">Enhanced Clustering with Advanced Algorithms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selective-enhanced-clustering">Selective Enhanced Clustering</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-validation-examples">Data Validation Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-data-validation">Basic Data Validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enhanced-validation-with-anomaly-detection">Enhanced Validation with Anomaly Detection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#visualization-examples">Visualization Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#time-series-plotting">Time Series Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comprehensive-analysis-dashboard">Comprehensive Analysis Dashboard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-workflow-examples">Advanced Workflow Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#complete-analysis-pipeline">Complete Analysis Pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multi-month-analysis">Multi-Month Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-analysis-workflow">Custom Analysis Workflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clustering-methods-comparison">Clustering Methods Comparison</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
 
-          <div class="body" role="main">
-            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TSOC Data Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="examples">
-<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h1>
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
 <p>This section provides comprehensive examples of using the TSOC Data Analysis package for various power system analysis scenarios.</p>
 <section id="example-categories">
-<h2>Example Categories<a class="headerlink" href="#example-categories" title="Link to this heading">¶</a></h2>
+<h2>Example Categories<a class="headerlink" href="#example-categories" title="Link to this heading"></a></h2>
 <p>The examples are organized into the following categories:</p>
 <ol class="arabic simple">
 <li><p><strong>Basic Analysis Examples</strong> - Simple load analysis and generator categorization</p></li>
@@ -47,9 +123,9 @@
 </ol>
 </section>
 <section id="basic-analysis-examples">
-<h2>Basic Analysis Examples<a class="headerlink" href="#basic-analysis-examples" title="Link to this heading">¶</a></h2>
+<h2>Basic Analysis Examples<a class="headerlink" href="#basic-analysis-examples" title="Link to this heading"></a></h2>
 <section id="simple-load-analysis">
-<h3>Simple Load Analysis<a class="headerlink" href="#simple-load-analysis" title="Link to this heading">¶</a></h3>
+<h3>Simple Load Analysis<a class="headerlink" href="#simple-load-analysis" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Calculate total and net load from power system data.</p>
 <p><strong>Data Requirements:</strong></p>
 <ul class="simple">
@@ -93,7 +169,7 @@
 </div>
 </section>
 <section id="generator-categorization">
-<h3>Generator Categorization<a class="headerlink" href="#generator-categorization" title="Link to this heading">¶</a></h3>
+<h3>Generator Categorization<a class="headerlink" href="#generator-categorization" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Categorize generators as voltage control or PQ control based on their reactive power characteristics.</p>
 <p><strong>Data Requirements:</strong></p>
 <ul class="simple">
@@ -129,9 +205,9 @@ PQ Control Generators: 2
 </section>
 </section>
 <section id="representative-points-examples">
-<h2>Representative Points Examples<a class="headerlink" href="#representative-points-examples" title="Link to this heading">¶</a></h2>
+<h2>Representative Points Examples<a class="headerlink" href="#representative-points-examples" title="Link to this heading"></a></h2>
 <section id="basic-clustering-analysis">
-<h3>Basic Clustering Analysis<a class="headerlink" href="#basic-clustering-analysis" title="Link to this heading">¶</a></h3>
+<h3>Basic Clustering Analysis<a class="headerlink" href="#basic-clustering-analysis" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Extract representative operating points using K-means clustering.</p>
 <p><strong>Data Requirements:</strong></p>
 <ul class="simple">
@@ -169,7 +245,7 @@ Representative points saved to: results/representative_operating_points.csv
 </div>
 </section>
 <section id="advanced-clustering-with-custom-parameters">
-<h3>Advanced Clustering with Custom Parameters<a class="headerlink" href="#advanced-clustering-with-custom-parameters" title="Link to this heading">¶</a></h3>
+<h3>Advanced Clustering with Custom Parameters<a class="headerlink" href="#advanced-clustering-with-custom-parameters" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Perform clustering with custom parameters for specific analysis requirements.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops</span><span class="p">,</span> <span class="n">REPRESENTATIVE_OPS</span>
@@ -222,7 +298,7 @@ Representative points saved to: results/representative_operating_points.csv
 </div>
 </section>
 <section id="enhanced-clustering-with-advanced-algorithms">
-<h3>Enhanced Clustering with Advanced Algorithms<a class="headerlink" href="#enhanced-clustering-with-advanced-algorithms" title="Link to this heading">¶</a></h3>
+<h3>Enhanced Clustering with Advanced Algorithms<a class="headerlink" href="#enhanced-clustering-with-advanced-algorithms" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Use advanced clustering techniques to improve clustering quality through data preprocessing, feature engineering, and alternative algorithms.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops_enhanced</span>
@@ -282,7 +358,7 @@ Feature Engineering:
 </div>
 </section>
 <section id="selective-enhanced-clustering">
-<h3>Selective Enhanced Clustering<a class="headerlink" href="#selective-enhanced-clustering" title="Link to this heading">¶</a></h3>
+<h3>Selective Enhanced Clustering<a class="headerlink" href="#selective-enhanced-clustering" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Use specific enhanced clustering features based on your analysis needs.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_representative_ops_enhanced</span>
@@ -318,9 +394,9 @@ Feature Engineering:
 </section>
 </section>
 <section id="data-validation-examples">
-<h2>Data Validation Examples<a class="headerlink" href="#data-validation-examples" title="Link to this heading">¶</a></h2>
+<h2>Data Validation Examples<a class="headerlink" href="#data-validation-examples" title="Link to this heading"></a></h2>
 <section id="basic-data-validation">
-<h3>Basic Data Validation<a class="headerlink" href="#basic-data-validation" title="Link to this heading">¶</a></h3>
+<h3>Basic Data Validation<a class="headerlink" href="#basic-data-validation" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Perform comprehensive data validation to ensure data quality.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataValidator</span>
@@ -360,7 +436,7 @@ Limit Validation Errors:
 </div>
 </section>
 <section id="enhanced-validation-with-anomaly-detection">
-<h3>Enhanced Validation with Anomaly Detection<a class="headerlink" href="#enhanced-validation-with-anomaly-detection" title="Link to this heading">¶</a></h3>
+<h3>Enhanced Validation with Anomaly Detection<a class="headerlink" href="#enhanced-validation-with-anomaly-detection" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Perform advanced validation with anomaly detection and gap filling.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnhancedDataValidator</span>
@@ -403,9 +479,9 @@ Anomaly Details:
 </section>
 </section>
 <section id="visualization-examples">
-<h2>Visualization Examples<a class="headerlink" href="#visualization-examples" title="Link to this heading">¶</a></h2>
+<h2>Visualization Examples<a class="headerlink" href="#visualization-examples" title="Link to this heading"></a></h2>
 <section id="time-series-plotting">
-<h3>Time Series Plotting<a class="headerlink" href="#time-series-plotting" title="Link to this heading">¶</a></h3>
+<h3>Time Series Plotting<a class="headerlink" href="#time-series-plotting" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Create time series plots for power system variables.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis.power_system_visualizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_load_timeseries</span>
@@ -421,7 +497,7 @@ Anomaly Details:
 <p><strong>Expected Output:</strong> Time series plot saved as PNG file in the results directory.</p>
 </section>
 <section id="comprehensive-analysis-dashboard">
-<h3>Comprehensive Analysis Dashboard<a class="headerlink" href="#comprehensive-analysis-dashboard" title="Link to this heading">¶</a></h3>
+<h3>Comprehensive Analysis Dashboard<a class="headerlink" href="#comprehensive-analysis-dashboard" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Create a comprehensive analysis dashboard with multiple plots.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis.power_system_visualizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_comprehensive_plots</span>
@@ -443,9 +519,9 @@ Anomaly Details:
 </section>
 </section>
 <section id="advanced-workflow-examples">
-<h2>Advanced Workflow Examples<a class="headerlink" href="#advanced-workflow-examples" title="Link to this heading">¶</a></h2>
+<h2>Advanced Workflow Examples<a class="headerlink" href="#advanced-workflow-examples" title="Link to this heading"></a></h2>
 <section id="complete-analysis-pipeline">
-<h3>Complete Analysis Pipeline<a class="headerlink" href="#complete-analysis-pipeline" title="Link to this heading">¶</a></h3>
+<h3>Complete Analysis Pipeline<a class="headerlink" href="#complete-analysis-pipeline" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Perform a complete analysis pipeline from data loading to results generation.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">extract_representative_ops</span>
@@ -494,7 +570,7 @@ Analysis Summary:
 </div>
 </section>
 <section id="multi-month-analysis">
-<h3>Multi-Month Analysis<a class="headerlink" href="#multi-month-analysis" title="Link to this heading">¶</a></h3>
+<h3>Multi-Month Analysis<a class="headerlink" href="#multi-month-analysis" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Perform analysis across multiple months and compare results.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">extract_representative_ops</span>
@@ -550,7 +626,7 @@ Multi-Month Comparison:
 </div>
 </section>
 <section id="custom-analysis-workflow">
-<h3>Custom Analysis Workflow<a class="headerlink" href="#custom-analysis-workflow" title="Link to this heading">¶</a></h3>
+<h3>Custom Analysis Workflow<a class="headerlink" href="#custom-analysis-workflow" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Create a custom analysis workflow for specific requirements.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -624,7 +700,7 @@ Multi-Month Comparison:
 </div>
 </section>
 <section id="clustering-methods-comparison">
-<h3>Clustering Methods Comparison<a class="headerlink" href="#clustering-methods-comparison" title="Link to this heading">¶</a></h3>
+<h3>Clustering Methods Comparison<a class="headerlink" href="#clustering-methods-comparison" title="Link to this heading"></a></h3>
 <p><strong>Objective:</strong> Compare standard and enhanced clustering methods to determine the best approach for your data.</p>
 <p><strong>Example Code:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tsoc_data_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -730,48 +806,34 @@ Multi-Month Comparison:
 </section>
 
 
+           </div>
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="configuration.html" title="previous chapter">Configuration Guide</a></li>
-      <li>Next: <a href="troubleshooting.html" title="next chapter">Troubleshooting</a></li>
-  </ul></li>
-</ul>
-</div>
-<search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &#169;2025, Sustainable Power Systems Lab (SPSL).
-      
-      |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
-      
-      |
-      <a href="_sources/examples.rst.txt"
-          rel="nofollow">Page source</a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="configuration.html" class="btn btn-neutral float-left" title="Configuration Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="troubleshooting.html" class="btn btn-neutral float-right" title="Troubleshooting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
-    
+  <hr/>
 
-    
-  </body>
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Sustainable Power Systems Lab (SPSL).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>
