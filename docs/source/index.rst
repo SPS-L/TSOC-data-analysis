@@ -18,6 +18,10 @@ Welcome to TSOC Data Analysis's documentation!
    :target: https://tsoc-data-analysis.sps-lab.org/
    :alt: Documentation
 
+.. image:: https://img.shields.io/pypi/v/tsoc-data-analysis.svg
+   :target: https://pypi.org/project/tsoc-data-analysis/
+   :alt: PyPI
+
 .. image:: https://img.shields.io/badge/GitHub-SPS--L%2FTSOC--data--analysis-blue.svg
    :target: https://github.com/SPS-L/TSOC-data-analysis
    :alt: GitHub Repository

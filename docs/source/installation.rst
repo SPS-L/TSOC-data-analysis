@@ -27,7 +27,7 @@ Installation Methods
 
 .. code-block:: bash
 
-   pip install git+https://github.com/SPS-L/TSOC-data-analysis.git
+   pip install tsoc-data-analysis
 
 Verification
 ------------

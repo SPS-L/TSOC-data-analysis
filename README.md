@@ -7,6 +7,7 @@ A comprehensive Python tool for analyzing TSOC power system operational data fro
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![Documentation](https://img.shields.io/badge/docs-sphinx-blue.svg)](https://tsoc-data-analysis.sps-lab.org/)
+[![PyPI](https://img.shields.io/pypi/v/tsoc-data-analysis.svg)](https://pypi.org/project/tsoc-data-analysis/)
 
 ## 📖 Full Documentation
 
