@@ -14,7 +14,7 @@ Pure Python Implementation: This tool is implemented entirely in Python. It can 
 the command line, imported as Python modules, or integrated into automated analysis pipelines.
 """
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 __author__ = "Sustainable Power Systems Lab (SPSL)"
 __email__ = "info@sps-lab.org"
 __url__ = "https://sps-lab.org"
