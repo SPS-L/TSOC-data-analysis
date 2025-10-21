@@ -1432,6 +1432,21 @@ def extract_representative_ops_enhanced(
     
     # Prepare data for clustering
     x_raw = working_final[final_feat_cols].fillna(0).to_numpy(float)
+    
+    # Check if we have any samples after filtering
+    if x_raw.shape[0] == 0:
+        raise ValueError(
+            "No samples remaining after data filtering. This can occur when:\n"
+            "1. All data points violate the power limits or MAPGL constraints\n"
+            "2. The filtering criteria are too restrictive for the available data\n"
+            "3. The input dataset is empty or contains only invalid data\n\n"
+            "Please check your input data and filtering parameters:\n"
+            f"- max_power: {max_power} MW\n"
+            f"- MAPGL: {MAPGL} MW\n"
+            f"- Original dataset size: {len(all_power)} snapshots\n"
+            f"- After filtering: {len(working_final)} snapshots"
+        )
+    
     scaler = StandardScaler()
     x = scaler.fit_transform(x_raw)
     
@@ -1849,6 +1864,21 @@ def extract_representative_ops(
     feat_cols, zero_var_excluded = _exclude_zero_variance_features(working, feat_cols, error_if_all=True)
     
     x_raw = working[feat_cols].to_numpy(float)
+    
+    # Check if we have any samples after filtering
+    if x_raw.shape[0] == 0:
+        raise ValueError(
+            "No samples remaining after data filtering. This can occur when:\n"
+            "1. All data points violate the power limits or MAPGL constraints\n"
+            "2. The filtering criteria are too restrictive for the available data\n"
+            "3. The input dataset is empty or contains only invalid data\n\n"
+            "Please check your input data and filtering parameters:\n"
+            f"- max_power: {max_power} MW\n"
+            f"- MAPGL: {MAPGL} MW\n"
+            f"- Original dataset size: {len(all_power)} snapshots\n"
+            f"- After filtering: {len(working)} snapshots"
+        )
+    
     scaler = StandardScaler()
     x = scaler.fit_transform(x_raw)
 
