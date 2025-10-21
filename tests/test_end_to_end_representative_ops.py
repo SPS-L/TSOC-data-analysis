@@ -13,8 +13,8 @@ if os.path.exists(results_folder):
 
 # Execute full data analysis
 success, all_data_df = execute(
-    month='2024-10',
-    data_dir='raw_data',
+    month='2024-07',
+    data_dir='../raw_data',
     output_dir=results_folder,
     save_plots=True,
     save_csv=True,
@@ -30,8 +30,8 @@ else:
 REPRESENTATIVE_OPS['defaults']['mapgl_belt_multiplier'] = 1.00
 REPRESENTATIVE_OPS['defaults']['k_max'] = 10
 
-sum_pmin_on = 215.00
-sum_pmax_on = 337.54
+sum_pmin_on = 210.0
+sum_pmax_on = 430.00
 
 rep_df, diagnostics = extract_representative_ops(
         all_data_df,
